@@ -16,5 +16,12 @@ The web works on a `client-server model`. The client is the browser, and the ser
 
 The message that the client requests is formatted based on a protocol called HTTP. HTTP is a language that clients and servers use to talk to each other. We also have HTTPS, which is HTTP with encryption.
 
-I need to highlight these <mark>very important words</mark>.  
-I need to highlight these ==very important words==.
+
+> how are you doing  
+*dsad*
+
+Try to put a blank line before...
+
+---
+
+...and after a horizontal rule.
