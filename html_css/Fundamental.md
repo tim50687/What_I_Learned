@@ -16,7 +16,7 @@ The web works on a `client-server model`. The client is the browser, and the ser
 
 The message that the client requests is formatted based on a protocol called HTTP. HTTP is a language that clients and servers use to talk to each other. We also have HTTPS, which is HTTP with encryption.
 
-When broswer recieve HTTP response, this HTTP response contains an HTML document, the browser reads that HTML document to construct a document object model and render the page.
+When broswer recieve HTTP response, this HTTP response contains an HTML document, the browser reads that HTML document to construct a `document object model` and render the page.
 
 **Front end developer**
 - HTML  
@@ -58,4 +58,21 @@ html element:
 `<html></html>` - Opening tag and Closing tag  
 `<head></head>` - head element. Give browser information about this page  
 For example:  
-    this
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`<title></title>` - title element. Specify title of this page  
+
+`<body></body>` - body element. Elements that will appear on our page  
+For example:  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`<img src="" alt="">` - image element. 1. We don't have closing tab because image element cannot have child element. 2. Don't need to add forward slash in html5. Two attributes (supply addition information about an element): `src` - specify the path of image. `alt` - give the browser some text to display in case the image cannot be display. Attributes are coded as part of the opening tag.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`<p></p>` - text element.  
+`<style></style>` - style element. Place we write CSS code. Type img {} to reference the image element. `border-radius` - half of the width will get round image. `margin-right` - add some space next to the image. 
+
+##### How to seperate two paragraph elements?  
+Give an attribute called `class`(classification) - Put this element inside different class or a different category. We can use `p.username` or even `.username` to apply to all elements that hace the username class.
+
+**CSS syntax**  
+```css
+h1 {color:blue; font-size:12px;}
+```
+`h1` - selector. The selector points to the HTML element you want to style.  
+`{color:blue; font-size:12px;}` - declaration block. The declaration block contains one or more declarations separated by semicolons. Each declaration includes a CSS property name and a value, seperated by a colon.
+
