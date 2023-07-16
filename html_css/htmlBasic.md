@@ -1,6 +1,6 @@
 # HTML Basic
 
-> Ｔips: `! + tab `- Get a basic HTML boilerplate
+> Tips: `! + tab `- Get a basic HTML boilerplate
 ```html
 <!DOCTYPE html>
 <html lang="en">
