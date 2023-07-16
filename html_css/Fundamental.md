@@ -16,12 +16,46 @@ The web works on a `client-server model`. The client is the browser, and the ser
 
 The message that the client requests is formatted based on a protocol called HTTP. HTTP is a language that clients and servers use to talk to each other. We also have HTTPS, which is HTTP with encryption.
 
+When broswer recieve HTTP response, this HTTP response contains an HTML document, the browser reads that HTML document to construct a document object model and render the page.
 
-> how are you doing  
-*dsad*
+**Front end developer**
+- HTML  
+The building block of our webpages.
+- CSS  
+Styling webpages and makeing them beautiful.
+- JavaScript  
+Adding functionality to webpages
 
-Try to put a blank line before...
+**HTML basic**
 
----
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>My first web page</title>
+    <style>
+      img {
+        width: 200px;
+        border-radius: 100px;
+        float: left;
+        margin-right: 10px;
+      }
+      .username {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="./images/boston.jpg" alt="An image of Boston" />
+    <p class="username">@Boston</p>
+    <p>I love to code!</p>
+  </body>
+</html>
+```
 
-...and after a horizontal rule.
+`<!DOCTYPE html>` - Tell browser this is an html5 document  
+html element:  
+`<html></html>` - Opening tag and Closing tag  
+`<head></head>` - head element. Give browser information about this page  
+For example:  
+    this
