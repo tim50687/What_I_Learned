@@ -71,6 +71,7 @@ Some characters are reserved in HTML, to display them we have to use special not
     <a href="#">Jump to top</a>
     <a href="https://google.com" target="_blank">GOOGLE</a>
     <a href="mailto:tim506877@gmail.com">Email me</a>
+    <h2 id="section-css">CSS</h2>
 ```
 - `a` - anchor element. Links to other pages or website.  
 
@@ -123,3 +124,26 @@ Conceptually, there is a box around every element in an HTML document. The brows
 ```
 
 Here we have a box with this dimension 200 by 200. And in this box, we're trying to insert this image. 
+
+## Video and Audio
+
+```html
+<style>
+video {
+        width: 400px;
+      }
+</style>
+
+<!-- Video -->
+    <video src="videos/ocean.mp4" controls autoplay loop >
+      Your browser does not support videos.
+    </video>
+    <audio src=""></audio>
+```
+
+- `video` - video element. By default, we see the image of the video. We don't have to specify the `height` because the browser will automatically calculate the height based on the aspect ratio of the video.
+    - `controls` - control attribute. We call it `boolean attribute`. `controls = "true"` or `controls = "false"` doesn't matter. The present of the boolean attribute represents the true value and its absence represents the false value.
+    - `autoplay` - autoplay attribute. The video automatically start when our page is loaded.
+    - `loop` - loop attribute. The video will automatically loop.
+
+In case the browser does not support video. We can provide the fallback text "Your browser does not support videos".
