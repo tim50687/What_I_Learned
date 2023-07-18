@@ -15,6 +15,11 @@
         color: red;
         font-style: normal;
       }
+      img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+      }
     </style>
   </head>
   <body>
@@ -35,6 +40,7 @@
       quaerat consectetur, eaque vel &nbsp;nesciunt aliquam minima ab placeat
       velit praesentium sunt quam sequi? Error sit mollitia sunt eveniet?
     </p>
+    <img src="images/coffee.jpg" alt="A coffee mug on a table">
   </body>
 </html>
 ```
@@ -90,3 +96,30 @@ Some characters are reserved in HTML, to display them we have to use special not
 A link is just an address, the url, the location of the target page.
 
 A hyperlink is the element that user can click on to navigate to that target page. Hyperlinks are hidden under the graphics, music, text, image, and video and are only visible when the mouse hovers over them.
+
+## img
+
+- `alt` - alt attribute. 
+    - 1. Make our page accessible to visually impaired people. They use screen reader to read the web out to them. That means we should write a good meaningful description here.
+    - 2. Help search engines read this text and understand what we're providing here.
+    - 3. If the image cannot be loaded, the alternative text is shown.
+
+### Sizing image
+
+We have a property in CSS called `object fit`. Most of the time we use `cover`, so the images covers its containing box.
+
+#### Containing box?
+
+Conceptually, there is a box around every element in an HTML document. The browser use that box to figure out how the page should be displayed.
+
+```html
+<style>
+      img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+      }
+    </style>
+```
+
+Here we have a box with this dimension 200 by 200. And in this box, we're trying to insert this image. 
