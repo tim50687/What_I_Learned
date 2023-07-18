@@ -54,3 +54,39 @@ Some characters are reserved in HTML, to display them we have to use special not
 - `&gt;` - &gt; (greater than).
 - `&copy;` - &copy; (copy right symbol).
 - `&nbsp;` - &nbsp; (non breaking space).
+
+## Hyperlinks
+
+```html
+    <a href="company/about.html"> About me </a>
+    <a href="images/boston.jpg" download>Boston pics</a>
+    <a href="#section-css">CSS</a>
+    <h2 id="section-css">CSS</h2>
+    <a href="#">Jump to top</a>
+    <a href="https://google.com" target="_blank">GOOGLE</a>
+    <a href="mailto:tim506877@gmail.com">Email me</a>
+```
+- `a` - anchor element. Links to other pages or website.  
+
+- `href attribute` - hypertext reference. We can use relative or absolute URL **(Also image)** . 
+    - `download` - download attribute. Prmopt the user to download it.
+
+- `id` - id atribute. Unique identifier. Can use pound sign to jump to the second heading. 
+
+- `#` - empty fragment. Jump to top.
+
+> Use absolute URL to link to an external website (Start with the protocol `https://`)
+
+### How to open a new tab
+
+- `target` - target attribute. Set it to `_blank`
+
+### How to link to email
+
+`mailto: <your email>`
+
+### Difference between link and hyperlink
+
+A link is just an address, the url, the location of the target page.
+
+A hyperlink is the element that user can click on to navigate to that target page. Hyperlinks are hidden under the graphics, music, text, image, and video and are only visible when the mouse hovers over them.
