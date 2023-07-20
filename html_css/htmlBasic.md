@@ -206,3 +206,5 @@ In case the browser does not support video. We can provide the fallback text "Yo
 > Short cut: `ol>li*3` + tab
 
 - `dl` - description list. Implement glossaries or display metadata.
+  - `dt` - description term. 
+    - `dd` - description detail element. To describe this term.
