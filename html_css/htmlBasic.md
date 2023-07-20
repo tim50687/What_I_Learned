@@ -277,3 +277,75 @@ To do that we use: `<thead></thead>, <tbody><tbody>, <tfoot></tfoot>`
 - `padding` - add padding around the data in cell.
 
 - `text-align: left;` - Make text in that element aligned to the left. 
+
+
+
+## Container
+
+If we need to group a bunch of element for styling purposes.
+
+```html
+<style>
+.product {
+  background-color: gold;
+  width: 300px;
+  }
+
+.highlight {
+  background-color: yellow;
+}
+</style>
+
+<!-- Container -->
+    <div class="product">
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis debitis ipsam tempore facere atque praesentium sunt recusandae aperiam beatae deserunt.</p>
+      <a href="#">Link</a>
+    </div>
+    <div class="product">
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis debitis ipsam tempore facere atque praesentium sunt recusandae aperiam beatae deserunt.</p>
+      <a href="#">Link</a>
+    </div>
+    
+    <p><span class="highlight">Lorem</span> ipsum dolor sit, amet consectetur adipisicing elit. Modi, rerum.</p>
+```
+
+Most common comtainer element:
+
+- `div` - division element. This container will `fill up the width of the page` because it's a `Block-Level Element` - always start on a new line and fillup the entire available space. But we can use CSS to change its width.
+
+-  `span` - span element. In a paragraph we can wrap the text with `span`. It's an `Inline Element`, which mean it's not gonna take up entire width.
+
+### Semantic elements
+
+Container elements that are more descriptive or meaningful. It helps search engine better understand our pages and what they contain. 
+
+```html
+<article class="article">
+      <h1>Heading</h1>
+      <p>Published <time datetime="2022-08-27 17:00">August 27 2021 05:00pm </time> </p>
+      <p><mark>Lorem</mark> ipsum dolor sit amet consectetur adipisicing elit. Optio expedita rem ipsa mollitia impedit quos dicta reprehenderit nam cumque molestiae?</p>
+      <figure>
+        <img src="images/coffee.jpg" alt="">
+        <figcaption>
+          My coffee this morning
+        </figcaption>
+      </figure>
+    </article>
+```
+
+- `article` - article element. This article doesn't has to be a blog post or a newspaper article. 
+  - `It can be any independent, self-contained content.` 
+    - Forum Post
+    - Comments
+    - Reviews
+    - Product cards
+
+- `figure` - figure element. We can make img element more meaningful by wrapping it and tell search engine this is a figure.
+  - `figcaption` - figure caption. This caption can be above or below the figure.
+
+- `mark` - mark element. If you want to highlight the content.
+
+- `time` - time element. Wrap the time to make it more semantic.
+  - `datetime` - date time attribute. This can help search engine better extract the necessary information from this page. Format = `datetime="2022-08-27 17:00"`
+
+> Imagine if instead of these semantic elements, all we had was divs and spans, the HTML markup wouldn't be very descriptive.
