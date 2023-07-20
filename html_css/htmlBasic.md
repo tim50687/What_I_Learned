@@ -208,3 +208,72 @@ In case the browser does not support video. We can provide the fallback text "Yo
 - `dl` - description list. Implement glossaries or display metadata.
   - `dt` - description term. 
     - `dd` - description detail element. To describe this term.
+
+## Table
+The table element should only be used for displaying tabular data.
+
+```html
+<style>
+table, td , th{
+        border: 1px solid grey;
+        border-collapse: collapse;
+        padding: 5px;
+      }
+      tfoot {
+        text-align: left;
+      }
+</style>
+<!-- table -->
+    <table>
+      <thead>
+        <tr>
+          <th colspan = "2">Expenses</th>
+        </tr>
+        <tr>
+          <th>Category</th>
+          <th>Amount</th>
+        </tr>
+        
+      </thead>
+      <tbody> 
+        <tr>
+          <td>Marketing</td>
+          <td>$100</td>
+        </tr>
+        <tr>
+          <td>Accounting</td>
+          <td>$200</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th>Total</th>
+          <th>$300</th>
+        </tr>
+      </tfoot>
+    </table>
+```
+
+- `tr` - table row. To define a row. 
+  - `th` - header cell. 
+    - `colspan="2"` - colspan sttribute. Determine how many columns this cell should expand to. (Default is 1)
+  - `td` - data cell. 
+
+> We want to tell search engine that in this table we have two sections, a header and a body.
+
+To do that we use: `<thead></thead>, <tbody><tbody>, <tfoot></tfoot>`
+
+### CSS
+
+- `border` - 3 values.
+  - 1. Thickness
+  - 2. Style of the border
+  - 3. Color
+
+> Here you can put two element together to apply style to both elements.
+
+- `border-collapse: collapse` - collapse the borders in neighboring cells.
+
+- `padding` - add padding around the data in cell.
+
+- `text-align: left;` - Make text in that element aligned to the left. 
