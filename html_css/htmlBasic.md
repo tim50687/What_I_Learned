@@ -147,3 +147,62 @@ video {
     - `loop` - loop attribute. The video will automatically loop.
 
 In case the browser does not support video. We can provide the fallback text "Your browser does not support videos".
+
+
+## List
+
+```html
+<style>
+      ul {
+        list-style-type: square;
+      }
+</style>
+
+<body>
+<!-- unorder list -->
+    <ul>
+      <li>About me</li>
+      <li>Courses
+        <ul>
+          <li>HTML</li>
+          <li>Javascript</li>
+          <li>Git</li>
+        </ul>
+      </li>
+      <li>Subscribe</li>
+      <li>Contact me</li>
+    </ul>
+
+    <!-- Order list -->
+    <ol>
+      <li>Preheat the oven.</li>
+      <li>Place the ingridients on the crust</li>
+      <li>Put the pizza in the oven for 20 minutes</li>
+    </ol>
+
+    <!-- description list -->
+    <dl>
+      <dt>Title</dt>
+      <dd>The ultimate HTML and CSS course</dd>
+      <dt>Author</dt>
+      <dd>Tim Jackson</dd>
+      <dt>Skills</dt>
+      <dd>HTML</dd>
+      <dd>CSS</dd>
+      <dd>Respponsive Design</dd>
+      <dd>Search engine optimization</dd>
+    </dl>
+</body>
+```
+
+
+- `ul` - unordered list. Show a list of item where the order does not matter. Nivigation menus on the website are often represented by unordered list.
+  - `li` - list item. 
+
+> `nest list`: We can display unordered list under the list item of the unordered list.
+
+- `ol` - ordered list. 
+
+> Short cut: `ol>li*3` + tab
+
+- `dl` - description list. Implement glossaries or display metadata.
