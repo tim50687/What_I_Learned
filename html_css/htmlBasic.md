@@ -142,7 +142,7 @@ video {
 ```
 
 - `video` - video element. By default, we see the image of the video. We don't have to specify the `height` because the browser will automatically calculate the height based on the aspect ratio of the video.
-    - `controls` - control attribute. We call it `boolean attribute`. `controls = "true"` or `controls = "false"` doesn't matter. The present of the boolean attribute represents the true value and its absence represents the false value.
+    - `controls` - control attribute. Add the control buttons. We call it `boolean attribute`. `controls = "true"` or `controls = "false"` doesn't matter. The present of the boolean attribute represents the true value and its absence represents the false value.
     - `autoplay` - autoplay attribute. The video automatically start when our page is loaded.
     - `loop` - loop attribute. The video will automatically loop.
 
@@ -256,7 +256,7 @@ table, td , th{
 
 - `tr` - table row. To define a row. 
   - `th` - header cell. 
-    - `colspan="2"` - colspan sttribute. Determine how many columns this cell should expand to. (Default is 1)
+    - `colspan="2"` - colspan attribute. Determine how many columns this cell should expand to. (Default is 1)
   - `td` - data cell. 
 
 > We want to tell search engine that in this table we have two sections, a header and a body.
@@ -349,3 +349,35 @@ Container elements that are more descriptive or meaningful. It helps search engi
   - `datetime` - date time attribute. This can help search engine better extract the necessary information from this page. Format = `datetime="2022-08-27 17:00"`
 
 > Imagine if instead of these semantic elements, all we had was divs and spans, the HTML markup wouldn't be very descriptive.
+
+## Element we use to structuring webpages
+
+Most webpages have at least three building blocks
+
+- `header` - Represent introductory content, which can belong to the page or a section or an article.
+  - `nav` - navigation bar. With a list of menu items `ul`. We can have multiple navigation on the same page.
+
+- `main` - Main content of the page. **`Every page can have only one main element`** Sometimes we may have multiple sections.
+  - `section` - group related content. **Every section should have a heading, which is quite often an h2**. We can use article element to represent each product(any independent, self contained piece of content).
+
+```html
+<section>
+        <h2>Products</h2>
+        <article></article>
+        <article></article>
+        <article></article>
+</section>
+```
+
+- `aside` - sometimes we can have a side bar for advertising, or other content that is not directly to the main content.
+
+
+- `footer`
+  - `nav` - navigation bar. With a list of menu items `ul`.
+
+
+> There are several ways to structure pages. Like we can have multiple sections inside an article.
+
+> Also the header and footer don't just represent the header and the footer of the page, we will use them inside the section or an article.
+
+> The semantic elements in HTML5 are: `<header>, <footer>, <nav>, <main>,  <aside>, <article>, <section>, <figure>, <time> and <mark>`.
