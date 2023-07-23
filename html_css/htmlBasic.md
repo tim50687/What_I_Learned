@@ -381,8 +381,3 @@ Most webpages have at least three building blocks
 > Also the header and footer don't just represent the header and the footer of the page, we will use them inside the section or an article.
 
 > The semantic elements in HTML5 are: `<header>, <footer>, <nav>, <main>,  <aside>, <article>, <section>, <figure>, <time> and <mark>`.
-
-<mark>lol</mark>
-$\textcolor{red}{\text{your text}}$
-
-<span style="color:red;">HTML</span>
