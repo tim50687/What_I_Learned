@@ -38,5 +38,59 @@ It requires an extra auxiliary data structure. Here, we use `array`. Elements in
 ## There are two ways to implement a "disjoint set"
 
 - Implementation with Quick Find. 
+    - Store the root vertex as array value to get O(1) find. 
+    - We need extra step to do union - find the root.
+
+```python
+class UnionFind:
+    def __init__(self, size):
+        self.root = [i for i in range(size)]
+    
+    def find(self, x):
+        return self.root[x]
+    
+    def union(self, x, y):
+        rootX = self.find(x)
+        rootY = self.find(y)
+        if rootX != rootY:
+            for i in range(len(self.root)):
+                if self.root[i] == rootY:
+                    self.root[i] = rootX
+
+    def connected(self, x, y):
+        return self.find(x) == self.find(y)
+```
+
+&nbsp;|union|find|connected|
+:---:|:---:|:---:|:---:
+time complexity|O(n)|O(1)|O(1)|
 
 - Implementation with Quick Union.
+    - Store the parent vertex as array value.
+    - find() - need to traverse parent every time to get the root.
+    - union() - change the root of Y to root of X.
+
+```python
+class UnionFind:
+    def __init__(self, size):
+        self.root = [i for i in range(size)]
+    
+    def find(self, x):
+        while (x != root[x]):
+            x = self.root[x]
+        return x
+    
+    def union(self, x, y):
+        rootX = self.find(x)
+        rootY = self.find(y)
+        if rootX != rootY:
+            self.root[rootY] = rootX
+
+    def connected(self, x, y):
+        return self.find(x) == self.find(y)
+```
+&nbsp;|union|find|connected|
+:---:|:---:|:---:|:---:
+time complexity|O(n)|O(n)|O(n)|
+
+
