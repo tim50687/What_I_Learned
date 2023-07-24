@@ -3,7 +3,7 @@
 ## Disjoint Set
 
 <p align="center">
-<img src="images/Disjoint_Set_1_edited.png" style="width:400; border:0;">
+<img src="../images/Disjoint_Set_1_edited.png" style="width:400; border:0;">
 </p>
 
 How can we efficiently check if 0 is connected to 3, 1 is connected to 5? We can do so by us ing the `disjoint set` data structure, also known as `union-find` data structure.
@@ -15,7 +15,7 @@ How can we efficiently check if 0 is connected to 3, 1 is connected to 5? We can
 It requires an extra auxiliary data structure. Here, we use `array`. Elements in the same set have the same `root`.
 
 <p align="center">
-<img src="images/disjoint_set.jpg" style="width:400;">
+<img src="../images/disjoint_set.jpg" style="width:400;">
 </p>
 
 1. Initially, value is equal to index because each vertex is isolated and independent.
