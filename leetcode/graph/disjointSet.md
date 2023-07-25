@@ -40,7 +40,7 @@ It requires an extra auxiliary data structure. Here, we use `array`. Elements in
 - Implementation with Quick Find. 
     - Store the root vertex as array value to get O(1) find. 
     - We need extra step to do union - find the root.
-
+    - `Must go through n nodes in union()`.
 ```python
 class UnionFind:
     def __init__(self, size):
@@ -94,3 +94,109 @@ class UnionFind:
 time complexity|O(n)|O(n)|O(n)|
 
 
+## Union by Rank (Optimization for union() in quick union based disjoint set)
+
+The word `rank` means ordering by specific critetia (by rank). To be specific, the `rank` refers to the height of each vertex. When picking the root of x or y as the new root node, we choose the root node of the vertex with a larger `rank`.
+
+```python
+class UnionFind:
+    def __init__(self, size):
+        self.root = [i for i in range(size)]
+        self.rank = [1 for i in range(size)]
+    
+    def find(self, x):
+        while (x != root[x]):
+            x = self.root[x]
+        return x
+    
+    def union(self, x, y):
+        rootX = self.find(x)
+        rootY = self.find(y)
+        if rootX != rootY:
+            if self.rank[rootX] > self.rank[rootY]:
+                self.root[rootY] = rootX
+            elif self.rank[rootX] < self.rank[rootY]:
+                self.root[rootX] = rootY
+            else:
+                self.root[rootY] = rootX
+                self.rank[rootX] += 1
+
+    def connected(self, x, y):
+        return self.find(x) == self.find(y)
+```
+
+&nbsp;|union|find|connected|
+:---:|:---:|:---:|:---:
+time complexity|$O(lgn)$|$O(lgn)$|$O(lgn)$|
+
+## Path Compression Optimization
+
+For quick union based disjoint set, we can further optimize the find(). After finding the root node, we can update the parent node of all traversed elements to their root node. $\textcolor{blue}{\text{When we search for the root node of the same element again, we only need to traverse two elements to find its root node.}}$
+
+The answer is to use `recursion`.
+
+```python
+class UnionFind:
+    def __init__(self, size):
+        self.root = [i for i in range(size)]
+    
+    def find(self, x):
+        # base case
+        if x == self.root[x]:
+            return x
+        
+        self.root[x] = self.find(self.root[x])
+        return self.root[x]
+    
+    def union(self, x, y):
+        rootX = self.find(x)
+        rootY = self.find(y)
+        if rootX != rootY:
+            self.root[rootY] = rootX
+
+    def connected(self, x, y):
+        return self.find(x) == self.find(y)
+```
+
+&nbsp;|union|find|connected|
+:---:|:---:|:---:|:---:
+time complexity|$O(lgn)$|$O(lgn)$|$O(lgn)$|
+
+
+## Optimized “disjoint set” with Path Compression and Union by Rank
+```python
+class UnionFind:
+    def __init__(self, size):
+        self.root = [i for i in range(size)]
+    
+    def find(self, x):
+        # base case
+        if x == self.root[x]:
+            return x
+        
+        self.root[x] = self.find(self.root[x])
+        return self.root[x]
+    
+    def union(self, x, y):
+        rootX = self.find(x)
+        rootY = self.find(y)
+        if rootX != rootY:
+            if self.rank[rootX] > self.rank[rootY]:
+                self.root[rootY] = rootX
+            elif self.rank[rootX] < self.rank[rootY]:
+                self.root[rootX] = rootY
+            else:
+                self.root[rootY] = rootX
+                self.rank[rootX] += 1
+
+    def connected(self, x, y):
+        return self.find(x) == self.find(y)
+```
+
+&nbsp;|union|find|connected|
+:---:|:---:|:---:|:---:
+time complexity|$O(\alpha n)$|$O(\alpha n)$|$O(\alpha n)$|
+
+- Optimized `union()` ensures that the tree is balanced, and makes the `find()` run in $O(lgn)$.
+- After first optimized `find()`, the parents are updated. Second `find()` will take $O(1)$. 
+- $O(\alpha n)$ is regarded as $O(1)$ on average.
