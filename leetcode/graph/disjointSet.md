@@ -139,6 +139,7 @@ The answer is to use `recursion`.
 class UnionFind:
     def __init__(self, size):
         self.root = [i for i in range(size)]
+        self.rank = [1 for i in range(size)]
     
     def find(self, x):
         # base case
@@ -200,3 +201,11 @@ time complexity|$O(\alpha n)$|$O(\alpha n)$|$O(\alpha n)$|
 - Optimized `union()` ensures that the tree is balanced, and makes the `find()` run in $O(lgn)$.
 - After first optimized `find()`, the parents are updated. Second `find()` will take $O(1)$. 
 - $O(\alpha n)$ is regarded as $O(1)$ on average.
+
+
+
+## Problem
+
+### 547. Number of Provinces
+
+- Use `QuickUnion` to union() those cities that need to be connected. If successfully union(), the group of cities -= 1.
