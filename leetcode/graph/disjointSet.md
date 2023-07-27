@@ -209,3 +209,17 @@ time complexity|$O(\alpha n)$|$O(\alpha n)$|$O(\alpha n)$|
 ### 547. Number of Provinces
 
 - Use `QuickUnion` to union() those cities that need to be connected. If successfully union(), the group of cities -= 1.
+
+### 261. Graph Valid Tree
+
+Check if it's valid tree:
+
+- Check if it's fully connected
+    - `nodes = edges - 1`
+
+- Check if there's a cycle in the graph
+    - Use `UnionFind`, we consider each connected component to be a set of nodes. If there's an edge between two sepeate nodes, they are merge into a single connected component.
+        - If it's a valid tree, there will be only one single connected component in the end.
+    - How do we detect cycle?
+        - If there's a cycle, we are adding an edge between two nodes that are already connected via a path. Therefore, in my union function, I can set if there're two node that are already connected (`have the same root`) and trying to connect to each other, it's a cycle. In this case, just return `False`.
+        
