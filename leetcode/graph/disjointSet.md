@@ -215,7 +215,7 @@ time complexity|$O(\alpha n)$|$O(\alpha n)$|$O(\alpha n)$|
 Check if it's valid tree:
 
 - Check if it's fully connected
-    - `nodes = edges - 1`
+    - `edges = nodes - 1`
 
 - Check if there's a cycle in the graph
     - Use `UnionFind`, we consider each connected component to be a set of nodes. If there's an edge between two sepeate nodes, they are merge into a single connected component.
