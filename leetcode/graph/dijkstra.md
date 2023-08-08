@@ -1,12 +1,12 @@
-# Depth First Search
+# Dijkstra
+
+- There's no DECREASE-KEY(`Relax`) in heapq, we just simply push the updated vertex to the heap. There might be identical vertex in the heap, but heappop() will get the min one -> same effect. `# Note: Need to deal with the next same vertex`
 
 ## Problem 
 
 ### 743. Network Delay Time
 
 - Last node to be added in dijkstra tree will be the longest path among the shortest path.
-
-- There's no DECREASE-KEY(`Relax`) in heapq, we just simply push the updated vertex to the heap. There might be identical vertex in the heap, but heappop() will get the min one -> same effect. `# Note: Need to deal with the next same vertex`
 
 #### Python code
 
