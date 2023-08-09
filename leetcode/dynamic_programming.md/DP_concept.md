@@ -5,6 +5,9 @@
 1. **Divide and Conquer**  
 See if you can **Divide** problem into subproblems, solve subproblems, and combine (**Conquer**) the results.  
 $$SOL(PB) = COMB(SOL(SPB))$$
+
+> $\textcolor{red}{\text{God given answer!}}$ Can you break it down into subproblems, combine them, and then solve it?
+
 > $\textcolor{red}{\text{Subproblem solutions must be combinable into the overall solution.}}$  
 
 
