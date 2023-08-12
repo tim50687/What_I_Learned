@@ -4,7 +4,7 @@
 
 - In BFS(), whenever you add vertex to the queue -> visit.
 
-- If you process things layer by layer:
+- If you process things layer by layer, you are still doing the same thing, however, here you're grouping the layer together, so that after the for loop, you know this layer is complete:
     - Use a for loop inside the while loop  
     ```python
     while q:
