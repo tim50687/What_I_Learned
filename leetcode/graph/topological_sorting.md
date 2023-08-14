@@ -1,5 +1,11 @@
 # Topological Sorting
 
+## Concepts
+
+- Using Kahn's algorithm for topological sorting, if there's a cycle in the graph, you won't be able to traverse every node. This means that the in-degree of some nodes will never become 0, preventing any further nodes from being pushed to your queue and thus preventing the completion of the topological sort.
+    - In Kahn's algorithm, we always select nodes with an in-degree of 0. If a cycle exists, no nodes can be selected since their in-degree will never be reduced to 0. Therefore, while doing kahn's algorithm, `if you can't go through every node -> there's a cycle -> you cannot find the order to finish every class`.
+    - If you can traverse every node, then you find the minimum correct order to finish all classes, problem solve.
+
 ## When to use? 
 
 When selecting courses for the next semester in college, you might have noticed that some advanced courses have prerequisites that require you to take some introductory courses first.
