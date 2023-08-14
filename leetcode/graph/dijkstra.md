@@ -6,7 +6,7 @@
 
 ### 743. Network Delay Time
 
-- Last node to be added in dijkstra tree will be the longest path among the shortest path.
+- Last node to be added in dijkstra tree have the longest distance from the source among the shortest path. Because each round, dijkstra will add the shortest distance from the source to the tree ( = shortest path to that node)
 
 #### Python code
 
