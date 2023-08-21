@@ -1,5 +1,17 @@
 # Python
 
+## Class
+
+- `self` refers to the instance of the Solution class on which the method is called.
+    - Instance-level attributes are specific to each instance of the class and are typically defined within methods using self.
+
+```python
+class Solution:
+    def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+        self.minDistance = 1e9
+        self.prevNode = None
+```
+
 ## QUEUE
 
 - `list.pop(0)` removes the first element. All remaining elements have to be shifted up one step, so that takes $O(n)$ linear time.
