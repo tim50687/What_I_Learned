@@ -12,6 +12,10 @@ class Solution:
         self.prevNode = None
 ```
 
+## Array
+
+- `isalnum()` - The isalnum() method returns True if all characters in the string are alphanumeric (either alphabets or numbers). If not, it returns False.
+
 ## QUEUE
 
 - `list.pop(0)` removes the first element. All remaining elements have to be shifted up one step, so that takes $O(n)$ linear time.
