@@ -17,3 +17,7 @@
 - Brute force: Loop once to determine the length, and then in the subsequent iteration, identify the node to remove.
 
 - Two pointer (fast and slow): Position the fast pointer n steps ahead of the slow pointer and loop until the fast pointer reaches the end.
+
+### 75. Sort Colors
+
+- Use three pointers.
