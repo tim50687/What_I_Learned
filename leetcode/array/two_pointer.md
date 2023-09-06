@@ -21,3 +21,18 @@
 ### 75. Sort Colors
 
 - Use three pointers.
+
+### 151. Reverse Words in a String
+
+`In Python, strings are immutable, so any operation that modifies a string will inherently require additional space`
+
+- One line solution:
+
+```python
+class Solution:
+    def reverseWords(self, s: str) -> str:
+        return " ".join(reversed(s.split()))
+```
+
+- Use two pointers:  
+Start from the end and keep adding words until the back pointer is less than 0.
