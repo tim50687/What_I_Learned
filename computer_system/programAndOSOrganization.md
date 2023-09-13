@@ -2,13 +2,13 @@
 
 ## Key terms and concepts
 
-## Register
+### Register
 
 Registers are the smallest data holding elements that are built into the processor itself. These are the memory locations that are directly accessible by the processor. They may hold an instruction, a storage address, or any kind of data such as a bit sequence or individual characters. For example, an instruction may specify that the contents of two defined registers be multiplied together and then placed in a specific register.
 
 **Example**: Accumulator register, Program counter, Instruction register, Address register, etc.
 
-## Memory
+### Memory
 
 Memory is a hardware device used to store computer programs, instructions, and data.  
 1. **Primary / Main Memory**: 
@@ -29,8 +29,12 @@ Memory is a hardware device used to store computer programs, instructions, and d
 $\textcolor{cyan}{\text{RAM is usually stored outside the CPU in separate chips.}}$  
 $\textcolor{cyan}{\text{RAM memory modules are installed into slots on the computer motherboard.}}$
 
+## Console
 
-## Simple Computer
+
+
+
+## 2.1 Simple Computer
 
 <p align = "center">
 <img src = "images/simple_computer.png" style = "width:400; border:0">
@@ -78,3 +82,62 @@ MVI A, 10H  (Load the value `10H` into register A)
 SUB A       (Subtract the value in register A from itself)
 ```
 After executing these instructions, the Zero Flag will be set to `1` because `10H - 10H` equals `00H`.
+
+
+### Instruction
+
+1. **CALL instruction**:
+   - **Purpose**: This instruction is used when you want to execute a subroutine (a separate section of code that performs a specific task). 
+   - **How it works**: When the `CALL` instruction is executed, the computer does two main things:
+     1. It saves the address of the next instruction (the one that comes after the `CALL` instruction) onto a special memory area called the "stack". This saved address is known as the "return address" because it's where the computer should return to after the subroutine is finished.
+     2. It then jumps to the address specified in the `CALL` instruction to start executing the subroutine.
+   - **Why use it**: Subroutines are useful because they allow for code reuse. Instead of writing the same code multiple times, you can write it once as a subroutine and then "call" it whenever needed.
+
+2. **RET instruction**:
+   - **Purpose**: This instruction is used to return from a subroutine back to the main program.
+   - **How it works**: When the `RET` instruction is executed, the computer does the following:
+     1. It looks at the top of the stack to find the return address (the address that was saved when the `CALL` instruction was executed).
+     2. It pops (removes) this address from the stack.
+     3. It then jumps to this return address, resuming execution from where it left off before the subroutine was called.
+   - **Why use it**: After a subroutine has finished its task, you need a way to get back to the main program. The `RET` instruction provides this mechanism by using the saved return address.
+
+### Memory-mapped I/O
+
+1. **Memory-mapped input/output devices**: 
+   - This means that certain parts of the computer's memory are not just used for storing data like numbers or text. Instead, these specific `memory locations are linked (or "mapped") to certain devices in the computer. When the computer reads from or writes to these memory locations, it's actually communicating with these devices.`
+
+2. **Devices**:
+   - **Frame buffer**: 
+     - Think of this as the computer's screen memory. It's a specific area in memory that holds what should be displayed on the screen.
+     - The frame buffer mentioned here can show 24 lines of text, and each line can have 80 characters. So, the total space needed is 1920 bytes (24 lines x 80 characters = 1920 characters).
+     - If you change a byte in this memory area, the corresponding character on the screen will change. For example, if you write the byte for the letter "A" to the first location of this memory, the top-left corner of the screen will show an "A".
+   
+   - **Keyboard controller**:
+     - This is how the computer interacts with the keyboard.
+     - There are two special memory locations (or "registers") for this:
+       1. One register tells the computer if a key has been pressed.
+       2. The other register tells the computer which key was pressed. For example, if you press the "A" key, this register will have the value for "A".
+
+
+## 2.3 A Simple Operating System Interface
+
+`Library Operating System`:
+
+- The section introduces the concept of a "library operating system." This type of OS consists of a set of functions that are directly linked with an application. The result is a single program that includes both the application and the necessary OS functions.  
+- This combined program is often stored in `Read-Only Memory (ROM)`, meaning it's immediately available when the computer is turned on.
+
+### Limitations of a Library Operating System:
+
+While this approach `works well for devices with a single purpose (like a microwave oven)`, it has limitations for general-purpose computers:
+Changing or updating the program means changing the entire memory content. This is because the application and OS functions are combined into one program.
+In extreme cases, updating the program might require getting a new device. This approach isn't practical for devices like personal computers.
+
+> When this combined program is loaded into memory, it occupies a specific, contiguous block of memory. Any change to a part of this program (whether it's the application portion or the OS library portion) could potentially alter the memory layout or size of the entire program.
+
+**Read-Only Memory (ROM) Considerations:**  
+
+In some devices, the Library Operating System might be stored in read-only memory (ROM). ROM is a type of non-volatile memory that retains its contents even when the device is turned off. If the combined program is stored in ROM, updating any part of it might require reprogramming the ROM, which effectively means changing its entire contents. This is not a practical solution for devices like personal computers.
+
+#### What is ROM?
+
+ROM stands for non-volatile memory in computers., which means the information is permanently stored on the chip. The memory does not depend on an electric current to save data, instead, data is written to individual cells using binary code. Non-volatile memory is used for parts of the computer that do not change, such as the initial boot-up portion of the software, or the firmware instructions that make your printer run. Turning off the computer does not have any effect on ROM. Non-volatile memory cannot be changed by users.
