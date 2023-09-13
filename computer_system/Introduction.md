@@ -36,5 +36,19 @@ It's a program called a terminal emulator. This is a program that opens a window
 
 Simply put, the shell `(command-line interpreter)` is a program that takes commands from the keyboard and gives them to the operating system to perform. 
 
+#### PATH
+
+The `PATH` variable is a fundamental environment variable in Unix-like operating systems, including Linux. It plays a crucial role in determining where the shell looks for executable files when you type a command in the terminal.
+
+Here's how it works:
+
+1. When you enter a command in the terminal, the shell (e.g., Bash, Zsh) tries to find the corresponding executable file for that command.
+2. The shell looks in each directory listed in the PATH variable, in order from left to right, until it finds a matching executable file. It searches these directories one by one until it either finds the executable or exhausts the list of directories.
+3. If the shell finds the executable, it executes the command. If it doesn't find the executable in any of the directories listed in PATH, it will display an error message indicating that the command is not found.
+
+> `:$PATH`: This is the crucial part of the command. It appends the current value of the `PATH` variable to the end of the new `PATH` you are setting. The colon (`:`) acts as a separator between the new directory (`/usr/local/mysql/bin/`) and the existing directories in the `PATH`.
+
+
+
 
 $\textcolor{red}{\text{}}$  
