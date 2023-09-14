@@ -1,5 +1,14 @@
 # Python
 
+## Function
+
+- `divmod()` - The divmod() function returns a tuple containing the quotient  and the remainder when argument1 (dividend) is divided by argument2 (divisor).
+
+```python
+x = divmod(5, 2)
+# x = (2, 1)
+```
+
 ## Class
 
 - `self` refers to the instance of the Solution class on which the method is called.
