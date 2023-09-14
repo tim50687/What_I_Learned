@@ -4,6 +4,14 @@
 
 ### Floyd's Cycle Detection Algorithm
 
+- Floyd's cycle-finding algorithm is a pointer algorithm that uses only two pointers, which move through the sequence at different speeds.
+
+> Why will the pointers always meet, and the fast pointer won't just "skip" over the slow pointer in the cycle? After looping around the cycle for the first time, if the fast pointer is one position behind, then the pointers will meet on the next iteration. If the fast pointer is two positions behind, then it will be one position behind on the next iteration. This pattern continues - after looping around once, the fast pointer moves exactly one step closer to the slow pointer at each iteration, so it's impossible for it to "skip" over.
+
+
+- Time Complexity: \(O(n)\) where \(n\) is the number of nodes in the linked list.
+- Space Complexity: \(O(1)\).
+- This problem can also be solved using hashing, which would require \(O(n)\) space.
 
 
 ## Problems
