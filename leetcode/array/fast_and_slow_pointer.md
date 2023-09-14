@@ -38,6 +38,15 @@ Think carefully about what the largest next number we could get for each number 
 
 > The number would either go down to 1 or be in a cycle.
 
+#### Answer
+
+- Use a set to store the numbers we've seen so far. Or, use Floyd's Cycle Detection Algorithm.
+
+    - Floyd's Cycle: 
+        - If there's a cycle, the fast and slow pointers will meet.
+        - If there's no cycle, the fast pointer will get to 1.
+        - Either way, we'll stop looping eventually.
+
 #### Time Complexity
 
 - $O(logn)$

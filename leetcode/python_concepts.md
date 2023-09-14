@@ -9,6 +9,13 @@ x = divmod(5, 2)
 # x = (2, 1)
 ```
 
+> Can be used to get each digit of a number. Also, get the remaning number after removing the last digit.
+
+```python
+while number > 0:
+    number, to_be_add = divmod(number, 10)
+```
+
 ## Class
 
 - `self` refers to the instance of the Solution class on which the method is called.
