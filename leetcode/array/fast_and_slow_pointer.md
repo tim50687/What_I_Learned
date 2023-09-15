@@ -2,6 +2,13 @@
 
 ## Algorithm
 
+### Find the middle of a linked list
+
+- Use two pointers, one slow and one fast.
+
+    - The slow pointer moves one step at a time.
+    - The fast pointer moves two steps at a time.
+
 ### Floyd's Cycle Detection Algorithm
 
 - Floyd's cycle-finding algorithm is a pointer algorithm that uses only two pointers, which move through the sequence at different speeds.
