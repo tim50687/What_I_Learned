@@ -58,3 +58,16 @@ For a large enough n, the most space will be taken by n itself.
 However, we can optimize to O(1) easily. As we've already shown, for numbers higher than this, it's impossible to return to them anyway.
 
 - $O(1)$
+
+### 141. Linked List Cycle
+
+- Use Floyd's Cycle Detection Algorithm.
+    - Deal with NoneType error (fast.next.next) inside the loop.
+
+#### Time Complexity
+
+- $O(n)$
+
+#### Space Complexity
+
+- $O(1)$
