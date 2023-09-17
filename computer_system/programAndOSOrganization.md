@@ -180,6 +180,35 @@ In essence, the buffer acts like a small queue or waiting area. It ensures that 
 
 In essence, the keyboard controller acts as an intermediary between the physical key presses on a keyboard and the digital signals that a computer's CPU can understand and process.
 
+### System Calls
+
+- **Definition**: A system call is a method by which a computer program requests a specific service from the operating system's kernel. It acts as a bridge, allowing programs to interact with the OS and access system resources.
+
+- **Purpose**: System calls enable programs to perform operations that require higher privileges, such as accessing hardware or reading protected files. They provide a standardized interface for programs to interact with the OS, ensuring consistent behavior.
+
+- **Key Features**:
+  - **Interface**: Provides a clear boundary between user programs and the OS.
+  - **Protection**: Enables access to privileged operations while safeguarding the system.
+  - **Kernel Mode**: During a system call, the program switches from user mode to kernel mode, granting it broader access to system resources.
+  - **Error Handling**: System calls can return specific error codes, helping programs identify and address issues.
+  - **Synchronization**: Ensures safe access to shared resources by multiple programs.
+
+- **Advantages**:
+  - **Resource Access**: Allows programs to utilize hardware like disk drives and printers.
+  - **Memory Management**: Facilitates allocation and deallocation of memory.
+  - **Process Management**: Manages the creation, termination, and communication between processes.
+  - **Security**: Grants access to resources that require administrative permissions.
+  - **Standardization**: Ensures consistent interaction across different OS versions and hardware platforms.
+
+- **How It Works**:
+  1. A program requires special resources or operations.
+  2. The program makes a system call request using predefined instructions.
+  3. The OS identifies the system call and hands control to its kernel.
+  4. The OS (through the kernel) performs the requested operation.
+  5. Control is returned to the program for continued execution.
+
+This note provides a concise overview of system calls, their purpose, features, advantages, and the general process of how they operate in a computing environment.
+
 ## 2.1 Simple Computer
 
 <p align = "center">
@@ -589,3 +618,160 @@ $\textcolor{cyan}{\text{Note}}$: The `exit()` system call handles the orderly sh
 
 $\textcolor{cyan}{\text{Note}}$: **Global Variables** are not stored on the stack. They are stored in a fixed memory location, typically in a data segment of the program's memory space. This ensures that there's only one copy of each global variable, and it can be accessed from any function in the program.
 
+## When should we do context switch?
+
+Context switching is a fundamental concept in multitasking operating systems. It allows a single CPU to manage multiple processes or threads by giving the appearance that they are running simultaneously. Here's when context switching is typically used, with the key points highlighted:
+
+1. **$\textcolor{orange}{\text{Time Sharing}}$**: In preemptive multitasking, the operating system uses a timer to allocate a fixed time slice or quantum to each process. When a process's time slice expires, a context switch occurs to allow another process to run.
+
+2. **$\textcolor{orange}{\text{I/O Blocking}}$**: When a process requests an I/O operation (like reading from a disk or receiving network data) that can't be completed immediately, rather than wasting CPU cycles waiting, a context switch can occur to let another process run.
+
+3. **$\textcolor{orange}{\text{Process Synchronization}}$**: In situations where processes are synchronized (e.g., using semaphores or locks), if a process can't proceed because it's waiting for a resource, a context switch can allow another process to run.
+
+4. **$\textcolor{orange}{\text{Manual Yielding}}$**: A process or thread might voluntarily yield the CPU, allowing the scheduler to switch to another task. This is common in cooperative multitasking systems.
+
+5. **$\textcolor{orange}{\text{Priority Preemption}}$**: If a higher-priority task becomes ready to run (e.g., it's awakened from sleep or it's just been created), the operating system might preempt the currently running lower-priority task with a context switch.
+
+6. **$\textcolor{orange}{\text{Interrupt Handling}}$**: When hardware interrupts occur, the operating system might context switch to an interrupt handler. After handling the interrupt, it might decide to resume the interrupted process or switch to a different one.
+
+7. **$\textcolor{orange}{\text{System Calls}}$**: Some system calls by a process might require waiting, leading to a context switch.
+
+8. **$\textcolor{orange}{\text{Balancing Load Across Cores}}$**: In multi-core systems, the operating system might decide to move a process or thread from one core to another to balance the load, necessitating a context switch.
+
+In essence, context switching ensures efficient CPU utilization, allowing multiple processes or threads to share the CPU effectively.
+
+<p align = "center">
+<img src = "images/when_switch.png" style = "width:400; border:0">
+</p>
+
+### Code Structure:
+
+1. **Terminal Structure**:
+   - `unclaimed_keystrokes`: A queue that holds keystrokes that haven't been processed yet.
+   - `waiting_process`: A pointer to the process that's waiting for input from this terminal.
+
+2. **GETKEY Function**:
+   - This function is called when a process wants to get a key from the terminal.
+   - If there's no unclaimed input, the current process is set as the waiting process for the terminal, and the system switches to another process from the active queue.
+   - If there's unclaimed input, the function returns the next key from the queue.
+
+3. **Interrupt Handler**:
+   - When a key is pressed, this interrupt is triggered.
+   - The pressed key is added to the `unclaimed_input` queue of the terminal.
+   - If there's a process waiting for input from this terminal, it's added back to the active queue, and the `waiting_process` for the terminal is set to NULL.
+
+### Explanation:
+
+- The code is designed to handle input for processes in a multitasking environment. When a process wants to read a key from the terminal, it calls the `GETKEY` function.
+
+- If there's no key available (i.e., the `unclaimed_input` queue is empty), the process is set as the `waiting_process` for the terminal and is taken off the active list. The system then switches to another process.
+
+- When a key is pressed, the interrupt handler is triggered. The key is added to the terminal's `unclaimed_input` queue. If there's a process waiting for input from this terminal, it's made active again.
+
+- The explanation further clarifies that the system won't switch to another process until the current one explicitly asks for more input. This is fine for programs that process input quickly, like text editors.
+
+- However, if a program does a lot of computation between input requests, it might hog the CPU, causing delays for other users or processes.
+
+- To address this, the system uses interrupts:
+  1. When a key is pressed and there's a process waiting for input, the system switches to that process immediately, ensuring quick response times.
+  2. Timer interrupts ensure that no single process hogs the CPU. When the timer goes off, the system switches to another process, ensuring fair CPU time distribution.
+
+> Context switching between processes can be initiated by a direct call to the OS. However, an interrupt, like a timer interrupt, can also trigger a context switch. For instance, if a timer is set to interrupt every 20 ms, its handler can perform a context switch, allowing processes to share the CPU in 20 ms intervals. This method is a way to implement time slicing among multiple processes.
+
+## 2.10 Address Spaces for Multiple Processes
+
+- position independent code (PIC)
+
+### Without Position-Independent Code (PIC):
+
+1. **Program A** is compiled with the expectation that it will start at memory address 1000. It has an instruction that says, "Load data from address 1050."
+2. **Program B** is compiled with the expectation that it will start at memory address 2000. It has an instruction that says, "Load data from address 2050."
+
+If you try to load Program A anywhere other than address 1000, or Program B anywhere other than address 2000, they will malfunction because they're trying to access data from the wrong memory addresses.
+
+### With Position-Independent Code (PIC):
+
+1. **Program A** is compiled without a fixed starting address in mind. Instead of instructions that point to specific addresses, it uses PC-relative addressing. An instruction might say, "Load data from 50 units ahead of the current instruction."
+2. **Program B** is also compiled in the same way, without a fixed starting address.
+
+Now, when you load these programs into memory:
+
+1. Let's say Program A gets loaded at address 1000. When it encounters the instruction "Load data from 50 units ahead of the current instruction," it will correctly go to address 1050.
+2. Later, due to memory constraints or other reasons, Program A might be loaded at address 3000. Now, the same instruction will lead it to address 3050. The program still works correctly because it's always looking relative to its current position.
+3. Program B works in a similar fashion. Whether it's loaded at address 2000, 4000, or any other address, it will always function correctly because its instructions are relative to its current position, not fixed addresses.
+
+- hardware support:
+
+#### Hardware Address Translation:
+
+Modern computer systems use a mechanism called **virtual memory**. This allows each program to think it's running in its own private memory space, even though multiple programs might be sharing the same physical memory. This is achieved through hardware address translation.
+
+##### Components:
+
+1. **Virtual Address**: This is the address used by programs. When a program wants to access a memory location, it uses a virtual address.
+
+2. **Physical Address**: This is the actual location in the computer's main memory (RAM) where data is stored.
+
+3. **Memory Management Unit (MMU)**: This is a hardware component that translates virtual addresses to physical addresses. It acts as a bridge between the CPU and the main memory.
+
+##### How it works:
+
+1. A program issues a command to access a memory location using a virtual address.
+  
+2. The MMU checks a table (often called a **page table**) to find out what physical address corresponds to that virtual address.
+
+3. Once the MMU determines the physical address, it accesses the actual data in the main memory.
+
+4. The program continues its operation, unaware of the translation that just occurred. It thinks it accessed the virtual address directly.
+
+##### Benefits:
+
+1. **Isolation**: Each program thinks it has its own private memory, preventing one program from accidentally (or maliciously) altering the memory of another program.
+
+2. **Flexibility**: The operating system can move programs around in physical memory (for example, to make space for a new program or to optimize memory usage) without the programs knowing or being affected.
+
+3. **Protection**: Certain areas of memory can be marked as non-accessible for specific programs, ensuring that critical system memory isn't tampered with by user programs.
+
+4. **Efficiency**: Allows for features like **paging** (loading only parts of a program into memory) and **swapping** (moving data between RAM and disk storage to ensure the most critical data is quickly accessible).
+
+In summary, hardware address translation, with the help of the MMU, allows modern operating systems to efficiently and safely manage memory among multiple running programs. It's a foundational concept that enables the multitasking capabilities we've come to expect from modern computers.
+
+## 2.11 Memory Protection and Translation
+
+1. **Flexible Sharing of Memory Between Processes**:
+   - Without hardware support, sharing physical memory among multiple processes can be complex.
+   - Address translation allows programs to be compiled with a standard virtual address space layout. When the program is loaded into memory, this virtual address space is mapped to available physical memory. This means that programs can be written without needing to know where they will be placed in physical memory, making memory management more flexible.
+
+2. **Security**:
+   - In a multi-user environment, it's crucial to prevent one user's process from accessing another's data. This ensures user privacy and data integrity.
+   - Even in single-user systems, the operating system must be protected. If the OS is compromised, it can't be trusted to manage access controls, like preventing one user from accessing another's files.
+
+3. **Robustness**:
+   - If programs can write to any memory address, a bug in one program could corrupt other programs or even the operating system, leading to system crashes.
+   - By constraining each process to only modify memory it has been allocated, the impact of bugs is limited. If a process misbehaves, only that process crashes, not the entire system. This makes the system more stable and allows for easier recovery from errors.
+
+In essence, these mechanisms ensure that memory is used efficiently, that users and processes can't interfere with each other, and that the system remains stable even when individual processes encounter issues.
+
+### Address Translation:
+
+**Base and Bound Relocation**:
+
+**Base and Bound Relocation** is a memory management scheme that uses two hardware registers to translate and limit the address space of a process.
+
+1. **Base Register**: Holds the physical address that corresponds to the virtual address 0 of the process. In other words, it tells where the process begins in physical memory.
+
+2. **Bound Register**: Contains the highest allowable virtual address for the process. It essentially defines the size of the process in virtual memory.
+
+3. **Address Translation**:
+   - For every memory access by a process, the virtual address it uses is first checked against the bound register.
+   - If the virtual address is within bounds, it's added to the value in the base register to determine the actual physical address in memory.
+   - If the virtual address exceeds the bound, a trap is triggered to the operating system, indicating an illegal access.
+
+4. **Benefits**:
+   - **Isolation**: Each process perceives it has its own contiguous block of memory, providing isolation from other processes and the operating system.
+   - **Security**: The bound check ensures that a process cannot access memory locations outside its allocated space, preventing accidental or malicious interference.
+   - **No Relocation Overhead**: Since the base register directly points to the starting physical address of the process, there's no need for address relocation when a process is loaded into memory.
+
+5. **Process Control**: Each process has unique base and bound values. When the operating system switches between processes (context switching), it saves and restores these values from the Process Control Block (PCB) of the respective processes.
+
+This mechanism provides a straightforward way to manage memory, ensuring both protection and isolation for processes in a multitasking environment.
