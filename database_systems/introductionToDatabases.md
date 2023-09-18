@@ -74,3 +74,17 @@ In essence, the passage highlights that while a DBMS is powerful and can store a
 ### Client-Server Architecture
 
 A client-server architecture for DBMS is one in which data is stored on a central server, but clients connect to that server in order to access and manipulate the data. This is in contrast to a file-based system, in which data is stored on individual computers and there is no central server. In a client-server architecture, the server is responsible for managing the data, while the clients are responsible for requesting and manipulating the data.
+
+### **Central Repository & Query Language in Databases**:
+
+- A central repository for all data and its descriptions allows for a unified way to access and manage data.
+  
+- This centralization introduces a general inquiry facility known as a **query language**, which provides a flexible way to request specific data from the database.
+
+- In file-based systems, users often work with a fixed set of queries, leading to a proliferation of programs and software management challenges.
+
+- **Structured Query Language (SQL)**:
+  - The most widely used query language.
+  - Recognized as both the formal and de facto standard for relational database management systems (RDBMSs).
+  - SQL's significance underscores the shift from rigid file-based systems to more flexible and standardized database systems.
+
