@@ -56,6 +56,31 @@ Essentially, `ptr->x` is a shorthand for `(*ptr).x`. The arrow operator `->` der
 
 > Note: It’s a good practice to check if the pointer return by malloc is NULL everytime.
 
+### Structure in C: Direct Usage v.s. Pointer Usage
+
+1. **Using Structures Directly**:
+   - Structures can be assigned by value, copying all data from the source to the destination.
+   - Efficient for small structures but can be time-consuming for larger ones due to data copying.
+   ```c
+   struct abc instance1, instance2;
+   instance1.field = 42;
+   instance2 = instance1;
+   ```
+
+2. **Using Pointers to Structures**:
+   - Work with addresses, not the data directly, making assignments and function calls more efficient.
+   - Allows for dynamic memory allocation and runtime memory adjustments.
+   - Changes made through pointers in functions reflect in the original structure.
+   ```c
+   struct abc instance;
+   struct abc *ptr = &instance;
+   ```
+
+3. **Advantages of Pointers**:
+   - Memory and time-efficient, especially for large structures.
+   - Provide flexibility in memory management and function operations.
+   - Analogous to the difference between using `int` and `int *`.
+
 ### Will OR statement check all criteria in C?
 
 If the first condition is true, the computer won't be bother to check the second condition.
