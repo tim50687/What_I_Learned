@@ -78,3 +78,26 @@ However, we can optimize to O(1) easily. As we've already shown, for numbers hig
 #### Space Complexity
 
 - $O(1)$
+
+## 457. Circular Array Loop ***
+
+- Use Floyd's Cycle Detection Algorithm to detect cycle for every element.
+    - Two condition you stop:
+    1. Break the all positive or all negative rule
+    2. self loop
+
+    - Else:
+        - return True
+    
+- We can mark the element for the path to prevent from n^2:
+    - that include the self loop (`Mark every element in that path as 0`)
+    - where elements that is not all positive or all negative. (`stop before the element that break the rule, because other path might need it`)
+
+
+#### Time Complexity
+
+- $O(n)$
+
+#### Space Complexity
+
+- $O(1)$

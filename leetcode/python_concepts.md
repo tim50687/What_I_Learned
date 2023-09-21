@@ -1,5 +1,26 @@
 # Python
 
+## %
+
+> Python’s modulo operator (%) always returns a number having the same sign as the denominator. This is `different` from C and languages inspired by it, which return the remainder having the same sign as the numerator.
+
+- -a % b = Add +b to -a until you reach either 0, or positive number
+
+- a % -b = Subtract -b to a until you reach either 0 or negative number
+
+### If you wanna access the specific index in the circular array, use the following:
+
+```python
+def get_next(_index):
+    temp = _index + nums[_index]
+    return (temp % n) 
+```
+
+
+## Scope
+
+ In Python, if you define a function within another function, it becomes a local function to that enclosing function. However, the function must be defined before it is used.
+
 ## Function
 
 - `divmod()` - The divmod() function returns a tuple containing the quotient  and the remainder when argument1 (dividend) is divided by argument2 (divisor).
