@@ -15,6 +15,25 @@
 
 > Why will the pointers always meet, and the fast pointer won't just "skip" over the slow pointer in the cycle? After looping around the cycle for the first time, if the fast pointer is one position behind, then the pointers will meet on the next iteration. If the fast pointer is two positions behind, then it will be one position behind on the next iteration. This pattern continues - after looping around once, the fast pointer moves exactly one step closer to the slow pointer at each iteration, so it's impossible for it to "skip" over.
 
+#### Proof
+
+- We can use induction to proof that the fast pointer will eventually catch up with the slow pointer.
+
+    - Base case: If the fast pointer starts one node behind the slow pointer, then they will meet on the next iteration.
+    - Inductive step: n steps -> n+1 steps
+
+##### How to calculate the entry point of the cycle?
+
+<p align="center">
+<img src="../images/proofOfFloyd.png" style="width:400; border:0;">
+</p>
+
+$$d_{f} = 2d_{s}$$
+
+$$m + k = C \cdot n $$ 
+Here C is constant
+
+$$m = C \cdot n - k$$
 
 - Time Complexity: \(O(n)\) where \(n\) is the number of nodes in the linked list.
 - Space Complexity: \(O(1)\).
@@ -101,3 +120,17 @@ However, we can optimize to O(1) easily. As we've already shown, for numbers hig
 #### Space Complexity
 
 - $O(1)$
+
+##  287. Find the Duplicate Number
+
+- Think of index as a node, value as a pointer.
+
+- Imagine pointer is like an edge, so index 1 ~ n must form a cycle.
+
+- Point to the same node - duplicate number - entry point of the cycle.
+
+- Use Floyd's Cycle Detection Algorithm to find the entry point of the cycle.
+
+    - 2 Phases:
+        - Phase 1: Find the intersection point of the two runners.
+        - Phase 2: Find the entrance of the cycle.
