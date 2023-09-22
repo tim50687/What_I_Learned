@@ -115,6 +115,13 @@ A thread is a unit of execution within a process. In computing, a thread is the 
 
 4. **Communication**: Inter-thread communication is easier and faster than inter-process communication.
 
+## API and ABI
+
+
+📝 **Note: Definition of API**
+
+An API (Application Programming Interface) serves as a bridge between two different software applications, allowing them to communicate and exchange data or functionalities. It defines the methods and data formats that applications can use to request and exchange information.
+
 
 
 
