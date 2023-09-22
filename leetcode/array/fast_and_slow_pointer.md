@@ -121,7 +121,7 @@ However, we can optimize to O(1) easily. As we've already shown, for numbers hig
 
 - $O(1)$
 
-##  287. Find the Duplicate Number
+## 287. Find the Duplicate Number
 
 - Think of index as a node, value as a pointer.
 
@@ -134,3 +134,13 @@ However, we can optimize to O(1) easily. As we've already shown, for numbers hig
     - 2 Phases:
         - Phase 1: Find the intersection point of the two runners.
         - Phase 2: Find the entrance of the cycle.
+
+
+## Palindrome Linked List
+
+- Use Floyd's Cycle Detection Algorithm to find the middle of the linked list.
+
+    - Reverse the second half of the linked list.
+        - Use dummy pointer to assit.
+
+    - Compare the first half and the second half.

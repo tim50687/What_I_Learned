@@ -71,3 +71,19 @@ This function takes 4 arguments, list which has to be worked with, number to ins
 li = [1, 3, 4, 4, 4, 6, 7]
 print (bisect.bisect_left(li, 4)) # 2
 ```
+
+## Tuple unpacking
+
+In the tuple unpacking example, such as `x, y = 10, 20`, you're not actually modifying a tuple. Instead, you're using a tuple-like syntax to perform multiple assignments in a single line. Here's a breakdown:
+
+1. `10, 20` on the RHS creates an implicit tuple `(10, 20)`.
+2. The LHS `x, y` is a `pattern that tells Python to expect multiple values for assignment`. It's tuple-like in its structure, but it doesn't represent an actual tuple object in memory.
+3. Python unpacks the values from the RHS tuple and assigns them to the variables on the LHS. Specifically, `x` is assigned the value `10`, and `y` is assigned the value `20`.
+
+At a lower level, Python is doing the following:
+
+1. **Tuple Creation**: The expression `10, 20` implicitly creates a tuple `(10, 20)`. This tuple holds the values `10` and `20`.
+
+2. **Tuple Unpacking**: The left-hand side `x, y` indicates to Python that it should unpack the values from the tuple. It does this by iterating over the tuple and assigning each value to the corresponding variable on the left.
+
+3. **Assignment**: As Python iterates over the tuple `(10, 20)`, it assigns the first value (`10`) to `x` and the second value (`20`) to `y`.
