@@ -22,14 +22,14 @@ The OS schedules `threads`, not processes, because threads are the only executab
 
 2. In all cases, to be able to perform a context switch, CPU switch from user mode to kernel mode. In the case of involuntary switches, this is performed by an interrupt. In the case of voluntary (and semi-voluntary) context switches, control is passed to the kernel via a system call.
 
-3. **Saving the Current Process State**:
-   - Before switching to another process, the operating system must ensure that the current state of the process being interrupted is saved. This ensures that when this process is resumed later, it can continue from where it left off.
-   - $\textcolor{cyan}{\text{Processor registers}}$ are crucial components that store data and state information about the current execution. These registers are saved by pushing their values onto the stack (`Stack of the thread`).
-
-4. The scheduler is invoked.  
+3. The scheduler is invoked.  
 [Jump to Scheduler Section](#scheduler)
     - What to do with the current thread? Should it be blocked? If so, which wait queue should it be placed in? If the switch is involuntary, it is placed at the end of the ready queue. Otherwise, the thread is placed in one of the wait queues.
     - Which thread should be run next?
+
+4. **Saving the Current Process State**:
+   - Before switching to another process, the operating system must ensure that the current state of the process being interrupted is saved. This ensures that when this process is resumed later, it can continue from where it left off.
+   - $\textcolor{cyan}{\text{Processor registers}}$ are crucial components that store data and state information about the current execution. These registers are saved by pushing their values onto the stack (`Stack of the thread`).
 
 5. **Saving the Stack Pointer**:
    - The stack pointer is a special register that points to the top of the current stack in memory. The stack contains local variables, function return addresses, and other essential data.  
