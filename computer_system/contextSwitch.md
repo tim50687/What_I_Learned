@@ -38,7 +38,7 @@ The OS schedules `threads`, not processes, because threads are the only executab
 
 6. **Switching to Another Process**:
     - At this point the kernel checks if the scheduled and unscheduled threads belong to the same process. If not ("process" rather than "thread" switch), the kernel resets the current address space by pointing the MMU (Memory Management Unit) to the page table of the scheduled process.
-   - To switch to another process, the operating system retrieves the saved state of the next process to run. This involves loading the stack pointer value for that process, typically from its PCB.
+   - To switch to another process, the operating system retrieves the saved state of the next process to run. This involves loading the stack pointer value for that process, typically from its TCB.
    - Once the stack pointer for the new process is set, the $\textcolor{cyan}{\text{processor registers}}$ for this process are restored from the stack. This sets up the CPU to resume execution of this process from where it was previously interrupted.
 
 7. **Returning to Execution**:
