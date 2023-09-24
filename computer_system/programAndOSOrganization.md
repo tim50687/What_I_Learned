@@ -209,21 +209,6 @@ In essence, the keyboard controller acts as an intermediary between the physical
 
 This note provides a concise overview of system calls, their purpose, features, advantages, and the general process of how they operate in a computing environment.
 
-### **Process Control Block (PCB)**
-
-The PCB is a crucial data structure used by the operating system to manage and keep track of each process. It contains the following information:
-
-- **Process ID**: A unique identifier for each process.
-- **Process State**: Indicates the current state of the process (e.g., ready, running, waiting, terminated).
-- **Program Counter**: Points to the next instruction to be executed for the process.
-- **CPU Registers**: Stores the current values of the processor's registers for the process.
-- **CPU Scheduling Information**: Contains data related to the scheduling of the process, such as its priority.
-- **Memory Management Information**: Details about the memory allocated to the process, including base and limit registers, page tables, etc.
-- **Accounting Information**: Data related to the process's resource usage, like CPU time.
-- **I/O Status Information**: Information about I/O operations, devices allocated to the process, and a list of open files.
-
-The operating system maintains a PCB for every process, ensuring that processes can be paused, resumed, and managed efficiently.
-
 
 ## 2.1 Simple Computer
 
