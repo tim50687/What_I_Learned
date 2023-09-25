@@ -27,6 +27,13 @@
 They are the same. The only difference is that table constraint is defined at the end of the CREATE TABLE statement.
 > Note: If you need to refer to multiple columns, you must use a table-level constraint.
 
+### UNIQUE
+A unique constraint is a rule applied to a column or a set of columns in a database table to ensure that each value in the column (or combination of values in multiple columns) is unique across all rows in the table.
+
+```sql
+CONSTRAINT UC_Person UNIQUE (ID,LastName)
+```
+
 ## INFORMATION_SCHEMA
 
 📌 **Note on `information_schema` in MySQL**
