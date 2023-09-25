@@ -1,6 +1,6 @@
 # How to create views
 
-SELECT queries can be complicates, particularly if they use multiple joins, subquires, and/or aggregate functions.
+SELECT queries can be complicated, particularly if they use multiple joins, subquires, and/or aggregate functions.
 
 Because of that, you may want to save the queries you use regularly. One way to do that is to store the statement in a script. Another way is to create a view.
 
@@ -16,3 +16,4 @@ Because of that, you may want to save the queries you use regularly. One way to 
 
     3. **Cascading Effects**: If there are any triggers, cascading deletes, or referential integrity constraints associated with the base table, those will also come into play when a row is deleted through the view.
 
+- You can create a view that's based on another view rather than on a base table. This is called a `nested view`.
