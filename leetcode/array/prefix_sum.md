@@ -44,3 +44,15 @@ if you subtract a and c, you will get a subarray summing to 7 * (k - d)
 3. Find the remainder start from right most
 
 4. Compare both array and find the max difference.
+
+#### What if we want to get all subarray summing to 7 * k?
+
+1. After prefix sum
+
+2. Use array: index -> remainder, value -> how many times this remainder appear
+```python
+If remainder == 0:
+    ans += array[remainder] + 1
+else:
+    ans += array[remainder]
+```
