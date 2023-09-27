@@ -78,3 +78,22 @@ Describes the relationship between attributes in a relation. For example, if A a
 
 A condition where A, B, and C are attributes of a relation such that if A → B and B → C, then C is transitively dependent on A via B. (provided that A is not funcitonally dependent on B or C)
 
+## The process of Normalization
+
+### First Normal Form (1NF)
+
+- flatten the structure of the relation, so that each tuple contains only a single value for each attribute.
+
+A relation is in 1NF if it contains no repeating groups of attributes. A repeating group is an attributes or a gorup of attributes, within a table that occurs with multiple values for a single occurence of the nominated key attribute for that table.
+
+### Second Normal Form (2NF)
+
+- remove partial dependencies
+
+A relation that  is in first normal form and every non-candidate-key attribute is fully functionally dependent on the primary key.
+
+### Third Normal Form (3NF)
+
+- remove transitive dependencies
+
+A relation that is in first and second normal form and in which no non-candidate-key attribute is transitively dependent on the primary key.
