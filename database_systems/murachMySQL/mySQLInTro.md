@@ -10,9 +10,71 @@ FROM information_schema.TABLES
 WHERE TABLE_SCHEMA = 'your_database_name';
 ```
 
-## SELECT
+## How to retrieve data from a single table?
 
-### count
+### SELECT, WHERE, ORDER BY, LIMIT
+
+The `SELECT` clause is always the first clause in a SELECT statement. These columns are retireved from the based table named in the `FROM` clause.
+
+> You can select a column that is calculated from other columns in the table. 
+```sql
+SELECT invoice_id, invoice_total,
+credit total + payment_total AS total credits
+FROM invoices
+WHERE invoice_ id = 17
+```
+> You can use the `CONCAT` function to combine two or more columns into a single column.
+```sql
+SELECT CONCAT(first_name, ' ', last_name) AS full_name
+```
+
+> Using alias. To include a space in the alias for the first column, you must enclose the alias in double quotes.
+```sql
+SELECT invoice_number AS "Invoice Number", invoice_date AS Date, invoice total AS Total
+FROM invoices
+```
+
+The `WHERE`, `ORDer BY`, and `LIMIT` clauses are optional. If you don't include them, the database system will return all rows from the table.
+
+- `WHERE` - determines which rows are returned.  
+
+Between different date
+```sql
+SELECT invoice_n11mher, invoice_date, invoice_total FROM invoices
+WHERE invoice date BETWEEN '2018-06-01' AND '2018-06-30' 
+ORDER BY invoice_date
+```
+Might return empty result
+```sql
+SELECT invoice_number, invoice_date, invoice_total FROM invoices
+WHERE invoice_total > 50000
+```
+- `ORDER BY` - determines the order in which the rows are returned.
+    - `ASC` - ascending order
+    - `DESC` - descending order
+
+    ```sql
+    SELECT invoice_number, invoice_date, invoice_total 
+    FROM invoices
+    ORDER BY invoice_total DESC
+    ```
+
+- `LIMIT` - determines the number of rows that are returned.
+
+#### Arithmetic operators
+
+- `+` - addition
+
+- `-` - subtraction
+
+- `*` - multiplication
+
+- `/` - division (decimal_quotient)
+    - `DIV` - division (integer_quotient)
+    - `%` - modulus (remainder)
+
+
+#### count
 To count the number of rows in a table, you can use the COUNT() function in SQL. Here's how you can do it:
 
 ```sql
