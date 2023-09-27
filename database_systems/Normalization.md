@@ -90,10 +90,10 @@ A relation is in 1NF if it contains no repeating groups of attributes. A repeati
 
 - remove partial dependencies
 
-A relation that  is in first normal form and every non-candidate-key attribute is fully functionally dependent on the primary key.
+A relation that  is in first normal form and every non-candidate-key attribute is fully functionally dependent on any candidate key.
 
 ### Third Normal Form (3NF)
 
 - remove transitive dependencies
 
-A relation that is in first and second normal form and in which no non-candidate-key attribute is transitively dependent on the primary key.
+A relation that is in first and second normal form and in which no non-candidate-key attribute is transitively dependent on any candidate key.
