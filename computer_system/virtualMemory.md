@@ -105,6 +105,29 @@ $\textcolor{cyan}{\text{Memory Management Unit (MMU)}}$: Responsible for transla
 
 ### 2 Level Page Table
 
+#### Why 2 level pages can solve the problem?
+
+In a single-level page table, you need a large table (e.g., 4 MB) for each process, regardless of how much memory the process actually uses. This is wasteful, especially for processes that only use a small portion of the address space.
+
+With a two-level page table, the top-level table (page directory) is much smaller and points to second-level tables. If a process only uses a small amount of memory, many entries in the top-level directory will be empty (indicating no second-level table for that range), and thus only a few second-level tables will be needed. This means small-memory processes will have small page tables, saving a significant amount of memory.
+
+1. **Virtual Address**:
+   - The virtual address is typically divided into three parts:
+     - **First-Level Index (or Directory Index)**: Used to index into the first-level page table.
+     - **Second-Level Index (or Table Index)**: Used to index into the second-level page table.
+     - **Offset**: Specifies a particular location within the resolved physical page.
+
+2. **Page Tables**:
+   - **First-Level Page Table (Page Directory)**: Contains pointers to second-level page tables.
+   - **Second-Level Page Table**: Contains the base addresses of physical pages.
+
+3. **Address Translation**:
+   - The first-level index is used to find the appropriate second-level page table.
+   - The second-level index is used to find the base address of the physical page.
+   - The offset is then added to this base address to pinpoint the exact byte or word within that physical page.
+
+
+---
 **1. Two-Level Page Table:**
 Instead of using a single large table to map virtual addresses to physical addresses, a two-level page table uses a hierarchical structure, like a tree. This structure consists of a top-level table (often called the page directory) and multiple second-level tables.
 
