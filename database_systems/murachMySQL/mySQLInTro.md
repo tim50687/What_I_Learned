@@ -12,7 +12,7 @@ WHERE TABLE_SCHEMA = 'your_database_name';
 
 ## How to retrieve data from a single table?
 
-### SELECT, WHERE, ORDER BY, LIMIT
+### SELECT
 
 The `SELECT` clause is always the first clause in a SELECT statement. These columns are retireved from the based table named in the `FROM` clause.
 
@@ -63,6 +63,8 @@ WHERE invoice_total > 50000
 
 #### Arithmetic operators
 
+You can use arithmetic operators in the SELECT clause to perform calculations on the columns in a table.
+
 - `+` - addition
 
 - `-` - subtraction
@@ -73,6 +75,31 @@ WHERE invoice_total > 50000
     - `DIV` - division (integer_quotient)
     - `%` - modulus (remainder)
 
+#### How to use functions
+
+- LEFT() - returns a specified number of characters from the left side of a string.
+
+- DATE_FORMAT() - formats a date value based on a specified format.
+
+- ROUND() - rounds a number to a specified number of decimal places.
+
+#### Without FROM clause
+
+With mySQL, you don't have to code a FROM clause. This makes it easy to test expressions that include arithmetic operators and functions.
+
+```sql
+SELECT "Ed" AS first_name, "Williams" AS last_name, 
+CONCAT(LEFT("Ed", 1), LEFT("Williams", 1)) AS initials
+```
+
+#### How to eliminate duplicate rows
+- `DISTINCT` - eliminates duplicate rows from the result set.
+```sql
+SELECT DISTINCT vendor_city, vendor_state
+FROM vendors
+ORDER BY vendor_city
+```
+
 
 #### count
 To count the number of rows in a table, you can use the COUNT() function in SQL. Here's how you can do it:
@@ -80,6 +107,74 @@ To count the number of rows in a table, you can use the COUNT() function in SQL.
 ```sql
 SELECT COUNT(*) FROM table_name;
 ```
+
+### WHERE
+
+The `WHERE` clause is used to filter rows from the result set. It's placed after the `FROM` clause and before the `ORDER BY` clause.
+
+#### How to use comparison operators
+
+> MySQL databases are not case-sensitive.
+
+> If you compare a null value using operators, the result is always a null value. To test for null values, use the `IS NULL` clause.
+
+#### How to use the IN operator
+
+The `IN` operator is used to test whether a value is equal to any value in a list of values. Here's how you can use it:
+
+```sql
+WHERE vendor_state NOT IN ('CA', 'NV')
+```
+
+```sql
+vendor id IN FROM invoices
+WHERE
+(SELECT vendor id
+WHERE invoice_date = 1 2018-07-18 1 )
+```
+
+- You can use the IN phrase to test whether an expression is equal to a value in a list of expressions. Each of the expressions in the list is automatically converted to the same type of data as the test expression.
+- The list of expressions can be coded in any order without affecting the order of the rows in the result set.
+- You can use the NOT operator to test for an expression that's not in the list of expressions.
+- You can also compare the test expression to the items in a list returned by a subquery. You'll learn more about coding subqueries in chapter 7.
+
+#### How to use the BETWEEN operator
+
+The `BETWEEN` operator is used to test whether a value is within a range of values. Here's how you can use it:
+
+```sql
+WHERE invoice_date BETWEEN '2018-06-01' AND '2018-06-30'
+WHERE invoice_total BETWEEN 50000 AND 100000
+```
+
+
+- You can use the `NOT` operator to test whether a value is outside a range of values.
+
+#### How to use REGEXP
+
+The `REGEXP` operator is used to test whether a string matches a pattern. Here's how you can use it:
+
+```sql
+WHERE vendor_name REGEXP '^A'
+```
+
+- ^ - matches the beginning of a string
+
+- $ - matches the end of a string
+
+- . - matches any single character
+
+- [ ] - matches any single character within the brackets
+
+- [char1 - char2] - matches any single character in the range from char1 to char2
+
+> It will degrade performance if you use the `REGEXP` operator.
+
+### ORDER
+
+To sort by more than one column, list the columns in the order that you want them sorted, separated by commas.
+
+```sql
 
 ## INSERT
 
