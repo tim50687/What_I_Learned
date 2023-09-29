@@ -87,3 +87,13 @@ At a lower level, Python is doing the following:
 2. **Tuple Unpacking**: The left-hand side `x, y` indicates to Python that it should unpack the values from the tuple. It does this by iterating over the tuple and assigning each value to the corresponding variable on the left.
 
 3. **Assignment**: As Python iterates over the tuple `(10, 20)`, it assigns the first value (`10`) to `x` and the second value (`20`) to `y`.
+
+## min
+
+### To get the smallest string in a list
+```python
+Letters = ["This", "is", "b","a", "sentence"]
+
+print(min(Letters, key=len))
+```
+
