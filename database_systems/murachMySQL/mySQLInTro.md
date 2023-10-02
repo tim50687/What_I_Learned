@@ -312,3 +312,7 @@ We post a copy of the pri- mary key attribute(s) of the entities that participat
 ### Multi-valued attributes
 
 Create a new relation to represent the multi-valued attribute, and include the primary key of the entity in the new relation to act as a foreign key.
+
+### weak entity
+
+[good website](https://stackoverflow.com/questions/26448216/sql-create-weak-entity-table)
