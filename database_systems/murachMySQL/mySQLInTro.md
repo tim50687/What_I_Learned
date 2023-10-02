@@ -174,7 +174,7 @@ WHERE vendor_name REGEXP '^A'
 
 To sort by more than one column, list the columns in the order that you want them sorted, separated by commas.
 
-```sql
+
 
 ## INSERT
 
@@ -187,6 +187,8 @@ To sort by more than one column, list the columns in the order that you want the
     - If columns `allow NULL values`, you can omit values for those columns. The database system will insert NULL values for them.
 
 ## Foreign Key Action
+
+[GOOD WEBSITE](https://stackoverflow.com/questions/6720050/foreign-key-constraints-when-to-use-on-update-and-on-delete)
 
 In MySQL, when defining foreign key relationships, you can specify what action should be taken when a referenced row in the parent table is updated or deleted. Here are the available actions:
 
