@@ -316,3 +316,34 @@ Create a new relation to represent the multi-valued attribute, and include the p
 ### weak entity
 
 [good website](https://stackoverflow.com/questions/26448216/sql-create-weak-entity-table)
+
+
+**Note on Referencing Composite Primary Keys in Relational Databases**
+
+**Context**: In a database, there might be scenarios where one entity (like `Seat` in a `Classroom`) cannot be uniquely identified by its attributes alone. Such an entity is termed a "weak entity." For unique identification, it uses a composite primary key, which includes its own attribute and a foreign key referencing another (strong) entity.
+
+**Example**:
+- **Strong Entity**: `Classroom` with primary key `classroom_id`.
+- **Weak Entity**: `Seat` with a composite primary key consisting of `classroom_id` (foreign key referencing `Classroom`) and its own attribute `seat_number`.
+
+**Challenge**: If a third table, say `SeatAssignment`, needs to reference a `Seat`, it must acknowledge the composite nature of the `Seat's` primary key.
+
+**Solution**:
+1. The third table must have columns to accommodate every part of the composite key.
+2. When setting up foreign key constraints in this third table, both columns (`classroom_id` and `seat_number` in this example) must be used to reference the primary key of the `Seat` table.
+
+**Illustrative Schema**:
+```sql
+CREATE TABLE SeatAssignment (
+    classroom_id INT,
+    seat_number INT,
+    student_id INT,
+    assignment_date DATE,
+    PRIMARY KEY (classroom_id, seat_number, student_id),
+    FOREIGN KEY (classroom_id, seat_number) REFERENCES Seat(classroom_id, seat_number),
+    FOREIGN KEY (student_id) REFERENCES Student(student_id)
+);
+```
+
+**Key Takeaway**: When designing tables that reference entities with composite primary keys, it's essential to handle both parts of the key correctly, both for data integrity and for maintaining clear relational mappings.
+
