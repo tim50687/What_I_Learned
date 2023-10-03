@@ -204,3 +204,50 @@ The TLB (Translation Look-aside Buffer) is a cache that stores recent virtual-to
 - **Solution 2**: Use an Address Space ID (ASID). Instead of flushing the TLB, `each TLB entry is tagged with an ASID`, which identifies the process (or context) it belongs to. A special MMU register holds the ASID of the currently running process. TLB entries with a different ASID are ignored, ensuring that entries from one process aren't mistakenly used by another. This approach allows multiple processes' TLB entries to coexist, improving efficiency.
 
 **Key Takeaway**: Ensuring the TLB's consistency is crucial for system correctness. While flushing the TLB is a straightforward solution, it can be inefficient. Using an ASID provides a more efficient way to handle TLB entries across context switches, allowing for better performance.
+
+#### **Virtual Address Space & Kernel Memory Protection**
+
+- **Virtual Memory**: An abstraction layer between software and hardware. Processes access "virtual addresses" rather than direct physical memory.
+
+- **Virtual Address Space**: Each process has its own range of virtual addresses, e.g., 0 to 4 GB on a 32-bit system. This is the memory range the process believes it can access.
+
+- **Page Tables**: Every process has its own page table, which maps its virtual addresses to physical addresses. The Memory Management Unit (MMU) uses these tables to translate virtual addresses to their corresponding physical locations in RAM.
+
+- **Kernel in Virtual Address Space**: Within each process's virtual address range, a portion is reserved for the OS kernel. For example, in a 32-bit system, addresses 0-3 GB might be for the process, while 3-4 GB are for the kernel. This kernel space is consistent across all processes, meaning the kernel's virtual addresses are the same in every process's page table.
+
+- **Efficiency**: Having the kernel in every process's virtual address space speeds up system calls. When a process requests services from the kernel, there's no need to switch to a different address space.
+
+- **Protection**: Hardware mechanisms prevent user processes from accessing the kernel's portion of the virtual address space. This ensures processes can't interfere with kernel operations, maintaining system security and stability.
+
+##### Sharing read-only pages between processes does not violate the security principle of preventing access from one process to another's memory for the following reasons:
+
+1. **No Modification Allowed**: Since the pages are read-only, one process cannot modify the contents of the shared page. This ensures that a process cannot tamper with or corrupt the data that another process might be using.
+
+2. **Intentional Sharing**: Read-only pages that are shared between processes are typically shared intentionally. Common examples include shared libraries or code segments. Multiple processes can execute the same code without each having a separate copy in physical memory, saving memory resources.
+
+3. **Isolation Remains**: Even though the read-only page is shared, the rest of the processes' memory remains isolated. One process cannot access or modify the private data or stack of another process.
+
+4. **No Information Leakage**: Since the shared pages are read-only and are typically non-sensitive (like code segments of system libraries), there's no risk of information leakage from one process to another.
+
+5. **Controlled by the OS**: The operating system controls which pages are marked as read-only and which processes can access them. This ensures that only legitimate and safe sharing occurs.
+
+6. **Address Space Layout Randomization (ASLR)**: Modern operating systems use techniques like ASLR to randomize the location of memory segments. Even if processes share read-only pages, the location of these pages in the virtual address space can be different for each process, making it harder for malicious processes to predict memory locations.
+
+In summary, sharing read-only pages is a controlled and intentional mechanism that allows for memory efficiency without compromising the security and isolation principles of modern operating systems.
+
+### 4.6 Page size, Address Space Size, and 64 bits
+
+The amount of memory that can be addressed by a system is determined by the number of unique addresses it can generate. This is directly related to the number of bits in its addressing scheme.
+
+For a 32-bit system:
+
+1. **Number of Unique Addresses**: 
+   - A 32-bit system can generate \(2^{32}\) unique addresses because each bit can have 2 possible values (0 or 1), and there are 32 bits.
+   - \(2^{32}\) equals 4,294,967,296.
+
+2. **Memory Addressable**:
+   - If each unique address corresponds to a byte of memory (which is a common convention), then \(2^{32}\) addresses can access \(2^{32}\) bytes of memory.
+   - 4,294,967,296 bytes is the same as 4 gigabytes (GB), when considering 1 gigabyte as 1 billion bytes.
+
+Therefore, a 32-bit system can address up to 4GB of memory. This is a theoretical maximum, and in practice, some of this address space might be reserved for system use or other purposes, so the actual usable memory might be less than 4GB.
+
