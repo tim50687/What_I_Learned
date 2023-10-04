@@ -165,4 +165,86 @@ and ask chatgpt to explain it to you.
 
 **Summary**: Interleaving is a natural occurrence in concurrent programming when multiple entities share a common output medium. While often benign, it can sometimes lead to confusing output sequences, especially in diagnostic or logging scenarios. Awareness and certain mitigation strategies can help manage and understand interleaved outputs.
 
-> Shell Behavior: Most shells are designed to display the prompt once the foreground process completes.
+> Shell Behavior: Most shells are designed to display the prompt once the foreground process completes.  
+
+## Exec in C
+
+**Arrays, Strings, and Null Terminators in C**
+
+- **Strings**:
+  - When you define a string literal, the compiler automatically appends a null terminator (`'\0'`).
+    ```c
+    char str[] = "hello";  // Automatically becomes {'h', 'e', 'l', 'l', 'o', '\0'}
+    ```
+  - This null terminator indicates the end of the string.
+
+- **Arrays of Pointers**:
+  - Arrays of pointers (or strings) don't automatically receive a `NULL` terminator.
+    ```c
+    char *argv[] = {"ls", "-l", "-h", "-a"};  // No NULL at the end
+    ```
+  - For certain functions (e.g., the `exec` family), a terminating `NULL` is required to indicate the end of the array.
+    ```c
+    char *argv[] = {"ls", "-l", "-h", "-a", NULL};  // Explicit NULL at the end
+    ```
+
+- **Why Use `NULL` Terminator**:
+  - In C, there's no inherent way to determine the length of an array.
+  - Functions like those in the `exec` family rely on the `NULL` terminator to know where the array of arguments ends.
+  - Not adding the `NULL` terminator can result in `undefined behavior`, as the function might read past the array.
+
+
+### **`execvp` Function in C**
+
+- **Description**:
+  The `execvp` function is a member of the `exec` family of functions in C. It is used to execute a file, replacing the current process image with a new process image. 
+
+- **Signature**:
+  ```c
+  int execvp(const char *file, char *const argv[]);
+  ```
+
+
+- **Parameters**:
+  - `file`: The name of the file to be executed. If the name doesn't contain a slash (`/`), the `PATH` environment variable is used to locate the file.
+  - `argv[]`: An array of pointers to strings passed as arguments to the program. The array must be terminated by a `NULL` pointer.
+
+- **Behavior**:
+  - Replaces the current process image with a new one.
+  - Does not return on success. If the function does return, it indicates an error, and the return value is `-1`.
+  - Uses the `PATH` environment variable to locate the file to be executed if the file name doesn't contain a directory path.
+
+- **Example**:
+  ```c
+  char *argv[] = {"ls", "-l", NULL};
+  execvp("ls", argv);
+  ```
+
+- **Important Notes**:
+  - Always ensure that the `argv[]` array is terminated with a `NULL` pointer.
+  - The `execvp` function doesn't create a new process. Instead, it replaces the current process image. To create a new process and then execute a file, you'd typically use `fork()` followed by `execvp`.
+  - If `execvp` is successful, the program specified will start running and the code after the `execvp` call won't be executed in the original program. If there's an error (e.g., the specified program can't be found), `execvp` will return `-1`.
+  - The process ID (PID) remains the same. 
+
+**Summary**: `execvp` is a powerful function for executing programs from within a C application, replacing the current process image. Proper usage requires an understanding of process management and a careful construction of the `argv` array.
+
+### strtok
+
+**Static Pointer in `strtok()`**
+
+- **Static Keyword in C**:
+  - When a variable (or pointer) is declared as `static` in a function, it retains its value between successive calls to that function.
+  - Such a variable is initialized only once. Afterward, it retains its last-assigned value across function calls.
+
+- **`strtok()` and its Static Pointer**:
+  - `strtok()` utilizes an internal static pointer to track its position in the string being tokenized.
+  - On the initial call to `strtok()` with a string, the function locates the first token and returns it. The internal static pointer then sets its position just after this token.
+  - For subsequent calls with `NULL` as the first argument, `strtok()` continues from the position of this internal static pointer, allowing it to tokenize the string piece by piece across multiple calls.
+  - The static nature of this pointer means it remembers its position even after the function exits.
+
+- **Implications**:
+  - **Thread Safety**: The use of a shared static pointer means `strtok()` is not thread-safe. Concurrent calls in different threads can result in unexpected behavior. For thread-safe tokenization, consider using `strtok_r()`.
+  - **Tokenizing Multiple Strings**: Interleaved calls to `strtok()` for different strings can disrupt the tokenization process due to the shared static pointer. It's advisable to complete tokenization for one string before starting on another.
+
+**Summary**: The `strtok()` function employs an internal static pointer to maintain its state between calls. This allows the function to continue parsing the same string over multiple calls. While convenient, this approach presents limitations concerning thread safety and handling multiple strings simultaneously.
+
