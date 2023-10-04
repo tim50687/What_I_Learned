@@ -251,3 +251,59 @@ For a 32-bit system:
 
 Therefore, a 32-bit system can address up to 4GB of memory. This is a theoretical maximum, and in practice, some of this address space might be reserved for system use or other purposes, so the actual usable memory might be less than 4GB.
 
+[good website](https://cs.brown.edu/courses/csci1310/2020/notes/l13.html)
+
+## Page fault
+
+Read these two websites to understand the page fault.
+
+[good website](https://medium.com/software-under-the-hood/under-the-hood-os-demand-paging-page-faults-and-working-set-82849bb6b404)
+
+[good website2](https://stackoverflow.com/questions/5684365/what-causes-page-faults)
+
+1. **Program Launch**: When you launch a program, the operating system sets up the necessary data structures for its execution, including the page table. The page table will have entries for all the pages of the program, but initially, these entries will indicate that the pages are not in RAM.
+
+2. **Initial Execution**: The CPU starts executing the program. Since the program's pages are not in RAM yet, as soon as the CPU tries to access the first instruction (or any data) of the program, it will encounter a page fault because the page containing that instruction is not in RAM.
+
+3. **Handling the Page Fault**: The operating system's page fault handler is invoked. It determines which page the CPU was trying to access, finds that page on the disk, loads it into a free frame in RAM, and updates the page table to indicate that this page is now in RAM.
+
+4. **Resuming Execution**: After the page is loaded into RAM and the page table is updated, the CPU resumes execution from where it left off. Now, it can access the instruction (or data) because the page containing it is in RAM.
+
+5. **Subsequent Page Faults**: As the CPU continues executing the program and accesses parts of the program that are not yet in RAM, it will encounter more page faults. Each time, the OS will load the required page into RAM.
+
+6. **Demand Paging**: This process of loading pages into RAM only when they are accessed by the CPU is called demand paging. Over time, as the program runs, more and more of its frequently accessed pages will be in RAM, reducing the number of page faults.
+
+The key idea here is that the CPU doesn't execute the program directly from the disk. Instead, it always executes from RAM. But with demand paging, not all of the program is loaded into RAM at the start. Pages are loaded into RAM "on demand" as the CPU tries to access them. This allows the system to use RAM more efficiently by only loading the parts of the program that are actively being used.
+
+#### Demand-Zero Page Fault
+
+**Step 1: Memory Request**
+- Your program decides it needs more memory, typically for storing data or objects. This is often done using functions like `malloc` in C or `new` in C++.
+
+**Step 2: Heap Manager Checks Available Memory**
+- The heap manager checks if there's enough free memory in the heap to satisfy the request.
+
+**Step 3: Not Enough Memory in the Heap**
+- If there isn't enough free memory in the current heap to satisfy the request, the heap manager decides to allocate new pages from the virtual memory system to expand the heap.
+
+**Step 4: New Pages Allocated**
+- The operating system's virtual memory manager allocates new pages to the heap. These pages are part of the virtual address space but haven't been "committed" or mapped to physical memory yet.
+
+**Step 5: Accessing the New Pages**
+- The heap manager, having been given new pages, now tries to access them to fulfill the original memory request from the program.
+
+**Step 6: Demand-Zero Page Fault Occurs**
+- Since these new pages have never been accessed and aren't yet mapped to physical memory, trying to access them triggers a "demand-zero page fault."
+
+**Step 7: Operating System Handles the Page Fault**
+- The operating system's page fault handler kicks in. It finds a free page in physical memory (RAM) to allocate for this purpose.
+
+**Step 8: Zeroing Out the Page**
+- Before giving this page to the program, the operating system ensures it's filled with zeros. This is a security and predictability measure to ensure that one program doesn't accidentally see leftover data from another program.
+
+**Step 9: Page Mapping**
+- The operating system maps the newly zeroed-out page in physical memory to the virtual address space of the program.
+
+**Step 10: Resuming Execution**
+- Now that the page fault has been handled and the required memory is available and initialized, the program can resume execution. The memory request (e.g., `malloc` or `new`) completes successfully, and the program continues running.
+
