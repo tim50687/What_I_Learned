@@ -307,3 +307,136 @@ The key idea here is that the CPU doesn't execute the program directly from the 
 **Step 10: Resuming Execution**
 - Now that the page fault has been handled and the required memory is available and initialized, the program can resume execution. The memory request (e.g., `malloc` or `new`) completes successfully, and the program continues running.
 
+### Process Address Space, Revisited
+####  **Note on Kernel Memory Mapping in 32-bit Linux Systems**
+
+**1. Virtual Address Space**:
+- Every process has its own virtual address space for accessing memory. This is segmented into user-space (for applications) and kernel-space (for the OS).
+
+**2. Kernel's Top 1GB Allocation**:
+- In 32-bit Linux, the kernel occupies the top 1GB of the virtual address space (from `0xC0000000` to `0xFFFFFFFF`).
+  
+**3. Kernel in Every Address Space**:
+- The kernel's 1GB is consistently mapped across all processes' address spaces.
+- **Reason**: Provides rapid access to kernel functions and structures during system calls or exceptions. This immediacy avoids the overhead of switching address spaces when transitioning between user and kernel modes.
+
+**4. Security with the U Bit**:
+- The kernel's presence in every process's address space doesn't equate to open access for user-space programs.
+- The 'U' bit in page table entries is used to restrict user-space access to kernel memory. Setting the U bit to zero for kernel mappings prevents user processes from altering or viewing kernel memory, ensuring system security.
+
+> In every process's virtual memory map on many operating systems, including Linux, there is a portion of the address space reserved for the kernel. This does not mean that each process has its own separate copy of the kernel; rather, `this region in every process's address space points to the same physical memory where the kernel resides.`
+
+### Shared Executable and Libraries 
+
+#### **Process of Memory Sharing**:
+
+1. **Page Faults**: 
+   - Triggered when a program accesses a part of its memory that isn't currently in RAM.
+
+2. **Checking for Existing Pages**:
+   - Before loading a memory page from storage, the OS checks if that specific page is already in memory due to another process.
+   - If the page is found, the current process is allowed to reference the already-loaded page instead of loading a duplicate.
+
+3. **Reference Counts**:
+   - The OS maintains a count of how many processes are using a particular page.
+   - When a process ends, the reference count for each page it was using is decremented.
+
+4. **De-allocation**:
+   - If the reference count of a page reaches zero (no more processes are using it), that page is freed, releasing memory.
+
+#### **Benefit**:
+- This mechanism of shared pages reduces memory duplication, leading to a more efficient use of system memory, especially when multiple processes run identical code or access identical data.
+
+Even when multiple applications, such as a browser, text editor, and email client, use the same libraries, each application in its entirety is a unique combination of its own code and the libraries it uses. This uniqueness, particularly in how the program code is integrated with its libraries, can result in differing alignments or configurations in memory. Such differences make it challenging for the operating system to identify and share identical memory regions among different programs.
+
+#### With the concept of memory sharing, we now have shared library
+
+**Solution with Shared Libraries**:
+- Shared libraries address this inefficiency. They are designed to enable the same library to be loaded into memory once and then be referenced by multiple programs.
+- Conceptually, each shared library is treated almost like its own standalone program in memory. This approach ensures that, while two different programs might not be entirely identical (and thus not shareable), the libraries they use can still be identified and shared among them.
+
+
+
+### **Note on Copy-On-Write Mechanism in UNIX Systems**:
+
+#### **Page Sharing**:
+- Generally, read-only pages are safely shared among processes since they can't be modified and hence don't affect other processes.
+  
+#### **UNIX Process Creation**:
+- UNIX uses `fork()` and `exec()` system calls for process management.
+  - `fork()`: Creates a copy of the current process.
+  - `exec(file)`: Replaces the current process's address space with the program specified by `file` and starts executing that program.
+  
+#### **Issues with the Traditional Approach**:
+- Early UNIX systems implemented `fork()` by copying all writable sections of the parent process to the child process. However, most of the time, the child process would immediately call `exec()`, discarding the copied address space. This made the copying process inefficient, especially when large programs tried to execute smaller ones.
+
+#### **Writable Page Sharing Challenge**:
+- Sharing writable pages poses a challenge. If both parent and child processes can write to the same page, they might inadvertently interfere with each other, potentially causing issues. Especially, data that is writable but isn't anticipated to be modified is a concern.
+
+#### **Copy-On-Write (COW) Technique**:
+- Linux uses the Copy-On-Write (COW) strategy to optimize the handling of writable memory pages during `fork()`.
+- On executing `fork()`, the child process's address space shares both read-only and writable pages from the parent. However, these writable pages are marked read-only to prevent modifications.
+- These pages are also flagged as copy-on-write in the kernel's memory structures.
+- If either process tries to write to a shared page, a page fault occurs. The page fault handler then:
+  1. Allocates a new memory page.
+  2. Copies the content of the old shared page to this new page.
+  3. Maps the new page as writable to the process trying to write, thereby isolating it from the original shared page.
+
+#### **Benefit**:
+- The COW technique avoids the unnecessary copying of memory unless it's explicitly needed (i.e., when a write operation is attempted). This results in faster and more efficient process creation and memory utilization.
+
+## Memory overcommitment
+
+**CPU Cache and Data Fetch**:
+
+- **Cache Memory**: CPUs have a small amount of very fast memory called cache. It's much faster than main RAM but also much smaller.
+
+- **Dynamic Fetching**: When the CPU needs to access data, it first checks if that data is in its cache. If not (a cache miss), it fetches the data from the main RAM into the cache. The idea is to keep frequently accessed data close to the CPU to speed up processing.
+
+- **Purpose**: Since accessing the cache is faster than accessing the main RAM, dynamically fetching and storing frequently used data in the cache helps in speeding up the CPU's operations.
+
+### **The Connection**:
+
+Both mechanisms — page faults for RAM and dynamic fetching for CPU caches — are about optimizing performance by ensuring that data is available in the fastest accessible place when needed. Just as the CPU doesn't keep all the data it might need in its cache (due to size limitations) but fetches it dynamically, the main memory doesn't keep all possible data it might need (due to its size limitations) but loads it dynamically via handling page faults.
+
+### **Anonymous Segments:**
+- **Definition**: These are memory segments that are not backed by any file on disk. Common examples are the stack (which stores local variables, function call information, etc.) and the heap (used for dynamic memory allocation).
+
+- **Typical Behavior**: Since these segments are not associated with any file, they usually reside in memory and aren't swapped out to disk under normal circumstances.
+
+### **Memory Eviction due to Low Memory**:
+- **Scenario**: If many processes are running and consuming memory, the system might run low on available RAM.
+
+- **OS's Reaction**: To ensure smooth operation, the OS might decide to free up some memory. It does this by selecting certain memory pages to move out of RAM. Anonymous pages from idle (or less active) processes are candidates for this, even though they aren't typically swapped under normal conditions.
+
+### **Swap Space**:
+- **Definition**: A dedicated space on the storage disk (hard drive or SSD) where the OS can temporarily store memory pages that it needs to move out of RAM. This process is known as "swapping."
+
+- **Locations**:
+  - **Linux**: Usually uses a dedicated swap partition.
+  - **Windows**: Uses a file called `PAGEFILE.sys`.
+  - **OSX**: Uses `/var/vm/swapfile`.
+
+- **Process of Swapping**:
+  1. The OS decides which memory page needs to be moved out of RAM.
+  2. It then writes the content of that page to the designated swap space on the disk.
+  3. The OS stores a mapping that indicates where on the disk this memory page has been saved.
+  4. With the data safely written to disk, the OS can now free up (or release) the corresponding RAM page, making it available for other immediate needs.
+
+#### **In Summary**:
+When an OS is under memory pressure, it may need to temporarily store parts of its active memory (including segments like stack and heap) on the disk to free up RAM. This process, called swapping, is crucial for system stability but can lead to performance penalties because accessing data from disk is slower than accessing it from RAM.
+
+### **Page Table Entry: Dual Roles**
+
+1. **When Page is in Physical Memory**:
+   - The page table entry points to the actual location of the page in RAM.
+   - The MMU interprets this entry for translating virtual to physical addresses.
+
+2. **When Page is Not in Physical Memory**:
+   - The page table entry indicates the location of the page in swap space.
+   - The MMU does not use this information for address translation, effectively "ignoring" it.
+   - Instead, this information is utilized by the software page fault handler to manage and retrieve the page from swap when necessary.
+
+
+
+> While both cache and RAM can experience evictions, the reasons, frequency, and management of these evictions differ. Cache evictions are more about optimizing for the most frequently/recently used data, while RAM evictions (in the form of paging or swapping) are about managing the limited physical memory in the face of larger virtual address spaces.
