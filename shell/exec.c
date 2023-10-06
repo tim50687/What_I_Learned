@@ -16,9 +16,74 @@
 
 // Combine with fork
 
+char **get_input(char *);
+int cd(char *path);
+
+int main()
+{
+    char **command;
+    char *input;
+    pid_t child_pid;
+    int stat_loc;
+
+    while (1)
+    {
+        input = readline("unixsh> ");
+        command = get_input(input);
+
+        if (!command[0])
+        { /* Handle empty commands */
+            free(input);
+            free(command);
+            continue;
+        }
+        // cd command
+        if (strcmp(command[0], "cd") == 0)
+        {
+            if (cd(command[1]) < 0)
+            {
+                perror(command[1]);
+            }
+            continue;
+        }
+
+        child_pid = fork();
+        if (child_pid < 0)
+        {
+            perror("Fork failed");
+            exit(1);
+        }
+
+        if (child_pid == 0)
+        {
+            /* Never returns if the call is successful */
+            if (execvp(command[0], command) < 0)
+            {
+                perror(command[0]);
+                exit(1);
+            }
+        }
+        else
+        {
+            waitpid(child_pid, &stat_loc, WUNTRACED);
+        }
+
+        free(input);
+        free(command);
+    }
+
+    return 0;
+}
+
 char **get_input(char *input)
 {
     char **command = malloc(8 * sizeof(char *));
+    if (command == NULL)
+    {
+        perror("malloc failed");
+        exit(1);
+    }
+
     char *separator = " ";
     char *parsed;
     int index = 0;
@@ -36,33 +101,7 @@ char **get_input(char *input)
     return command;
 }
 
-int main()
+int cd(char *path)
 {
-    char **command;
-    char *input;
-    pid_t child_pid;
-    int stat_loc;
-
-    while (1)
-    {
-        input = readline("> ");
-        command = get_input(input);
-
-        child_pid = fork();
-
-        if (child_pid == 0)
-        {
-            execvp(command[0], command);
-            printf("This will never be printed if execvp is successful");
-        }
-
-        else
-        {
-            waitpid(child_pid, &stat_loc, WUNTRACED);
-        }
-
-        free(input);
-        free(command);
-    }
-    return 0;
+    return chdir(path);
 }

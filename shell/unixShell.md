@@ -248,3 +248,145 @@ and ask chatgpt to explain it to you.
 
 **Summary**: The `strtok()` function employs an internal static pointer to maintain its state between calls. This allows the function to continue parsing the same string over multiple calls. While convenient, this approach presents limitations concerning thread safety and handling multiple strings simultaneously.
 
+## Free Memory
+
+**Memory Management in Forked Processes**
+
+1. **Process Image Replacement**: When a child process runs `execvp()` (or similar functions), it replaces its current process image with a new one. This means the entire memory space of the child process, including any memory allocations, is substituted by the memory image of the new program.
+ 
+2. **Memory Isolation**: `fork()` duplicates the parent's memory for the child, providing the child with its own separate memory space. Any modifications in the child's memory do not impact the parent's memory, and vice versa.
+
+3. **Memory Cleanup**:
+    - **Child Process**: If `execvp()` is used, memory cleanup in the child process isn't necessary because the process image (and its memory allocations) are discarded.
+    - **Parent Process**: It's essential to free any dynamically allocated memory to prevent memory leaks. 
+
+4. **Point to Remember**: Absent an `execvp()` call or similar in the child process, both the parent and child processes must handle their own memory management, meaning each would need to free any allocated memory independently.
+
+## Error Handling
+
+**errno**
+- **Description**: `errno` is a global variable set by system calls and some library functions to indicate what went wrong. It's defined in `errno.h`.
+- **Usage**: When a system call fails, it usually returns `-1` and sets the `errno` variable to a value representing the error. 
+- **Note**: Since it's a global variable, its value can be overwritten by subsequent system calls that don't fail, so it's best to check its value immediately after the failure of a call.
+
+**perror**
+- **Description**: `perror` is a library function that prints a description for the last error that occurred.
+- **Usage**: It's used to display a string you provide, followed by a colon, a space, and then the textual representation of the current `errno` value.
+- **Example**: 
+  ```c
+  if (some_system_call() == -1) {
+      perror("Description of what we were trying to do");
+  }
+  ```
+
+**exit**
+- **Description**: `exit` is a function to terminate a program. It's defined in `stdlib.h`.
+- **Usage**: 
+  - `exit(0)`: Generally indicates successful termination.
+  - `exit(1)`, `exit(2)`, ...: Generally indicates termination due to an error. The specific non-zero value can be used to indicate different error reasons.
+- **Note**: On program exit, it ensures that all I/O buffers are flushed, files are closed, and any atexit() registered functions are called.
+
+
+## **Understanding Libraries in C Programming:**
+
+1. **Standard Libraries**:
+   - These are libraries that come bundled with most C compilers and provide the fundamental functionalities required for C programming.
+   - Libraries such as `libc` contain implementations of the C Standard Library, which includes functions from headers like `stdio.h` and `stdlib.h`.
+   - Because they are part of the standard, they're linked automatically by the compiler. This is why functions from `stdio.h` (e.g., `printf`, `scanf`) don't need any special linking instructions.
+  
+2. **External (or Non-standard) Libraries**:
+   - These libraries provide additional functionalities beyond the standard library but aren't automatically linked by compilers.
+   - An example is the `readline` library. Even if you include its header (`readline/readline.h`), you still need to link against it using the `-lreadline` option.
+   - The need for explicit linking prevents unnecessary bloat in the final executable. If every library were automatically linked, a simple program could become large due to unneeded code.
+  
+When compiling C code, it's essential to know whether you're using standard or external libraries. For external libraries, ensure you provide the appropriate linking instructions.
+
+## Use cd
+
+**Changing the Current Working Directory in a Shell-Like Program**
+
+In a shell-like program, you often need to handle changing the current working directory. The most common approach is to use the `chdir` system call directly within a custom `cd` function. Here's a simple implementation:
+
+```c
+#include <unistd.h>
+
+int cd(char *path) {
+    return chdir(path);
+}
+```
+
+This function accepts a path as an argument and uses `chdir` to change the current working directory to the specified path. If successful, it returns 0, and if there's an error, it returns -1.
+
+## Signal
+
+**Understanding Signals in Unix-Like Operating Systems**
+
+Signals are a fundamental concept in Unix-like operating systems, serving as a means of asynchronous communication between processes and the operating system. Here are key points to understand about signals:
+
+1. **Purpose of Signals:**
+   - Signals are notifications sent to processes to inform them of specific events or conditions, such as user actions or system events.
+   - They facilitate inter-process communication, allowing processes to respond to external events.
+
+2. **Signal Identification:**
+   - Each signal is identified by an integer number (e.g., 1, 2) and often has a symbolic name (e.g., SIGINT for interrupt) defined in the system's signal header file.
+
+3. **Signal Sources:**
+   - Signals can be generated by various sources:
+     - **User Actions:** User actions like pressing Ctrl-C can trigger signals (e.g., SIGINT).
+     - **Operating System:** The operating system can send signals to processes for various reasons (e.g., termination, termination request).
+     - **Other Processes:** One process can send a signal to another process to communicate or request specific actions.
+
+4. **Signal Handling:**
+   - Processes can define signal handlers, which are functions that respond to specific signals.
+   - When a signal is received, the operating system invokes the corresponding signal handler, allowing the process to respond to the signal's event.
+
+5. **Asynchronous Nature:**
+   - Signals are asynchronous, meaning they can interrupt a process's execution at any point in time.
+   - This asynchronicity can make signal handling challenging, as processes must be prepared to handle signals while in any state of execution.
+
+6. **Common Signals:**
+   - Some common signals include:
+     - SIGINT (Ctrl-C): Sent to terminate a process or request interruption.
+     - SIGTERM: Sent to request the termination of a process.
+     - SIGKILL: Sent to forcefully terminate a process.
+     - SIGSTOP and SIGCONT: Used to pause and resume processes, respectively.
+
+7. **Custom Signal Handling:**
+   - Processes can customize how they handle signals by defining their signal handlers.
+   - Custom signal handlers allow processes to take specific actions in response to signals, such as cleaning up resources or saving state.
+
+8. **Signal Termination:**
+   - By default, some signals terminate processes when they are received, while others can be customized to perform different actions.
+
+Understanding signals is essential for designing robust and responsive Unix-like software applications. They enable processes to communicate and adapt to a wide range of events, improving system reliability and user experience.
+
+### Comparing Signals and Interrupts
+
+**Interrupts:**
+
+1. **Communication Medium:** Interrupts can be viewed as a means of communication between the CPU and the OS kernel.
+
+2. **Initiators:** Interrupts can be initiated by multiple sources, including:
+   - The CPU itself, for exceptions like divide by zero or page faults.
+   - Hardware devices, such as input devices (hardware interrupts).
+   - CPU instructions, like traps initiated by syscalls or breakpoints in debugging.
+
+3. **Management:** Interrupts are managed primarily by the CPU. When an interrupt occurs, the CPU interrupts the current task and invokes an OS-kernel-provided Interrupt Service Routine (ISR) or interrupt handler. The ISR is responsible for handling the specific event or condition that triggered the interrupt.
+
+**Signals:**
+
+1. **Communication Medium:** Signals can be viewed as a means of communication between the OS kernel and OS processes.
+
+2. **Initiators:** Signals can be initiated by different sources, including:
+   - The OS kernel itself, for specific events or errors (e.g., SIGFPE for a floating-point exception, SIGSEGV for a segmentation fault).
+   - Processes, using functions like `kill()` to send signals to other processes.
+
+3. **Management:** Signals are primarily managed by the OS kernel. When a signal is generated, the OS kernel delivers it to the target thread or process. The OS kernel then invokes either a generic action predefined for that signal (e.g., terminate the process) or a process-provided signal handler. The signal handler is a user-defined function that allows processes to respond to signals in a customized way.
+
+In summary, interrupts and signals serve different purposes and involve different communication paths within a computer system:
+
+- Interrupts are used for low-level hardware events and are initiated by the CPU, hardware devices, or specific CPU instructions. They are managed by the CPU and handled by OS-kernel-provided Interrupt Service Routines (ISRs).
+
+- Signals are used for higher-level events and communication between processes and the OS kernel. They can be initiated by the OS kernel or processes and are managed by the OS kernel. Signals can trigger predefined actions or user-defined signal handlers in processes.
+
+Both interrupts and signals are essential mechanisms for managing events and communication in a computer system, but they operate at different levels of abstraction and have distinct use cases.
