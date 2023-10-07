@@ -163,7 +163,7 @@ For the Viewing relation, there is only one candidate key, comprising clientNo a
 
 - `Entity Integrity`: No primary key attribute (or component of a primary key attribute) may be null.
 
-- `Referential Integrity`: For each non-null foreign key value in a relation, there must exist a matching primary key value in the related relation. 
+- `Referential Integrity`: For each non-null foreign key value in a relation, there must exist a matching primary key value in the related relation. Or, stated differently, the foreign key value must be null or must match the primary key value of some tuple in the related relation.
 
 ### Wholly NULL?
 
@@ -217,3 +217,19 @@ Views are used for two main purposes:
 $\textcolor{orange}{\text{Views provide logical data independence}}$ that not only shields users from changes in the database structure but also supports the reorganization of the conceptual schema. For instance, when attributes are added or relations are modified, views can be set up to maintain the original perspective for the users. (Existed views are not affected by the changes `if views are defined to exclude it.`) 
 
 > Views are dynamic, which means they reflect the current state of the underlying base relations. If a user's view includes all attributes of a base relation and a new attribute is added to that base relation, the view will automatically include that new attribute, `unless specifically excluded.` Similarly, any changes made to the base relations that affect the view are immediately reflected in the view. So, if the view isn't set up to exclude certain attributes, any additions or changes to those attributes in the base relation will be visible in the view.
+
+#### **View Updating Guidelines**:
+
+1. **Single Table Views**:
+   - A view can be updated if it references a single base table.
+
+2. **Presence of Keys**:
+   - The referenced table should contain either its primary key (PK) or a candidate key to allow view updates.
+
+3. **Multi-Table Views**:
+   - Updates are generally not permitted for views that involve multiple base tables due to potential data inconsistencies.
+
+4. **Aggregations & Grouping**:
+   - Views that utilize aggregation or grouping functions are typically not directly updatable.
+
+By following these guidelines, you ensure that updates to views maintain the integrity and consistency of the underlying data.
