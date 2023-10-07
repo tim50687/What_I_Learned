@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <signal.h>
 
 // Basic execvp
 // int main()
@@ -15,7 +16,6 @@
 // }
 
 // Combine with fork
-
 char **get_input(char *);
 int cd(char *path);
 
@@ -25,6 +25,8 @@ int main()
     char *input;
     pid_t child_pid;
     int stat_loc;
+
+    signal(SIGINT, SIG_IGN); // signal handling
 
     while (1)
     {
@@ -56,6 +58,12 @@ int main()
 
         if (child_pid == 0)
         {
+            // check pgid
+            pid_t pgid = getpgid(child_pid);
+            printf("Child Process Group ID: %d\n", pgid);
+
+            signal(SIGINT, SIG_DFL); // signal handling
+
             /* Never returns if the call is successful */
             if (execvp(command[0], command) < 0)
             {
@@ -65,6 +73,11 @@ int main()
         }
         else
         {
+            // check pgid
+            pid_t pid = getpid();
+            pid_t pgid = getpgid(pid);
+            printf("Parent Process Group ID: %d\n", pgid);
+
             waitpid(child_pid, &stat_loc, WUNTRACED);
         }
 

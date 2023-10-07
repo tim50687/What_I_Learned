@@ -319,7 +319,19 @@ This function accepts a path as an argument and uses `chdir` to change the curre
 
 ## Signal
 
-**Understanding Signals in Unix-Like Operating Systems**
+In C, when dealing with signal handling, you can use two important macros that can be passed as the second argument to the `signal` function:
+
+1. `SIG_IGN` (Signal Ignore): This macro tells the system to ignore the specified signal. When you use `signal(SIGINT, SIG_IGN)`, it means that if the process receives a `SIGINT` signal (e.g., triggered by pressing Ctrl-C), the default behavior of terminating the process will be ignored, and the process will continue running as if nothing happened. It essentially disables the default action associated with that signal.
+
+2. `SIG_DFL` (Signal Default): This macro sets the signal's behavior back to its default action. It's useful when you want to reset the behavior of a signal to the standard default after having modified it. For example, if you previously set a custom signal handler for `SIGINT` and now want to revert to the default behavior (process termination), you can use `signal(SIGINT, SIG_DFL)`.
+
+However, it's essential to note that you cannot modify or control the behavior of certain signals like `SIGKILL` and `SIGSTOP`. These signals are designed to be unblockable and cannot have custom handlers assigned to them. Blocking a signal means that the signal will not be delivered to the process at all, but this cannot be done with `SIGKILL` and `SIGSTOP` due to their critical nature.
+
+> Child can copy the signal handler from the parent process.
+
+- When a process is forked, it inherits its PGID from its parent.
+
+### **Understanding Signals in Unix-Like Operating Systems**
 
 Signals are a fundamental concept in Unix-like operating systems, serving as a means of asynchronous communication between processes and the operating system. Here are key points to understand about signals:
 
@@ -390,3 +402,69 @@ In summary, interrupts and signals serve different purposes and involve differen
 - Signals are used for higher-level events and communication between processes and the OS kernel. They can be initiated by the OS kernel or processes and are managed by the OS kernel. Signals can trigger predefined actions or user-defined signal handlers in processes.
 
 Both interrupts and signals are essential mechanisms for managing events and communication in a computer system, but they operate at different levels of abstraction and have distinct use cases.
+
+### **Note on Signal Handling in C:**
+
+In C programming, signal handling is facilitated by the `signal` function and the `sighandler_t` type. The `signal` function is used to establish a signal handler for a specific signal and takes two arguments:
+
+1. `int signum`: Specifies the signal number for which you want to establish a handler, such as `SIGINT` for Ctrl+C or `SIGTERM` for termination signals.
+
+2. `sighandler_t handler`: A pointer to a function that will serve as the signal handler for the specified signal. The function should have the signature `void handler(int signum)`.
+
+While the `signal` function expects a specific signature for the signal handler function, C allows you to pass functions as arguments even if their signatures don't match exactly. This flexibility is due to C's support for function pointers.
+
+Internally, the `signal` function works with a common signature for signal handlers, `void handler(int signum)`, allowing you to pass functions that adhere to this signature.
+
+However, it's crucial to ensure that your signal handler function (`handler`) matches the expected signature (`void handler(int signum)`) and handles the signal appropriately when implementing signal handling in your C programs.
+
+#### Code breakdown
+
+```c
+void sigint_handler(int signo)
+{
+    printf("Caught SIGINT\n");
+}
+
+int main()
+{
+    signal(SIGINT, sigint_handler);
+    while (1)
+        ; /* Infinite loop */
+}
+```
+
+In the `sigint_handler` function, the `signo` parameter receives the signal number that triggered the handler. Here's how it works:
+
+1. When you register a signal handler using the `signal` function, you specify the signal for which you want to set up the handler (in this case, `SIGINT`) and the function that should serve as the handler (in this case, `sigint_handler`).
+
+2. When the signal is received (e.g., when you press Ctrl+C, which generates a `SIGINT` signal), the operating system interrupts the normal execution of your program and calls the registered signal handler function (`sigint_handler` in this case).
+
+3. When the signal handler function is called, it receives an integer parameter, `signo`, which represents the signal number that triggered the handler. In this case, `signo` will be equal to `SIGINT` because we registered the handler specifically for `SIGINT`.
+
+Here's the function signature for `sigint_handler`:
+
+```c
+void sigint_handler(int signo)
+```
+
+Inside the `sigint_handler` function, you can access the `signo` parameter like any other function parameter, and it will contain the value of the signal that caused the handler to be invoked. In this example, when you see the message "Caught SIGINT" printed, it means that `signo` contains the value `SIGINT` because that's the signal that triggered the handler.
+
+#### Example for CTRL + C
+
+When a user interacts with a computer system, such as by pressing keys on the keyboard, a complex process involving both hardware and software components is set in motion. Here's a breakdown of this process, emphasizing key points:
+
+1. **User Input ($\textcolor{cyan}{\text{Hardware Event}}$):** User actions, like pressing keys on the keyboard, initiate hardware events. When a key is pressed, the keyboard controller generates a hardware interrupt.
+
+2. **Hardware Interrupt ($\textcolor{cyan}{\text{Communication with CPU}}$):** Hardware interrupts are signals sent from hardware devices (e.g., keyboard) to the CPU, requesting immediate attention. This is a $\textcolor{cyan}{\text{low-level communication}}$ mechanism between hardware and the CPU.
+
+3. **Interrupt Handling ($\textcolor{cyan}{\text{Operating System Involvement}}$):** Upon receiving a hardware interrupt, the CPU suspends its current tasks and invokes the appropriate $\textcolor{cyan}{\text{interrupt handler}}$ in the operating system. This is where $\textcolor{cyan}{\text{operating system}}$ intervention begins.
+
+4. **Signal Generation ($\textcolor{cyan}{\text{Operating System Action}}$):** Inside the interrupt handler, the operating system may $\textcolor{cyan}{\text{interpret the hardware event}}$. For instance, if a specific key combination like Ctrl-C is detected, the operating system may $\textcolor{cyan}{\text{generate a software-based signal}}$ known as $\textcolor{cyan}{\text{SIGINT}}$ (Signal Interrupt).
+
+5. **Signal Delivery ($\textcolor{cyan}{\text{Inter-Process Communication}}$):** The generated SIGINT signal is then $\textcolor{cyan}{\text{delivered to the appropriate process}}$. In a terminal, for example, the SIGINT signal is typically sent to the $\textcolor{cyan}{\text{foreground process}}$ running in the terminal. This serves as a $\textcolor{cyan}{\text{request to interrupt or terminate the process}}$.
+
+In summary, user input events, such as keyboard key presses, start as hardware interrupts, which involve $\textcolor{cyan}{\text{communication between hardware and CPU}}$. The operating system plays a critical role in $\textcolor{cyan}{\text{handling these interrupts}}$, which may lead to the generation of $\textcolor{cyan}{\text{software-based signals}}$ for process control and inter-process communication. Both hardware and software components are integral to this interaction.
+
+### **Signal Handling and Signal Masking**
+
+In signal handling, it's crucial to prevent a signal handler from being interrupted by itself. To achieve this, the kernel adds the signal that invoked the signal handler to the process's signal mask by default. When a signal is in the signal mask, it's blocked from being delivered again to the process while the current instance of the signal handler is running. This prevents recursive signal handler invocations and ensures orderly signal handling. Once the signal handler returns, the signal is automatically removed from the signal mask, allowing the process to receive and handle that signal if it's delivered again in the future. This mechanism helps maintain the integrity of signal handling in multi-threaded or multi-process environments.
