@@ -32,6 +32,28 @@ The **BIOS** (Basic Input/Output System) is a program stored in a ROM (Read-Only
 
 It's a program called a terminal emulator. This is a program that opens a window and lets you interact with the shell.
 
+
+**Terminal Behavior with Ctrl+C**
+
+1. **Signal Generation**:
+   - When you press `Ctrl+C`, the terminal generates a `SIGINT` (interrupt signal).
+   
+2. **Signal Delivery**:
+   - This signal is delivered to the foreground process group associated with the terminal. In the context of running processes, this means the currently executing command and any child processes it may have spawned.
+
+3. **Default Behavior**:
+   - If not otherwise handled, the `SIGINT` signal will terminate processes in the foreground process group.
+
+4. **Input Buffer Clearance**:
+   - The terminal's input buffer (where keystrokes are temporarily stored before being sent to the foreground process) is cleared. This means any unsent characters typed before pressing `Ctrl+C` are discarded.
+
+5. **Visual Feedback**:
+   - Often, the terminal will move to a new line after detecting `Ctrl+C`, providing visual feedback to the user that the interrupt was recognized.
+
+6. **Return to Ready State**:
+   - If a shell was running, it typically displays a new command prompt, indicating it's ready for the next command.
+
+
 ### Shell
 
 Simply put, the shell `(command-line interpreter)` is a program that takes commands from the keyboard and gives them to the operating system to perform. 
@@ -155,3 +177,5 @@ A "DLL" stands for "Dynamic Link Library." It is a feature of the Windows operat
    - **Security**: Malicious software can exploit certain vulnerabilities by replacing a legitimate DLL with a malicious one, a technique known as "DLL Hijacking."
 
 In summary, DLLs are a crucial component of the Windows operating system, allowing for modular, efficient, and flexible software design. However, they also come with challenges that developers need to be aware of and manage appropriately.
+
+
