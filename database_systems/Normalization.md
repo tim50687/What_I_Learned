@@ -82,18 +82,23 @@ A condition where A, B, and C are attributes of a relation such that if A → B 
 
 ### First Normal Form (1NF)
 
+- There must be a primary key for identification
+
+- Can't have null values in pk
+  - Can have null in the fields that are not pk
+
 - flatten the structure of the relation, so that each tuple contains only a single value for each attribute.
 
 A relation is in 1NF if it contains no repeating groups of attributes. A repeating group is an attributes or a gorup of attributes, within a table that occurs with multiple values for a single occurence of the nominated key attribute for that table.
 
 ### Second Normal Form (2NF)
 
-- remove partial dependencies
+- remove partial dependencies on candidate keys
 
-A relation that  is in first normal form and every non-candidate-key attribute is fully functionally dependent on any candidate key.
+A relation that is in `first normal form` and every non-candidate-key attribute is fully functionally dependent on primary key.
 
 ### Third Normal Form (3NF)
 
 - remove transitive dependencies
 
-A relation that is in first and second normal form and in which no non-candidate-key attribute is transitively dependent on any candidate key.
+A relation that is in first and second normal form and in which no non-candidate-key attribute is transitively dependent on primary key.
