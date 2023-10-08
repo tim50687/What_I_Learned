@@ -2,19 +2,42 @@
 
 ## **Understanding Threads and Their Benefits**
 
-**Parallelism:** 
-   - **Purpose:** Threads enable efficient utilization of multiple processors in a system by allowing parts of a program to run concurrently.
-   - $\textcolor{cyan}{\text{Example: If a program is performing operations on large arrays (like addition of two arrays), it can significantly speed up this process by distributing the workload across multiple CPUs. Each thread can handle a part of the array, allowing operations to be done in parallel.}}$
-   - **Terminology:** The process of transforming a single-threaded program to work optimally on multi-core systems is termed "parallelization".
+**1. Parallelism:**
+   - **Purpose:** Threads enable $\textcolor{cyan}{\text{efficient utilization of multiple processors}}$ by allowing parts of a program to run concurrently.
+   - **Example:** For operations on large arrays (like array addition), it can significantly speed up this process by distributing the workload across multiple CPUs. Each thread can handle a part of the array, allowing operations to be done in parallel.
+   - **Terminology:** The process of adapting a single-threaded program for multi-core systems is termed $\textcolor{cyan}{\text{"parallelization"}}$.
 
-**Overcoming I/O Blocking:**
-   - **Purpose:** Threads can prevent a program from being completely halted due to slow I/O operations.
-   - $\textcolor{cyan}{\text{Example: If a program is engaged in different types of I/O activities (such as waiting for a message, disk I/O, or a page fault), instead of making the entire program wait, one thread can handle the I/O while another thread can continue with other tasks.}}$
-   - **Outcome:** This overlap ensures that while one thread is blocked (waiting for I/O), other threads can still perform useful tasks. This model is commonly used in server-based applications like web servers and databases to maximize efficiency.
+**2. Overcoming I/O Blocking:**
+   - **Purpose:** Threads can prevent a program from $\textcolor{cyan}{\text{halting due to slow I/O}}$.
+   - **Example:** If a program is involved in different I/O activities (e.g., waiting for a message), one thread can handle the I/O while another continues with other tasks.
+   - **Outcome:** This overlap ensures that while one thread is blocked, other threads can perform $\textcolor{cyan}{\text{useful tasks}}$. This model is used in applications like web servers and databases.
 
 **Processes vs. Threads:**
-   - **Shared Memory:** Threads within a program share the same address space, making it easier to share data. This shared memory model can make threads more efficient for tasks that require a lot of data exchange.
-   - $\textcolor{cyan}{\text{Isolation: Processes run in separate memory spaces. This isolation can be beneficial when tasks don't need to share much data and can operate independently.}}$
-   - **Usage:** Threads are best suited for tasks within a program that need to share data and resources, while processes are more appropriate for logically distinct tasks with minimal data sharing.
+   - **Shared Memory:** Threads within a program share the same address space, making $\textcolor{cyan}{\text{data sharing efficient}}$.
+   - **Isolation:** Processes run in separate spaces. This can be beneficial when tasks operate independently.
+   - **Usage:** Threads are suited for tasks needing shared data, while processes are for $\textcolor{cyan}{\text{logically distinct tasks}}$.
 
-$\textcolor{cyan}{\text{Takeaway: Threads offer a way to improve performance through parallelism and to ensure smooth operation in the face of I/O blocking. They are a natural choice in modern software design, especially when tasks need to share and access common data efficiently.}}$
+**Takeaway:** Threads offer a way to improve performance through parallelism and to ensure smooth operation despite I/O blocking. They are a go-to in modern software design when tasks need efficient data access.
+
+## Thread Creation
+
+1. **Thread Creation:**
+   - Creating a thread can be compared to $\textcolor{cyan}{\text{making a function call}}$. However, there's a distinction: while a function call will execute and then return to the caller, thread creation leads to a new execution path that operates concurrently with the caller.
+   - The point at which the new thread begins execution may be immediately after its creation, or it could be delayed, depending on the OS scheduler's decisions.
+
+2. **OS Scheduler's Role:**
+   - The Operating System's scheduler determines $\textcolor{cyan}{\text{what runs next}}$. Its decision-making is based on algorithms that aim for efficient task management, but the exact sequence of task execution can be unpredictable.
+  
+3. **Complexity of Concurrency:**
+   - Threads introduce a level of unpredictability. Without concurrency, computer operations follow a predictable sequence. With concurrency, multiple operations can interleave, making it $\textcolor{cyan}{\text{hard to foresee the exact order}}$ of execution.
+   - This unpredictable nature escalates the complexity of understanding and managing computer operations. Concurrency not only complicates things, but it can also magnify challenges exponentially.
+
+**Takeaway:** While threads unlock potentials like parallelism, they also bring complexity and unpredictability. It's crucial to approach multi-threading with caution and a deep understanding of its intricacies.
+
+## The heart of the problem: Uncontrolled scheduling
+
+
+- A `critical section` is a piece of code that accesses a shared resource, usually a variable or data structure.
+- A `race condition` (or data race [NM92]) arises if multiple threads of execution enter the critical section at roughly the same time; both attempt to update the shared data structure, leading to a surprising (and perhaps undesirable) outcome.
+- An `indeterminate program` consists of one or more race conditions; the output of the program varies from run to run, depending on which threads ran when. The outcome is thus not deterministic, something we usually expect from computer systems.
+- To avoid these problems, threads should use some kind of `mutual exclusion primitives`; doing so guarantees that `only a single thread ever enters a critical section,` thus avoiding races, and resulting in deterministic program outputs.
