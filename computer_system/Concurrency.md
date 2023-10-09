@@ -41,3 +41,168 @@
 - A `race condition` (or data race [NM92]) arises if multiple threads of execution enter the critical section at roughly the same time; both attempt to update the shared data structure, leading to a surprising (and perhaps undesirable) outcome.
 - An `indeterminate program` consists of one or more race conditions; the output of the program varies from run to run, depending on which threads ran when. The outcome is thus not deterministic, something we usually expect from computer systems.
 - To avoid these problems, threads should use some kind of `mutual exclusion primitives`; doing so guarantees that `only a single thread ever enters a critical section,` thus avoiding races, and resulting in deterministic program outputs.
+
+## Thread API
+
+**Note on Multithreading with POSIX:**
+
+1. **Introduction**:
+   - Writing a multi-threaded program requires the ability to create new threads. 
+   - In POSIX, this is achieved through the `pthread_create()` function.
+
+2. **Thread Creation**:
+   ```c
+   #include <pthread.h>
+
+   int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine)(void*), void *arg);
+   ```
+   ```c
+   #include <stdio.h>
+   #include <pthread.h>
+
+   typedef struct {
+      int a;
+      int b;
+   } myarg_t;
+
+   void *mythread(void *arg) {
+      myarg_t *args = (myarg_t *) arg;
+      printf("%d %d\n", args->a, args->b);
+      return NULL;
+   }
+
+   int main(int argc, char *argv[]) {
+      pthread_t p;
+      myarg_t args = { 10, 20 };
+      int rc = pthread_create(&p, NULL, mythread, &args);
+      // Rest of your main function...
+      return 0;
+   }
+
+   ```
+
+3. **Function Arguments**:
+   - `thread`: A pointer to a structure of type `pthread_t`. It is used to interact with this thread later.
+   - `attr`: Used to specify attributes for the thread (e.g., stack size or scheduling priority). Defaults are typically sufficient, so passing `NULL` is common.
+   - `start_routine`: A function pointer. It defines which function the thread should start executing. The function is expected to take a single `void*` argument and return a `void*` value.
+   - `arg`: The argument to be passed to the `start_routine`.
+
+4. **Function Pointers**:
+   - A function pointer in C represents the address of a function. It allows dynamic invocation of functions.
+   - For `pthread_create()`, the `start_routine` is expected to have a specific signature. Depending on the requirements, the argument type and return type can be adjusted.
+
+5. **Passing Multiple Arguments**:
+   - Since `start_routine` takes only one argument, if you want to pass multiple arguments to it, you can package them into a single custom type (e.g., `myarg_t`).
+   - Within the `start_routine`, you can cast the received `void*` argument back to the expected type and access the packaged arguments.
+
+6. **Execution**:
+   - Upon successfully creating a thread with `pthread_create()`, you now have another active execution entity. This new thread has its own call stack but shares the address space with existing threads in the program.
+
+**Highlighted Points**:
+- $\textcolor{cyan}{\text{POSIX}}$ offers a function called `pthread_create()` for thread creation.
+- Threads can be $\textcolor{cyan}{\text{given specific attributes}}$ through the `attr` argument.
+- A thread starts its execution from a function pointed to by start_routine.
+- Passing multiple arguments requires packaging them into a $\textcolor{cyan}{\text{single custom type}}$.
+- Creating a thread results in another $\textcolor{cyan}{\text{live executing entity}}$ with its own call stack.
+
+### Waiting for thread Completion
+
+```c
+#include <stdio.h>
+#include <pthread.h>
+
+typedef struct {
+    int a;
+    int b;
+} myarg_t;
+
+typedef struct {
+    int x;
+    int y;
+} myret_t;
+
+void *mythread(void *arg) {
+    myarg_t *args = (myarg_t *) arg;
+    printf("%d %d\n", args->a, args->b);
+    
+    myret_t *rvals = malloc(sizeof(myret_t));
+    rvals->x = 1;
+    rvals->y = 2;
+    return (void *) rvals;
+}
+
+int main(int argc, char *argv[]) {
+    pthread_t p;
+    myret_t *rvals;
+    myarg_t args = { 10, 20 };
+    
+    pthread_create(&p, NULL, mythread, &args);
+    pthread_join(p, (void **) &rvals);
+    
+    printf("returned %d %d\n", rvals->x, rvals->y);
+    free(rvals);
+    return 0;
+}
+
+```
+#### pthread_join()
+
+- When you create a thread and it's running, your main program doesn't know when the thread finishes. If you want your main program to wait until the thread completes its task, you use `pthread_join()`.
+  
+- The `pthread_join()` function ensures that the main program waits until the specified thread has finished executing.
+
+#### Arguments to pthread_join():
+
+1. **pthread_t thread**: This argument is the ID of the thread you want to wait for. This ID is given to you when you create the thread using `pthread_create()`.
+  
+2. **void **value_ptr**: This is a pointer to where the result of the thread's execution will be stored. Since a thread can return any kind of data, this pointer is of type "pointer to void" (`void*`). This means it can point to any type of data. You can think of it as a generic pointer.
+
+#### The Example:
+
+Here's a breakdown of the provided code:
+
+1. **Structures**:
+    - Two structures are defined: `myarg_t` (used to pass arguments to the thread) and `myret_t` (used to retrieve results from the thread).
+    
+2. **Thread Function (mythread)**:
+    - This function is what the thread will execute when it runs.
+    - It receives a single argument, `arg`, which is a pointer (hence it can point to any data type). Here, it points to `myarg_t` data.
+    - The function allocates memory for a `myret_t` structure and sets its values to `x=1` and `y=2`. 
+    - It then returns a pointer to this structure. This is the result that the main program will retrieve after the thread finishes.
+
+3. **Main Program**:
+    - It first defines the arguments for the thread in a `myarg_t` structure (`args = {10, 20}`), though these arguments aren't used in this example.
+    - It then creates the thread using `Pthread_create()`, which will run the `mythread()` function.
+    - The main program waits for the thread to complete using `Pthread_join()`. Once the thread finishes, the return value (pointer to `myret_t` structure) is stored in `rvals`.
+    - Finally, the program prints the results and then frees the memory allocated inside the thread.
+
+#### Key Points:
+- The `pthread_create()` function is used to start a new thread.
+  
+- The `pthread_join()` function is used to wait for a thread to finish and to retrieve its result.
+  
+- You have to be careful about memory management when working with threads. Here, the memory is allocated inside the thread, and after its results are used, the memory is freed in the main program.
+
+#### However
+
+1. **Using `pthread_create()` followed by `pthread_join()`**:
+    - This segment suggests that if you're simply creating a thread and then immediately waiting for it to finish (`pthread_join()`), it might seem unusual or unnecessary. After all, the main idea behind threads is to allow multiple tasks to run concurrently.
+
+2. **Procedure Calls**:
+    - The text mentions that if you're doing the above pattern (create then immediately wait), then you might as well have just made a `regular function` (or procedure) call instead of using a thread. This is because a regular function call also runs a block of code and waits for it to complete before moving on.
+
+3. **Purpose of Threads**:
+    - Threads shine when you want to do multiple things at once. For instance, you might want to create multiple threads to process data concurrently and not wait for each one to complete immediately after starting it.
+
+4. **Not All Multi-threaded Code Uses `pthread_join()`**:
+    - The text points out that not every situation requires you to wait for a thread to complete.
+    - Consider a multi-threaded web server: the main thread could continuously accept client requests and hand them off to worker threads for processing. These worker threads might run indefinitely, processing multiple requests over their lifetimes. In such a scenario, the main thread doesn't always wait for worker threads to finish a task before continuing (it doesn't always "join" them).
+
+5. **When Joining is Essential**:
+    - For parallel processing tasks, where you split up a job into smaller tasks and distribute them among several threads, you'd likely want to wait for all threads to finish before continuing. This is because the next step in your computation might depend on the results of all those threads.
+    - In these situations, you use `pthread_join()` to ensure that all threads have completed their work before the program moves onto the next phase.
+
+In summary:
+- Using threads makes sense when you want concurrent execution. If you're creating a thread just to wait for it immediately, you might as well use a simple function call.
+- Not every threaded application requires you to wait for threads to finish. It depends on the specific use case and application design.
+- In scenarios where the next step depends on the results of all threads, you'll likely use `pthread_join()` to ensure all threads have finished their tasks.

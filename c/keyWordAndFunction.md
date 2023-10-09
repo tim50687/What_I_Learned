@@ -125,3 +125,14 @@ If there's an end-of-file condition (for instance, if the input is being redirec
 5. **Program Continues**: Execution continues after the `fgets()` line in the program.
 
 Remember that the behavior of "waiting until you hit Enter" is specific to terminal-based input. If `stdin` is reading from a file or another source, the behavior might differ.
+
+## `sprintf()`:
+
+The `sprintf()` function is a C library function that writes formatted data to a string. It's similar to `printf()`, except that it writes to a string instead of `stdout`.
+
+```c
+char buffer[50];
+int a = 10, b = 20, c;
+c = a + b;
+sprintf(buffer, "Sum of %d and %d is %d", a, b, c);
+```
