@@ -49,7 +49,7 @@
 
 1. **Character Types for Numeric Values:** 
    - Even if values are numeric, character types might be more suitable for certain data like zip codes, telephone numbers, and social security numbers.
-   - Reason: These values are not used in numeric operations.
+   - Reason: `These values are not used in numeric operations.`
    - Important: Storing such numbers in numeric columns can lead to MySQL stripping leading zeros, which is undesirable.
 
 2. **String Literals in MySQL:**
@@ -132,6 +132,9 @@
    - `UNSIGNED` attribute prevents negative values but doesn't change the range.
    - `ZEROFILL` pads the number with zeros from the left and automatically sets the `UNSIGNED` attribute.
 
-## The temporal data types
+## CR and LF
 
+CR (Carriage Return) - moves the cursor to the beginning of the current line.
+
+LF (Line Feed) - moves the cursor down to the next line.
 
