@@ -274,8 +274,8 @@ Student can accept many courses, and course can accept many students.
 
 
 #### Mandatory participation on one side and optional participation on the other side
-Optional participation is parent entity, and mandatory participation is child entity.
-1. A primary key of the parent is placed in the child entity as a foreign key.
+
+Put mandatory participation entity's primary key into the optional participation entity as a foreign key.
 
 #### Optional participation on both sides
 
@@ -324,7 +324,7 @@ Create a new relation to represent the multi-valued attribute, and include the p
 
 **Example**:
 - **Strong Entity**: `Classroom` with primary key `classroom_id`.
-- **Weak Entity**: `Seat` with a composite primary key consisting of `classroom_id` (foreign key referencing `Classroom`) and its own attribute `seat_number`.
+- **Weak Entity**: `Seat` with a composite primary key consisting of `classroom_id` (foreign key referencing `Classroom`) and its own attribute `seat_number`. Foreign Key on delete cascade.
 
 **Challenge**: If a third table, say `SeatAssignment`, needs to reference a `Seat`, it must acknowledge the composite nature of the `Seat's` primary key.
 
