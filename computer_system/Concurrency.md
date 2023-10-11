@@ -206,3 +206,52 @@ In summary:
 - Using threads makes sense when you want concurrent execution. If you're creating a thread just to wait for it immediately, you might as well use a simple function call.
 - Not every threaded application requires you to wait for threads to finish. It depends on the specific use case and application design.
 - In scenarios where the next step depends on the results of all threads, you'll likely use `pthread_join()` to ensure all threads have finished their tasks.
+
+## Locks
+
+### POSIX Locking and Concurrency
+
+In the POSIX framework, locks can be associated with specific variables, enabling greater flexibility in synchronization strategies. This offers the following benefits:
+
+1. **Increased Concurrency**: Rather than employing a single, overarching lock for every critical section, distinct locks can be allocated for individual data or structures. This fine-grained approach lets multiple threads access locked code concurrently.
+
+2. **Efficiency and Scalability**: By employing variable-specific locks, the system can avoid unnecessary waiting. Threads that need to access different data structures or variables can do so without being blocked by unrelated operations.
+
+3. **Fine-Grained vs. Coarse-Grained**:
+   - **Coarse-Grained Locking**: A strategy where one overarching lock protects access to all shared resources. While simple, it can be less efficient in multi-threaded scenarios since only one thread can access any shared resource at a given time.
+   - **Fine-Grained Locking**: A strategy where different locks protect different shared resources. This permits multiple threads to access separate resources concurrently, enhancing system throughput.
+
+By using fine-grained locking in the POSIX model, developers can craft synchronization strategies that better fit their specific use cases, optimizing for performance and concurrency.
+
+
+### **Lock Evaluation Criteria:**
+
+1. **Mutual Exclusion:**
+   - Definition: Ensuring that only one thread can enter the critical section at a time, thus preventing concurrent access.
+   - Key Question: Does the lock effectively prevent multiple threads from accessing a shared resource simultaneously?
+
+2. **Fairness:**
+   - Definition: Ensuring that each thread contending for the lock has an equitable chance to acquire it.
+   - Concerns:
+     - **Thread Starvation:** It's the scenario where a thread perpetually waits and never gets a chance to acquire the lock, even when it's free. This is an extreme case highlighting the absence of fairness.
+   - Key Question: Does any thread contending for the lock get indefinitely postponed or neglected, leading to starvation?
+
+3. **Performance:**
+   - Factors to Consider:
+     - **No Contention:** Assess the time overhead of acquiring and releasing the lock when there's only one thread in the system.
+     - **Single CPU Contention:** Examine the efficiency of the lock when multiple threads compete for it on a single CPU. 
+     - **Multi-CPU Contention:** Evaluate the lock's performance when threads from different CPUs contend for it.
+   - Key Question: What is the time overhead introduced by the lock in different contention scenarios, and how does it affect the overall system performance?
+
+### Why test and set can solve correctness problem?
+
+If `TestAndSet` were only a C function written like that, it wouldn't be atomic and wouldn't solve the problem. The difference is in how `TestAndSet` is actually implemented and executed.
+
+
+1. **Atomic in this Context**: "Atomic" here doesn't refer to atoms in the physical sense. In computer science, an "atomic operation" means an operation that runs completely independently of any other operations and is uninterruptible. Once it starts, it runs straight through without being stopped or interfered with.
+
+2. **The Role of Hardware**: While we can represent `TestAndSet` as a function in C or any high-level language, for it to be truly atomic, it must be supported by the hardware. That means the processor itself has a built-in mechanism or instruction to execute `TestAndSet` as a single, uninterruptible operation. When you call `TestAndSet` in a program on a system that supports it, under the hood, the processor uses its built-in atomic `TestAndSet` instruction.
+
+3. **Why Not Just a Function?**: If `TestAndSet` were only a high-level function like in the example, other threads or processors could interfere between the moment we fetch the old value and when we set the new value. This interference would introduce the race condition we're trying to avoid. That's why a simple function isn't sufficient. The hardware-level atomic operation ensures that the entire fetch-and-set sequence happens without any possibility of interruption or interference.
+
+In summary, while we can *represent* operations like `TestAndSet` in high-level programming languages for understanding or illustrative purposes, ensuring their atomicity in real-world scenarios requires hardware support. When we talk about `TestAndSet` in the context of synchronization, we're often referring to the hardware-supported atomic operation, not just the high-level function representation.
