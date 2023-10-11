@@ -345,5 +345,11 @@ CREATE TABLE SeatAssignment (
 );
 ```
 
+> Using composite foreign keys helps in preserving the relationships between tables when the primary key of the referenced table is made up of multiple columns
+```sql
+FOREIGN KEY (classroom_id, seat_number) REFERENCES Seat(classroom_id, seat_number)
+```
+
+
 **Key Takeaway**: When designing tables that reference entities with composite primary keys, it's essential to handle both parts of the key correctly, both for data integrity and for maintaining clear relational mappings.
 
