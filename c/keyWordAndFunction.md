@@ -136,3 +136,25 @@ int a = 10, b = 20, c;
 c = a + b;
 sprintf(buffer, "Sum of %d and %d is %d", a, b, c);
 ```
+
+## `dup2()`:
+
+The `dup2()` function is a Unix system call that duplicates an existing file descriptor to another file descriptor. It's typically used to redirect `stdin` and `stdout` to files or other devices.
+
+```c
+dup2(int oldfd, int newfd)
+```
+closes newfd if it is already open, and makes a copy of oldfd numbered newfd. 
+### Why is this necessary?
+
+Using `dup2()` allows processes to change where their output goes (for writers) or where their input comes from (for readers). 
+
+In the case of `ls | grep`:
+
+- The `ls` command should have its output directed to the pipe instead of the terminal. Hence, we use `dup2()` to replace stdout for `ls` with the write end of the pipe.
+  
+- The `grep` command should take its input from the pipe instead of the keyboard. Hence, we use `dup2()` to replace stdin for `grep` with the read end of the pipe.
+
+The `close()` calls are essential for two reasons:
+1. Free up system resources.
+2. Ensure that the pipe behaves correctly. For example, if the read end isn't closed, `grep` might hang waiting for more input because the pipe wouldn't send an EOF (end of file) signal.

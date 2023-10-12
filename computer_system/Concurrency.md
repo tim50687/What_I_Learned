@@ -255,3 +255,25 @@ If `TestAndSet` were only a C function written like that, it wouldn't be atomic 
 3. **Why Not Just a Function?**: If `TestAndSet` were only a high-level function like in the example, other threads or processors could interfere between the moment we fetch the old value and when we set the new value. This interference would introduce the race condition we're trying to avoid. That's why a simple function isn't sufficient. The hardware-level atomic operation ensures that the entire fetch-and-set sequence happens without any possibility of interruption or interference.
 
 In summary, while we can *represent* operations like `TestAndSet` in high-level programming languages for understanding or illustrative purposes, ensuring their atomicity in real-world scenarios requires hardware support. When we talk about `TestAndSet` in the context of synchronization, we're often referring to the hardware-supported atomic operation, not just the high-level function representation.
+
+#### Evaluating Spin Locks
+
+The crucial element missing in the description is the atomicity of the combined operations. In a real `TestAndSet` hardware instruction, the process of fetching the old value, storing the new value, and returning the old value is done as a single, indivisible (atomic) operation. No other operation on the CPU, and no other CPU (in multi-CPU systems), can see the intermediate state or interrupt in the middle of this operation.
+
+For `TestAndSet` to work correctly as a mutual exclusion primitive, it needs to be a hardware-supported atomic operation. When we say that `TestAndSet` is a hardware instruction, we mean that the CPU provides support to ensure that the entire sequence of fetching, storing, and returning occurs without interruption. If two threads on two different CPUs were to execute the `TestAndSet` instruction at the "same time", the hardware ensures that they are serialized in some order, so only one of them sees the lock as available.
+
+**Spin Locks on a Single-CPU System**
+
+- A spin lock uses atomic hardware instructions (e.g., `test-and-set` or `compare-and-swap`) to check if a lock is available.
+- These atomic operations ensure that reading, possibly modifying, and writing a memory value occurs in an uninterruptible step, providing mutual exclusion.
+- In a uniprocessor system:
+  1. If a thread (Thread A) tries to acquire a spin lock held by another thread (Thread B), Thread A will enter a loop, repeatedly checking if the lock is free.
+  2. The OS scheduler can preempt Thread A (i.e., pause its execution) due to its time slice expiring or other scheduling decisions.
+  3. If another thread (Thread C) is scheduled and also attempts to acquire the same lock, it will also enter a spin, waiting for the lock to be released.
+  4. This becomes inefficient: if Thread B isn't scheduled to run, both Thread A and Thread C are stuck in a non-productive spinning state.
+- In summary, on a single-CPU system, spin locks can lead to significant inefficiencies when threads are preempted while holding or waiting for a lock.
+
+
+**Multiple CPUs**: 
+
+In a multiprocessor system, spin locks can be more efficient. If one thread on CPU 1 holds the lock and another thread on CPU 2 tries to acquire it, the second thread will spin. However, since the critical section (the part of code protected by the lock) is expected to be short, the first thread will quickly release the lock, and the spinning thread can acquire it. In this scenario, the overhead of spinning is relatively small, especially if the number of threads is roughly equal to the number of CPUs.
