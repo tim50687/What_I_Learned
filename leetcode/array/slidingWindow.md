@@ -7,7 +7,7 @@
 
 > A sliding window guarantees a maximum of `2n` window iterations - the right pointer can move n times and the left pointer can move n times. Sliding windows algorithms run in linear time.
 
-## Logic
+## `Logic`
 
 - Two pointers
 
