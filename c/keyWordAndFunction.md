@@ -25,7 +25,74 @@ echo $?
 - When you subsequently ran `echo $?`, it displayed the exit status of the previous command, which was 144.
 - Finally, when you ran `echo $?` again, it displayed the exit status of the `echo` command itself, which was 0 because `echo` successfully printed the value.
 
+## `ls`:
 
+**Understanding the Behavior of the `ls` Command**
+
+The `ls` command in Unix-like operating systems is used to list files and directories. Its output format adjusts based on where its output is being sent:
+
+1. **Direct Terminal Output:** 
+   When you run `ls` directly in a terminal, it detects that its output is connected to a terminal screen. In this scenario, `ls` often displays its output in columns, making it user-friendly and easier to read.
+
+2. **Command Substitution or Redirection:** 
+   When the output of `ls` is captured by command substitution (e.g., `$(ls)`) or redirected to a file or another command, `ls` defaults to listing filenames one per line.
+
+   For instance, in the command:
+   ```bash
+   echo $(ls)
+   ```
+   The `ls` command lists filenames one per line, but then those filenames (including newlines) become arguments to the `echo` command. As a result, the newlines are replaced by spaces, giving a single-line output.
+
+3. **Forcing Single-Line Output:** 
+   If you always want `ls` to list one file per line, regardless of the output destination, you can use the `-1` option:
+   ```bash
+   ls -1
+   ```
+   This ensures a single file is listed per line.
+
+## `$(...)`:
+
+## Command Substitution: `$(...)`
+
+In this mechanism, the output of a command replaces the command itself.
+
+Command substitution allows us to run a command and use its output in another context, whether in an assignment or as an argument to another command.
+
+### Example 1:
+Let's capture the output of `ls -1` (which lists files one per line) and assign it to a variable:
+```bash
+output=$(ls -1)
+```
+The variable `$output` now contains the names of the files, with each file name on a separate line.
+
+If we echo this variable *with quotes*, it will respect the newlines:
+```bash
+echo "$output"
+```
+This will print each file on its own line.
+
+### Example 2:
+However, if we use the command substitution directly as an argument to another command *without quotes*, things change:
+```bash
+echo $(ls -1)
+```
+This will print all the files on a single line, separated by spaces. Why? Because the shell, by default, splits arguments on whitespace (spaces, tabs, and newlines). So, each file name becomes a separate argument to `echo`, and `echo` prints them all separated by spaces.
+
+#### The Role of Double Quotes:
+
+**Preserving White Spaces**: Without double quotes, the shell interprets whitespace (spaces, tabs, and newlines) as argument delimiters. By surrounding a string or command substitution with double quotes, we're instructing the shell to treat the content as a single argument, even if it contains whitespace.
+
+   - Without quotes:
+     ```bash
+     echo $(ls -1)
+     ```
+     Here, each file/directory returned by `ls -1` is treated as a separate argument to `echo`, and `echo` prints them separated by spaces.
+
+   - With quotes:
+     ```bash
+     echo "$(ls -1)"
+     ```
+     In this case, the entire output of `ls -1` (including all newlines) is treated as a single argument. Thus, `echo` prints the files/directories each on a separate line, respecting the newlines.
 
 
 # Function
