@@ -133,3 +133,55 @@ Besides matched rows, an outer join returns unmatched rows from one or both tabl
 
 - A left outer join returns unmatched rows from the first (left) table.
 - A right outer join returns unmatched rows from the second (right) table.
+
+
+### How to join tables with the USING keyword
+
+```sql
+SELECT invoice_number, vendor_name
+FROM vendors
+    JOIN invoices USING (vendor_id)
+ORDER BY invoice_number
+```
+
+When you use the equal operator to join two tables on a common column, the join can be referred to as an `equijoin`. 
+
+For joins like this, you can simplify the query with the USING keyword.
+
+- `vendor_id` column exists in both the Vendor and Invoice tables.
+
+### How to use cross joins 
+
+A `cross join` returns the Cartesian product of the two tables involved in the join.
+
+- use explicit syntax
+
+```sql
+SELECT select_list
+FROM table1 CROSS JOIN table2
+```
+
+> A cross join joins each row from the first table with each row from the second table.
+
+### How to work with unions
+
+```sql
+SELECT 'Active' AS source, invoice_number, invoice_date, invoice_total 
+FROM active_invoices
+WHERE invoice_date >= '2018-06-01'
+UNION
+SELECT 'Paid' AS source, invoice_numher, invoice_date, invoice total 
+FROM paid_ invoices
+WHERE invoice_date >= '2018-06-01'
+ORDER BY invoice_total DESC
+```
+
+- same number of columns.
+
+- data types of the corresponding columns must have the same number of columns.
+
+- In an ORDER BY clause, you must use the columns names that are specified in the first SELECT statement. This is because the column names in the first SELECT statement are used to determine the column names in the result set.
+
+- By default, the UNION operator removes duplicate rows from the result set. If you want to include duplicate rows, use the `UNION ALL` operator instead.
+
+- you will typically assign the same name to corresponding columns so the statement is easier to understand.

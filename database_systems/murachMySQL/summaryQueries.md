@@ -45,7 +45,7 @@ With 2 exceptions, a SELECT clause that contains an aggregate function can conta
 1. If the column specifications results in a literal value.
 
 ```sql
-SELECT 'A fter 1/1/2018' AS selection_date,
+SELECT 'After 1/1/2018' AS selection_date,
 COUNT(*) AS number_of_ invoices, ROUND{AVG{invoice_total), 2) AS avg_invoice_amt, SUM{invoice_total) AS total_invoice_amt
 FROM invoices
 WHERE invoice_date > '2018-01-01'
