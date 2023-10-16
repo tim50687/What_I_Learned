@@ -185,3 +185,44 @@ ORDER BY invoice_total DESC
 - By default, the UNION operator removes duplicate rows from the result set. If you want to include duplicate rows, use the `UNION ALL` operator instead.
 
 - you will typically assign the same name to corresponding columns so the statement is easier to understand.
+
+
+### **Sequential JOINs in SQL Queries**
+
+When performing multiple JOIN operations in a query, the results are built upon each other sequentially based on the order of the JOINs. Here's a breakdown using the example:
+
+```sql
+SELECT *
+FROM songs s
+LEFT JOIN albums al ON s.album_id = al.alid
+LEFT JOIN artists ar ON al.artist = ar.artist_name
+LEFT JOIN user_follows_artist ufa ON ar.aid = ufa.aid;
+```
+
+1. **First JOIN (`songs` with `albums`):** This pairs each song with its associated album. If a song doesn't have a corresponding album, the columns related to the album will show `NULL` for that song.
+
+2. **Second JOIN (Result of First JOIN with `artists`):** This is based on the intermediate result from the first JOIN. It attempts to pair each album (from the previous result set) with its associated artist. If the intermediate result has a song with `NULL` album details, this song will continue to have `NULL` details for both album and artist after this JOIN.
+
+3. **Third JOIN (Result of First and Second JOINs with `user_follows_artist`):** The result from the previous two JOINs is then paired with the `user_follows_artist` table. This adds information about which users follow each artist. If an artist doesn't have any followers, this column will display `NULL`.
+
+To summarize, each subsequent JOIN operation processes the result of the previous JOINs. If there's a `NULL` from an earlier JOIN, this `NULL` will persist through the subsequent JOINs unless otherwise addressed in the query.
+
+> If you change one of the LEFT JOINs to a standard (INNER) JOIN, the behavior of the query changes.
+
+Let's break down the new query:
+
+```sql
+SELECT *
+FROM songs s
+LEFT JOIN albums al ON s.album_id = al.alid
+JOIN artists ar ON al.artist = ar.artist_name
+LEFT JOIN user_follows_artist ufa ON ar.aid = ufa.aid;
+```
+
+1. **First JOIN (`songs` with `albums`):** As before, this pairs each song with its associated album. If a song doesn't have a corresponding album, the columns related to the album will show `NULL` for that song.
+
+2. **Second JOIN (Result of First JOIN with `artists`):** Here's where the change is. Since it's an INNER JOIN, only those rows with matching entries in both the intermediate result (from the first JOIN) and the `artists` table will remain in the result set. If there's a song from the intermediate result that has `NULL` as album details (because it doesn't have an associated album), then it won't have a matching artist either. Consequently, such a song will be excluded from the final result set. Essentially, any song without an associated album will be dropped at this stage.
+
+3. **Third JOIN (Result of First and Second JOINs with `user_follows_artist`):** This tries to pair each artist from the previous result set with information from the `user_follows_artist` table. If an artist doesn't have any followers, this column will display `NULL`.
+
+To summarize, by using an INNER JOIN with the `artists` table, any song without a matching album (and hence without a matching artist) will be excluded from the result set. Only songs that have both an associated album and artist will appear in the final result.

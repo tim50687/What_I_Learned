@@ -12,6 +12,19 @@ The most common aggregate functions are:
 
 - `COUNT()` - returns the number of rows in a column
 
+    **Note on SQL LEFT JOIN with COUNT:**
+
+    When using a `LEFT JOIN`, if there's no matching entry in the right table, the fields for that table in the result set will contain `NULL` values.
+
+    When applying the `COUNT` function to a field that might contain `NULL` values due to the `LEFT JOIN`:
+
+    1. `COUNT` will only consider non-`NULL` values. 
+    2. Any `NULL` values in the counted field will be excluded from the count.
+
+    For instance, if we're counting songs by genre using a `LEFT JOIN`, and a particular genre has no songs associated with it, the `COUNT` for that genre will return 0.
+
+    This behavior ensures that you get an accurate count of actual entries, without inflating the count with non-matching entries from the join.
+
 - `SUM()` - returns the sum of the values in a column
 
 - `AVG()` - returns the average of the values in a column

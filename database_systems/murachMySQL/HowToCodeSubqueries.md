@@ -61,6 +61,8 @@ The condition must be true for at least one of the values returned by a subquery
 
 ### Correlated subqueries
 
+- like a for loop
+
 Correlated subquery executeted once for each row that's processed by the main query.
 
 ```sql

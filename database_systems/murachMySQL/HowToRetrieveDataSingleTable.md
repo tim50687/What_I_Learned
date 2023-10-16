@@ -198,3 +198,6 @@ WHERE vendor_name REGEXP '^A'
 To sort by more than one column, list the columns in the order that you want them sorted, separated by commas.
 
 
+### LIMIT
+
+- Can use limit to get the max or min!
