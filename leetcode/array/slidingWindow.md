@@ -14,8 +14,13 @@
 - Brute force is to check all the possible window, which is O(n^2).
 	- Left pointer start from 0, and you have to go through every index to find out the possible sub array.
 	- However, we can find the way to optimize the right pointer.
+		- I think, **`either find longest or shortest, right pointer will never go back, therefore, outer loop use right pointer.`**
 	- Unlike Brute force, we can move the left and right pointer in the smart way.
 		- While expanding, check whether moving left pointer or right pointer can benefit the answer.
+- Find smallest:
+	- expand window until it's valid
+- Find longest:
+	- expand window until it's invalid
 
 ## Dynamic Sliding Window
 
@@ -43,3 +48,8 @@
 - create `Counter(t)` to count the number of each character in t.
 
 - use `count = len(t)` variable to track the constraint.
+
+### 3. Longest Substring Without Repeating Characters
+
+- create a flag to see if there's a duplicate character in the window.
+	- if window shrink, check if the value in dictionary is == 1.
