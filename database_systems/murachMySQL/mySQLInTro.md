@@ -187,3 +187,46 @@ FOREIGN KEY (classroom_id, seat_number) REFERENCES Seat(classroom_id, seat_numbe
 
 **Key Takeaway**: When designing tables that reference entities with composite primary keys, it's essential to handle both parts of the key correctly, both for data integrity and for maintaining clear relational mappings.
 
+What you're looking at is a Common Table Expression (CTE), introduced using the `WITH` clause in SQL.
+
+## **Common Table Expression (CTE)**
+
+- **Purpose**: A CTE provides a temporary result set that you can reference within a `SELECT`, `INSERT`, `UPDATE`, or `DELETE` statement. CTEs are used for simplifying complex joins and subqueries, and also for breaking up queries into more logical and manageable pieces.
+
+- **Syntax**:
+  ```sql
+  WITH cte_name (column_name1, column_name2, ...)
+  AS (
+      -- Your query here
+  )
+  -- Main query referencing the CTE
+  ```
+
+- **Example**:
+
+  Given your snippet:
+
+  ```sql
+  WITH vendor_table AS 
+  (SELECT vendor_id, AVG(invoice_total) AS vendor_avg 
+   FROM invoices
+   GROUP BY vendor_id) 
+  -- After this, you can use "vendor_table" in your main query as if it's a regular table
+  ```
+
+  You can now use `vendor_table` in subsequent queries as if it was a real table, for example:
+
+  ```sql
+  SELECT v.vendor_name, vt.vendor_avg 
+  FROM vendors v 
+  JOIN vendor_table vt ON v.vendor_id = vt.vendor_id;
+  ```
+
+  This will give you the average invoice total for each vendor.
+
+- **Benefits**:
+  1. **Readability and Maintenance**: By using CTEs, you can break down complex queries into simpler parts, which makes your SQL code more readable and easier to maintain.
+  2. **Reusable**: The same CTE can be referenced multiple times in the main query.
+  3. **Logical Flow**: CTEs enable top-down logic in which you can first define the CTE and then use it, providing a flow that can be easier to follow.
+
+- **Note**: Remember, CTEs are temporary and only last for the duration of the query in which they're defined. They don't store data beyond the execution of that query.

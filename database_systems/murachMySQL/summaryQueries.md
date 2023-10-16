@@ -76,3 +76,46 @@ GROUP BY and HAVING clauses are coded after the WHERE clause and before the ORDE
 - The HAVING clause is used to filter groups after they are created.
     - Can include aggregate functions.
     - Can only refer to columns included in the SELECT clause.
+
+
+## **GROUP_CONCAT() in SQL**
+
+- **Purpose**: The `GROUP_CONCAT()` function is used to concatenate values from multiple rows into a single string. It's particularly useful when working with grouped results.
+  
+- **Syntax**: 
+  ```sql
+  GROUP_CONCAT(column_name)
+  ```
+
+- **Example**:
+
+  Consider a table named `vendors`:
+
+  | vendor_id | vendor_name       | vendor_city  | vendor_state |
+  |-----------|-------------------|--------------|--------------|
+  | 1         | Vendor A          | Los Angeles  | CA           |
+  | 2         | Vendor B          | San Francisco| CA           |
+  | 3         | Vendor C          | San Diego    | CA           |
+  | 4         | Vendor D          | Austin       | TX           |
+  | 5         | Vendor E          | Dallas       | TX           |
+  | 6         | Vendor F          | Phoenix      | AZ           |
+
+  To get a list of cities for each state where vendors are located:
+
+  ```sql
+  SELECT vendor_state, GROUP_CONCAT(vendor_city) AS vendor_cities 
+  FROM vendors 
+  GROUP BY vendor_state 
+  ORDER BY vendor_state;
+  ```
+
+  Result:
+
+  | vendor_state | vendor_cities                            |
+  |--------------|------------------------------------------|
+  | AZ           | Phoenix                                  |
+  | CA           | Los Angeles,San Francisco,San Diego      |
+  | TX           | Austin,Dallas                            |
+
+- **Note**: The result for the state of CA shows cities "Los Angeles", "San Francisco", and "San Diego" concatenated into a single string, indicating all the cities in CA with vendors. This provides a concise way to view grouped data.
+
