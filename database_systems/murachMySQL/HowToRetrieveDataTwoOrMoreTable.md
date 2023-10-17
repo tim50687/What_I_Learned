@@ -123,6 +123,51 @@ ORDER BY vl.vendor_state, vl.vendor_city;
 | Vendor E    | New York    | NY           |
 | Vendor E    | New York    | NY           |
 ```
+#### Trick
+
+##### Eliminating Duplicate Pairings in SQL Joins
+
+When joining a table to itself to find pairings between records, it's common to get "duplicate" pairs, where record A paired with record B is considered the same as record B paired with record A. 
+
+**Scenario:**
+You have a table named `user_follows_artist` and you want to find pairs of users who follow the same artist. When you join the table with itself, you might get pairs of users like (1,2) and (2,1) which are essentially duplicates.
+
+**Problematic Query:**
+```sql
+SELECT ufa1.user_id, ufa2.user_id, ufa1.aid
+FROM user_follows_artist ufa1
+	JOIN user_follows_artist ufa2
+		ON ufa1.user_id != ufa2.user_id AND
+			ufa1.aid = ufa2.aid;
+```
+Result:
+```
+user_id  user_id  aid
+1       2       1
+2       1       1
+... and so on ...
+```
+
+**Solution:**
+Use a `<` or `>` operator instead of `!=` when comparing the user IDs. This ensures that for each pair of users, only one combination (the one with the smaller ID first) is returned.
+
+```sql
+SELECT ufa1.user_id AS user_id1, ufa2.user_id AS user_id2, ufa1.aid
+FROM user_follows_artist ufa1
+	JOIN user_follows_artist ufa2
+		ON ufa1.user_id < ufa2.user_id AND
+			ufa1.aid = ufa2.aid;
+```
+Result:
+```
+user_id1  user_id2  aid
+1        2        1
+... no (2,1) ...
+```
+
+**Takeaway:**
+By modifying the join condition, you can control the combinations of records that are matched and returned in the result set, thus avoiding undesired duplicates.
+
 
 
 ### How to work with outer joins
