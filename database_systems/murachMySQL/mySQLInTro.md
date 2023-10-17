@@ -10,77 +10,6 @@ FROM information_schema.TABLES
 WHERE TABLE_SCHEMA = 'your_database_name';
 ```
 
-## How to retrieve data from a single table?
-
-### SELECT, WHERE, ORDER BY, LIMIT
-
-The `SELECT` clause is always the first clause in a SELECT statement. These columns are retireved from the based table named in the `FROM` clause.
-
-> You can select a column that is calculated from other columns in the table. 
-```sql
-SELECT invoice_id, invoice_total,
-credit total + payment_total AS total credits
-FROM invoices
-WHERE invoice_ id = 17
-```
-> You can use the `CONCAT` function to combine two or more columns into a single column.
-```sql
-SELECT CONCAT(first_name, ' ', last_name) AS full_name
-```
-
-> Using alias. To include a space in the alias for the first column, you must enclose the alias in double quotes.
-```sql
-SELECT invoice_number AS "Invoice Number", invoice_date AS Date, invoice total AS Total
-FROM invoices
-```
-
-The `WHERE`, `ORDer BY`, and `LIMIT` clauses are optional. If you don't include them, the database system will return all rows from the table.
-
-- `WHERE` - determines which rows are returned.  
-
-Between different date
-```sql
-SELECT invoice_n11mher, invoice_date, invoice_total FROM invoices
-WHERE invoice date BETWEEN '2018-06-01' AND '2018-06-30' 
-ORDER BY invoice_date
-```
-Might return empty result
-```sql
-SELECT invoice_number, invoice_date, invoice_total FROM invoices
-WHERE invoice_total > 50000
-```
-- `ORDER BY` - determines the order in which the rows are returned.
-    - `ASC` - ascending order
-    - `DESC` - descending order
-
-    ```sql
-    SELECT invoice_number, invoice_date, invoice_total 
-    FROM invoices
-    ORDER BY invoice_total DESC
-    ```
-
-- `LIMIT` - determines the number of rows that are returned.
-
-#### Arithmetic operators
-
-- `+` - addition
-
-- `-` - subtraction
-
-- `*` - multiplication
-
-- `/` - division (decimal_quotient)
-    - `DIV` - division (integer_quotient)
-    - `%` - modulus (remainder)
-
-
-#### count
-To count the number of rows in a table, you can use the COUNT() function in SQL. Here's how you can do it:
-
-```sql
-SELECT COUNT(*) FROM table_name;
-```
-
 ## INSERT
 
 - List the values to be inserted on the VALUES clause.
@@ -92,6 +21,8 @@ SELECT COUNT(*) FROM table_name;
     - If columns `allow NULL values`, you can omit values for those columns. The database system will insert NULL values for them.
 
 ## Foreign Key Action
+
+[GOOD WEBSITE](https://stackoverflow.com/questions/6720050/foreign-key-constraints-when-to-use-on-update-and-on-delete)
 
 In MySQL, when defining foreign key relationships, you can specify what action should be taken when a referenced row in the parent table is updated or deleted. Here are the available actions:
 
@@ -177,8 +108,8 @@ Student can accept many courses, and course can accept many students.
 
 
 #### Mandatory participation on one side and optional participation on the other side
-Optional participation is parent entity, and mandatory participation is child entity.
-1. A primary key of the parent is placed in the child entity as a foreign key.
+
+Put mandatory participation entity's primary key into the optional participation entity as a foreign key.
 
 #### Optional participation on both sides
 
@@ -215,3 +146,87 @@ We post a copy of the pri- mary key attribute(s) of the entities that participat
 ### Multi-valued attributes
 
 Create a new relation to represent the multi-valued attribute, and include the primary key of the entity in the new relation to act as a foreign key.
+
+### weak entity
+
+[good website](https://stackoverflow.com/questions/26448216/sql-create-weak-entity-table)
+
+
+**Note on Referencing Composite Primary Keys in Relational Databases**
+
+**Context**: In a database, there might be scenarios where one entity (like `Seat` in a `Classroom`) cannot be uniquely identified by its attributes alone. Such an entity is termed a "weak entity." For unique identification, it uses a composite primary key, which includes its own attribute and a foreign key referencing another (strong) entity.
+
+**Example**:
+- **Strong Entity**: `Classroom` with primary key `classroom_id`.
+- **Weak Entity**: `Seat` with a composite primary key consisting of `classroom_id` (foreign key referencing `Classroom`) and its own attribute `seat_number`. Foreign Key on delete cascade.
+
+**Challenge**: If a third table, say `SeatAssignment`, needs to reference a `Seat`, it must acknowledge the composite nature of the `Seat's` primary key.
+
+**Solution**:
+1. The third table must have columns to accommodate every part of the composite key.
+2. When setting up foreign key constraints in this third table, both columns (`classroom_id` and `seat_number` in this example) must be used to reference the primary key of the `Seat` table.
+
+**Illustrative Schema**:
+```sql
+CREATE TABLE SeatAssignment (
+    classroom_id INT,
+    seat_number INT,
+    student_id INT,
+    assignment_date DATE,
+    PRIMARY KEY (classroom_id, seat_number, student_id),
+    FOREIGN KEY (classroom_id, seat_number) REFERENCES Seat(classroom_id, seat_number),
+    FOREIGN KEY (student_id) REFERENCES Student(student_id)
+);
+```
+
+> Using composite foreign keys helps in preserving the relationships between tables when the primary key of the referenced table is made up of multiple columns
+```sql
+FOREIGN KEY (classroom_id, seat_number) REFERENCES Seat(classroom_id, seat_number)
+```
+
+
+**Key Takeaway**: When designing tables that reference entities with composite primary keys, it's essential to handle both parts of the key correctly, both for data integrity and for maintaining clear relational mappings.
+
+What you're looking at is a Common Table Expression (CTE), introduced using the `WITH` clause in SQL.
+
+## **Common Table Expression (CTE)**
+
+- **Purpose**: A CTE provides a temporary result set that you can reference within a `SELECT`, `INSERT`, `UPDATE`, or `DELETE` statement. CTEs are used for simplifying complex joins and subqueries, and also for breaking up queries into more logical and manageable pieces.
+
+- **Syntax**:
+  ```sql
+  WITH cte_name (column_name1, column_name2, ...)
+  AS (
+      -- Your query here
+  )
+  -- Main query referencing the CTE
+  ```
+
+- **Example**:
+
+  Given your snippet:
+
+  ```sql
+  WITH vendor_table AS 
+  (SELECT vendor_id, AVG(invoice_total) AS vendor_avg 
+   FROM invoices
+   GROUP BY vendor_id) 
+  -- After this, you can use "vendor_table" in your main query as if it's a regular table
+  ```
+
+  You can now use `vendor_table` in subsequent queries as if it was a real table, for example:
+
+  ```sql
+  SELECT v.vendor_name, vt.vendor_avg 
+  FROM vendors v 
+  JOIN vendor_table vt ON v.vendor_id = vt.vendor_id;
+  ```
+
+  This will give you the average invoice total for each vendor.
+
+- **Benefits**:
+  1. **Readability and Maintenance**: By using CTEs, you can break down complex queries into simpler parts, which makes your SQL code more readable and easier to maintain.
+  2. **Reusable**: The same CTE can be referenced multiple times in the main query.
+  3. **Logical Flow**: CTEs enable top-down logic in which you can first define the CTE and then use it, providing a flow that can be easier to follow.
+
+- **Note**: Remember, CTEs are temporary and only last for the duration of the query in which they're defined. They don't store data beyond the execution of that query.
