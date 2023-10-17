@@ -105,6 +105,29 @@ $\textcolor{cyan}{\text{Memory Management Unit (MMU)}}$: Responsible for transla
 
 ### 2 Level Page Table
 
+#### Why 2 level pages can solve the problem?
+
+In a single-level page table, you need a large table (e.g., 4 MB) for each process, regardless of how much memory the process actually uses. This is wasteful, especially for processes that only use a small portion of the address space.
+
+With a two-level page table, the top-level table (page directory) is much smaller and points to second-level tables. If a process only uses a small amount of memory, many entries in the top-level directory will be empty (indicating no second-level table for that range), and thus only a few second-level tables will be needed. This means small-memory processes will have small page tables, saving a significant amount of memory.
+
+1. **Virtual Address**:
+   - The virtual address is typically divided into three parts:
+     - **First-Level Index (or Directory Index)**: Used to index into the first-level page table.
+     - **Second-Level Index (or Table Index)**: Used to index into the second-level page table.
+     - **Offset**: Specifies a particular location within the resolved physical page.
+
+2. **Page Tables**:
+   - **First-Level Page Table (Page Directory)**: Contains pointers to second-level page tables.
+   - **Second-Level Page Table**: Contains the base addresses of physical pages.
+
+3. **Address Translation**:
+   - The first-level index is used to find the appropriate second-level page table.
+   - The second-level index is used to find the base address of the physical page.
+   - The offset is then added to this base address to pinpoint the exact byte or word within that physical page.
+
+
+---
 **1. Two-Level Page Table:**
 Instead of using a single large table to map virtual addresses to physical addresses, a two-level page table uses a hierarchical structure, like a tree. This structure consists of a top-level table (often called the page directory) and multiple second-level tables.
 
@@ -181,3 +204,239 @@ The TLB (Translation Look-aside Buffer) is a cache that stores recent virtual-to
 - **Solution 2**: Use an Address Space ID (ASID). Instead of flushing the TLB, `each TLB entry is tagged with an ASID`, which identifies the process (or context) it belongs to. A special MMU register holds the ASID of the currently running process. TLB entries with a different ASID are ignored, ensuring that entries from one process aren't mistakenly used by another. This approach allows multiple processes' TLB entries to coexist, improving efficiency.
 
 **Key Takeaway**: Ensuring the TLB's consistency is crucial for system correctness. While flushing the TLB is a straightforward solution, it can be inefficient. Using an ASID provides a more efficient way to handle TLB entries across context switches, allowing for better performance.
+
+#### **Virtual Address Space & Kernel Memory Protection**
+
+- **Virtual Memory**: An abstraction layer between software and hardware. Processes access "virtual addresses" rather than direct physical memory.
+
+- **Virtual Address Space**: Each process has its own range of virtual addresses, e.g., 0 to 4 GB on a 32-bit system. This is the memory range the process believes it can access.
+
+- **Page Tables**: Every process has its own page table, which maps its virtual addresses to physical addresses. The Memory Management Unit (MMU) uses these tables to translate virtual addresses to their corresponding physical locations in RAM.
+
+- **Kernel in Virtual Address Space**: Within each process's virtual address range, a portion is reserved for the OS kernel. For example, in a 32-bit system, addresses 0-3 GB might be for the process, while 3-4 GB are for the kernel. This kernel space is consistent across all processes, meaning the kernel's virtual addresses are the same in every process's page table.
+
+- **Efficiency**: Having the kernel in every process's virtual address space speeds up system calls. When a process requests services from the kernel, there's no need to switch to a different address space.
+
+- **Protection**: Hardware mechanisms prevent user processes from accessing the kernel's portion of the virtual address space. This ensures processes can't interfere with kernel operations, maintaining system security and stability.
+
+##### Sharing read-only pages between processes does not violate the security principle of preventing access from one process to another's memory for the following reasons:
+
+1. **No Modification Allowed**: Since the pages are read-only, one process cannot modify the contents of the shared page. This ensures that a process cannot tamper with or corrupt the data that another process might be using.
+
+2. **Intentional Sharing**: Read-only pages that are shared between processes are typically shared intentionally. Common examples include shared libraries or code segments. Multiple processes can execute the same code without each having a separate copy in physical memory, saving memory resources.
+
+3. **Isolation Remains**: Even though the read-only page is shared, the rest of the processes' memory remains isolated. One process cannot access or modify the private data or stack of another process.
+
+4. **No Information Leakage**: Since the shared pages are read-only and are typically non-sensitive (like code segments of system libraries), there's no risk of information leakage from one process to another.
+
+5. **Controlled by the OS**: The operating system controls which pages are marked as read-only and which processes can access them. This ensures that only legitimate and safe sharing occurs.
+
+6. **Address Space Layout Randomization (ASLR)**: Modern operating systems use techniques like ASLR to randomize the location of memory segments. Even if processes share read-only pages, the location of these pages in the virtual address space can be different for each process, making it harder for malicious processes to predict memory locations.
+
+In summary, sharing read-only pages is a controlled and intentional mechanism that allows for memory efficiency without compromising the security and isolation principles of modern operating systems.
+
+### 4.6 Page size, Address Space Size, and 64 bits
+
+The amount of memory that can be addressed by a system is determined by the number of unique addresses it can generate. This is directly related to the number of bits in its addressing scheme.
+
+For a 32-bit system:
+
+1. **Number of Unique Addresses**: 
+   - A 32-bit system can generate \(2^{32}\) unique addresses because each bit can have 2 possible values (0 or 1), and there are 32 bits.
+   - \(2^{32}\) equals 4,294,967,296.
+
+2. **Memory Addressable**:
+   - If each unique address corresponds to a byte of memory (which is a common convention), then \(2^{32}\) addresses can access \(2^{32}\) bytes of memory.
+   - 4,294,967,296 bytes is the same as 4 gigabytes (GB), when considering 1 gigabyte as 1 billion bytes.
+
+Therefore, a 32-bit system can address up to 4GB of memory. This is a theoretical maximum, and in practice, some of this address space might be reserved for system use or other purposes, so the actual usable memory might be less than 4GB.
+
+[good website](https://cs.brown.edu/courses/csci1310/2020/notes/l13.html)
+
+## Page fault
+
+Read these two websites to understand the page fault.
+
+[good website](https://medium.com/software-under-the-hood/under-the-hood-os-demand-paging-page-faults-and-working-set-82849bb6b404)
+
+[good website2](https://stackoverflow.com/questions/5684365/what-causes-page-faults)
+
+1. **Program Launch**: When you launch a program, the operating system sets up the necessary data structures for its execution, including the page table. The page table will have entries for all the pages of the program, but initially, these entries will indicate that the pages are not in RAM.
+
+2. **Initial Execution**: The CPU starts executing the program. Since the program's pages are not in RAM yet, as soon as the CPU tries to access the first instruction (or any data) of the program, it will encounter a page fault because the page containing that instruction is not in RAM.
+
+3. **Handling the Page Fault**: The operating system's page fault handler is invoked. It determines which page the CPU was trying to access, finds that page on the disk, loads it into a free frame in RAM, and updates the page table to indicate that this page is now in RAM.
+
+4. **Resuming Execution**: After the page is loaded into RAM and the page table is updated, the CPU resumes execution from where it left off. Now, it can access the instruction (or data) because the page containing it is in RAM.
+
+5. **Subsequent Page Faults**: As the CPU continues executing the program and accesses parts of the program that are not yet in RAM, it will encounter more page faults. Each time, the OS will load the required page into RAM.
+
+6. **Demand Paging**: This process of loading pages into RAM only when they are accessed by the CPU is called demand paging. Over time, as the program runs, more and more of its frequently accessed pages will be in RAM, reducing the number of page faults.
+
+The key idea here is that the CPU doesn't execute the program directly from the disk. Instead, it always executes from RAM. But with demand paging, not all of the program is loaded into RAM at the start. Pages are loaded into RAM "on demand" as the CPU tries to access them. This allows the system to use RAM more efficiently by only loading the parts of the program that are actively being used.
+
+#### Demand-Zero Page Fault
+
+**Step 1: Memory Request**
+- Your program decides it needs more memory, typically for storing data or objects. This is often done using functions like `malloc` in C or `new` in C++.
+
+**Step 2: Heap Manager Checks Available Memory**
+- The heap manager checks if there's enough free memory in the heap to satisfy the request.
+
+**Step 3: Not Enough Memory in the Heap**
+- If there isn't enough free memory in the current heap to satisfy the request, the heap manager decides to allocate new pages from the virtual memory system to expand the heap.
+
+**Step 4: New Pages Allocated**
+- The operating system's virtual memory manager allocates new pages to the heap. These pages are part of the virtual address space but haven't been "committed" or mapped to physical memory yet.
+
+**Step 5: Accessing the New Pages**
+- The heap manager, having been given new pages, now tries to access them to fulfill the original memory request from the program.
+
+**Step 6: Demand-Zero Page Fault Occurs**
+- Since these new pages have never been accessed and aren't yet mapped to physical memory, trying to access them triggers a "demand-zero page fault."
+
+**Step 7: Operating System Handles the Page Fault**
+- The operating system's page fault handler kicks in. It finds a free page in physical memory (RAM) to allocate for this purpose.
+
+**Step 8: Zeroing Out the Page**
+- Before giving this page to the program, the operating system ensures it's filled with zeros. This is a security and predictability measure to ensure that one program doesn't accidentally see leftover data from another program.
+
+**Step 9: Page Mapping**
+- The operating system maps the newly zeroed-out page in physical memory to the virtual address space of the program.
+
+**Step 10: Resuming Execution**
+- Now that the page fault has been handled and the required memory is available and initialized, the program can resume execution. The memory request (e.g., `malloc` or `new`) completes successfully, and the program continues running.
+
+### Process Address Space, Revisited
+####  **Note on Kernel Memory Mapping in 32-bit Linux Systems**
+
+**1. Virtual Address Space**:
+- Every process has its own virtual address space for accessing memory. This is segmented into user-space (for applications) and kernel-space (for the OS).
+
+**2. Kernel's Top 1GB Allocation**:
+- In 32-bit Linux, the kernel occupies the top 1GB of the virtual address space (from `0xC0000000` to `0xFFFFFFFF`).
+  
+**3. Kernel in Every Address Space**:
+- The kernel's 1GB is consistently mapped across all processes' address spaces.
+- **Reason**: Provides rapid access to kernel functions and structures during system calls or exceptions. This immediacy avoids the overhead of switching address spaces when transitioning between user and kernel modes.
+
+**4. Security with the U Bit**:
+- The kernel's presence in every process's address space doesn't equate to open access for user-space programs.
+- The 'U' bit in page table entries is used to restrict user-space access to kernel memory. Setting the U bit to zero for kernel mappings prevents user processes from altering or viewing kernel memory, ensuring system security.
+
+> In every process's virtual memory map on many operating systems, including Linux, there is a portion of the address space reserved for the kernel. This does not mean that each process has its own separate copy of the kernel; rather, `this region in every process's address space points to the same physical memory where the kernel resides.`
+
+### Shared Executable and Libraries 
+
+#### **Process of Memory Sharing**:
+
+1. **Page Faults**: 
+   - Triggered when a program accesses a part of its memory that isn't currently in RAM.
+
+2. **Checking for Existing Pages**:
+   - Before loading a memory page from storage, the OS checks if that specific page is already in memory due to another process.
+   - If the page is found, the current process is allowed to reference the already-loaded page instead of loading a duplicate.
+
+3. **Reference Counts**:
+   - The OS maintains a count of how many processes are using a particular page.
+   - When a process ends, the reference count for each page it was using is decremented.
+
+4. **De-allocation**:
+   - If the reference count of a page reaches zero (no more processes are using it), that page is freed, releasing memory.
+
+#### **Benefit**:
+- This mechanism of shared pages reduces memory duplication, leading to a more efficient use of system memory, especially when multiple processes run identical code or access identical data.
+
+Even when multiple applications, such as a browser, text editor, and email client, use the same libraries, each application in its entirety is a unique combination of its own code and the libraries it uses. This uniqueness, particularly in how the program code is integrated with its libraries, can result in differing alignments or configurations in memory. Such differences make it challenging for the operating system to identify and share identical memory regions among different programs.
+
+#### With the concept of memory sharing, we now have shared library
+
+**Solution with Shared Libraries**:
+- Shared libraries address this inefficiency. They are designed to enable the same library to be loaded into memory once and then be referenced by multiple programs.
+- Conceptually, each shared library is treated almost like its own standalone program in memory. This approach ensures that, while two different programs might not be entirely identical (and thus not shareable), the libraries they use can still be identified and shared among them.
+
+
+
+### **Note on Copy-On-Write Mechanism in UNIX Systems**:
+
+#### **Page Sharing**:
+- Generally, read-only pages are safely shared among processes since they can't be modified and hence don't affect other processes.
+  
+#### **UNIX Process Creation**:
+- UNIX uses `fork()` and `exec()` system calls for process management.
+  - `fork()`: Creates a copy of the current process.
+  - `exec(file)`: Replaces the current process's address space with the program specified by `file` and starts executing that program.
+  
+#### **Issues with the Traditional Approach**:
+- Early UNIX systems implemented `fork()` by copying all writable sections of the parent process to the child process. However, most of the time, the child process would immediately call `exec()`, discarding the copied address space. This made the copying process inefficient, especially when large programs tried to execute smaller ones.
+
+#### **Writable Page Sharing Challenge**:
+- Sharing writable pages poses a challenge. If both parent and child processes can write to the same page, they might inadvertently interfere with each other, potentially causing issues. Especially, data that is writable but isn't anticipated to be modified is a concern.
+
+#### **Copy-On-Write (COW) Technique**:
+- Linux uses the Copy-On-Write (COW) strategy to optimize the handling of writable memory pages during `fork()`.
+- On executing `fork()`, the child process's address space shares both read-only and writable pages from the parent. However, these writable pages are marked read-only to prevent modifications.
+- These pages are also flagged as copy-on-write in the kernel's memory structures.
+- If either process tries to write to a shared page, a page fault occurs. The page fault handler then:
+  1. Allocates a new memory page.
+  2. Copies the content of the old shared page to this new page.
+  3. Maps the new page as writable to the process trying to write, thereby isolating it from the original shared page.
+
+#### **Benefit**:
+- The COW technique avoids the unnecessary copying of memory unless it's explicitly needed (i.e., when a write operation is attempted). This results in faster and more efficient process creation and memory utilization.
+
+## Memory overcommitment
+
+**CPU Cache and Data Fetch**:
+
+- **Cache Memory**: CPUs have a small amount of very fast memory called cache. It's much faster than main RAM but also much smaller.
+
+- **Dynamic Fetching**: When the CPU needs to access data, it first checks if that data is in its cache. If not (a cache miss), it fetches the data from the main RAM into the cache. The idea is to keep frequently accessed data close to the CPU to speed up processing.
+
+- **Purpose**: Since accessing the cache is faster than accessing the main RAM, dynamically fetching and storing frequently used data in the cache helps in speeding up the CPU's operations.
+
+### **The Connection**:
+
+Both mechanisms — page faults for RAM and dynamic fetching for CPU caches — are about optimizing performance by ensuring that data is available in the fastest accessible place when needed. Just as the CPU doesn't keep all the data it might need in its cache (due to size limitations) but fetches it dynamically, the main memory doesn't keep all possible data it might need (due to its size limitations) but loads it dynamically via handling page faults.
+
+### **Anonymous Segments:**
+- **Definition**: These are memory segments that are not backed by any file on disk. Common examples are the stack (which stores local variables, function call information, etc.) and the heap (used for dynamic memory allocation).
+
+- **Typical Behavior**: Since these segments are not associated with any file, they usually reside in memory and aren't swapped out to disk under normal circumstances.
+
+### **Memory Eviction due to Low Memory**:
+- **Scenario**: If many processes are running and consuming memory, the system might run low on available RAM.
+
+- **OS's Reaction**: To ensure smooth operation, the OS might decide to free up some memory. It does this by selecting certain memory pages to move out of RAM. Anonymous pages from idle (or less active) processes are candidates for this, even though they aren't typically swapped under normal conditions.
+
+### **Swap Space**:
+- **Definition**: A dedicated space on the storage disk (hard drive or SSD) where the OS can temporarily store memory pages that it needs to move out of RAM. This process is known as "swapping."
+
+- **Locations**:
+  - **Linux**: Usually uses a dedicated swap partition.
+  - **Windows**: Uses a file called `PAGEFILE.sys`.
+  - **OSX**: Uses `/var/vm/swapfile`.
+
+- **Process of Swapping**:
+  1. The OS decides which memory page needs to be moved out of RAM.
+  2. It then writes the content of that page to the designated swap space on the disk.
+  3. The OS stores a mapping that indicates where on the disk this memory page has been saved.
+  4. With the data safely written to disk, the OS can now free up (or release) the corresponding RAM page, making it available for other immediate needs.
+
+#### **In Summary**:
+When an OS is under memory pressure, it may need to temporarily store parts of its active memory (including segments like stack and heap) on the disk to free up RAM. This process, called swapping, is crucial for system stability but can lead to performance penalties because accessing data from disk is slower than accessing it from RAM.
+
+### **Page Table Entry: Dual Roles**
+
+1. **When Page is in Physical Memory**:
+   - The page table entry points to the actual location of the page in RAM.
+   - The MMU interprets this entry for translating virtual to physical addresses.
+
+2. **When Page is Not in Physical Memory**:
+   - The page table entry indicates the location of the page in swap space.
+   - The MMU does not use this information for address translation, effectively "ignoring" it.
+   - Instead, this information is utilized by the software page fault handler to manage and retrieve the page from swap when necessary.
+
+
+
+> While both cache and RAM can experience evictions, the reasons, frequency, and management of these evictions differ. Cache evictions are more about optimizing for the most frequently/recently used data, while RAM evictions (in the form of paging or swapping) are about managing the limited physical memory in the face of larger virtual address spaces.

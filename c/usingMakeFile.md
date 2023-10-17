@@ -20,3 +20,20 @@ Here's what happens step by step:
 6. After this command runs, you should have an executable file named `ex1` in your directory.
 
 In summary, when you typed `make ex1`, you told `make` to compile `ex1.c` into an executable named `ex1` using the system's C compiler. The output `cc ex1.c -o ex1` is just `make` showing you the command it executed to do this.
+
+
+### Track
+
+
+**Note on `make` and File Timestamps**
+
+- **Primary Function**: `make` determines whether to rebuild a target based on file timestamps.
+  
+- **Timestamps Checked**:
+  1. **Modification Timestamp**: Indicates the last time a file was changed. This is the primary timestamp `make` relies on.
+  2. **Creation Timestamp**: Shows when the file was created. Less relevant for `make`.
+  
+- **Rebuild Decision**: When comparing a target and its dependencies:
+  - If any dependency has a more recent modification timestamp than the target, `make` will rebuild the target.
+
+

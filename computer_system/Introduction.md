@@ -32,6 +32,28 @@ The **BIOS** (Basic Input/Output System) is a program stored in a ROM (Read-Only
 
 It's a program called a terminal emulator. This is a program that opens a window and lets you interact with the shell.
 
+
+**Terminal Behavior with Ctrl+C**
+
+1. **Signal Generation**:
+   - When you press `Ctrl+C`, the terminal generates a `SIGINT` (interrupt signal).
+   
+2. **Signal Delivery**:
+   - This signal is delivered to the foreground process group associated with the terminal. In the context of running processes, this means the currently executing command and any child processes it may have spawned.
+
+3. **Default Behavior**:
+   - If not otherwise handled, the `SIGINT` signal will terminate processes in the foreground process group.
+
+4. **Input Buffer Clearance**:
+   - The terminal's input buffer (where keystrokes are temporarily stored before being sent to the foreground process) is cleared. This means any unsent characters typed before pressing `Ctrl+C` are discarded.
+
+5. **Visual Feedback**:
+   - Often, the terminal will move to a new line after detecting `Ctrl+C`, providing visual feedback to the user that the interrupt was recognized.
+
+6. **Return to Ready State**:
+   - If a shell was running, it typically displays a new command prompt, indicating it's ready for the next command.
+
+
 ### Shell
 
 Simply put, the shell `(command-line interpreter)` is a program that takes commands from the keyboard and gives them to the operating system to perform. 
@@ -126,3 +148,34 @@ An API (Application Programming Interface) serves as a bridge between two differ
 
 
 $\textcolor{red}{\text{}}$  
+
+
+## DLL (Dynamic Link Library)
+
+A "DLL" stands for "Dynamic Link Library." It is a feature of the Windows operating system and represents a file that contains code and data that multiple programs can use simultaneously. Here's a detailed breakdown:
+
+1. **Purpose of DLLs**:
+   - **Code Reusability**: DLLs allow developers to create modular programs where a module can be a DLL that multiple programs can use.
+   - **Efficient Memory Usage**: Since multiple programs can share a single copy of a DLL in memory, it reduces redundancy and saves memory.
+   - **Easier Updates**: If a function in a DLL needs to be updated or fixed, it can be done without affecting the programs that use the DLL. Once the DLL is updated, all programs using it will benefit from the update.
+
+2. **Dynamic Linking**:
+   - Unlike static linking, where program code is combined with library code into a single executable file, dynamic linking allows a program to call functions from a DLL that is separate from the program itself.
+   - The linking occurs at runtime when the program is executed, not at compile time.
+
+3. **Structure**:
+   - A DLL can define two kinds of functions: exported and internal. The exported functions are intended to be called by other applications, while internal functions are meant for use only within the DLL itself.
+
+4. **Loading & Unloading**:
+   - DLLs are loaded into memory by a program when needed and are unloaded when no longer required. This dynamic loading and unloading provide flexibility but also requires careful management to ensure that resources are properly allocated and freed.
+
+5. **File Extension**:
+   - DLL files have the `.dll` file extension.
+
+6. **Potential Issues**:
+   - **DLL Hell**: This is a term used to describe complications that arise from using multiple versions of a DLL. If different programs require different versions of a DLL, it can lead to version conflicts and software errors.
+   - **Security**: Malicious software can exploit certain vulnerabilities by replacing a legitimate DLL with a malicious one, a technique known as "DLL Hijacking."
+
+In summary, DLLs are a crucial component of the Windows operating system, allowing for modular, efficient, and flexible software design. However, they also come with challenges that developers need to be aware of and manage appropriately.
+
+
