@@ -16,7 +16,9 @@ The web works on a `client-server model`. The client is the browser, and the ser
 
 The message that the client requests is formatted based on a protocol called HTTP. `HTTP is a language that clients and servers use to talk to each other`. We also have HTTPS, which is HTTP with encryption.
 
-When broswer recieve HTTP response, this HTTP response contains an HTML document, the browser reads that HTML document to construct a `document object model` and render the page (<span style="color: cyan">After fetching all the resources</span>).
+When broswer recieve HTTP response, this HTTP response contains an HTML document, the browser reads that HTML document to construct a [document object model](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction) and render the page (${\color{cyan}\text{After fetching all the resources}}$).
+
+> JavaScript primarily interacts with the Document Object Model (DOM) when it comes to web development.
 
 **Front end developer**
 - HTML  
@@ -26,7 +28,32 @@ Styling webpages and makeing them beautiful.
 - JavaScript  
 Adding functionality to webpages
 
-**HTML basic**
+## URL Basic
+
+URL, which stands for **Uniform Resource Locator**, is a fundamental concept of the Web. It serves as the mechanism browsers use to retrieve resources on the internet. A URL essentially acts as the address of a unique resource online. While each valid URL theoretically points to a distinct resource, there are exceptions, such as URLs pointing to nonexistent or relocated resources. `The management of these resources and URLs falls under the responsibility of the web server owner.`
+
+**Examples of URLs:**
+- [https://developer.mozilla.org](https://developer.mozilla.org)
+- [https://developer.mozilla.org/en-US/docs/Learn/](https://developer.mozilla.org/en-US/docs/Learn/)
+- [https://developer.mozilla.org/en-US/search?q=URL](https://developer.mozilla.org/en-US/search?q=URL)
+
+You can type any of these URLs into your browser's address bar to load the associated web page or resource.
+
+**Parts of a URL:**
+
+A URL consists of various components, some mandatory and others optional. The most crucial parts are highlighted below:
+
+- **Scheme:** Represents the chosen communication protocol, such as "https://" for secure browsing.
+- **Domain Name:** Acts as the location (city or town) where the resource resides, like "developer.mozilla.org."
+- **Port:** Similar to a zip code, specifying the destination for the resource.
+- **Path:** Describes the building or directory where the resource is located.
+- **Parameters:** Provide additional information, akin to specifying an apartment number.
+- **Anchor:** Represents the specific section or target within the resource.
+
+You can think of a URL like a postal mail address, where the scheme is the postal service, the domain name is the city or town, the port is the zip code, the path is the building, parameters are extra details like an apartment number, and the anchor is the intended recipient.
+
+
+## **HTML basic**
 
 ```html
 <!DOCTYPE html>
