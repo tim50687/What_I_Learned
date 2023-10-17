@@ -32,7 +32,9 @@ for i in range(q):
 - smart way to do it: O(n)
 let's say:
 a and c is prefix sum, a < c
-a = 7 * k + r
+
+a = 7 * k + r 
+
 c = 7 * d + r
 
 if you subtract a and c, you will get a subarray summing to 7 * (k - d)

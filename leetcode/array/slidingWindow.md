@@ -7,6 +7,21 @@
 
 > A sliding window guarantees a maximum of `2n` window iterations - the right pointer can move n times and the left pointer can move n times. Sliding windows algorithms run in linear time.
 
+## `Logic`
+
+- Two pointers
+
+- Brute force is to check all the possible window, which is O(n^2).
+	- Left pointer start from 0, and you have to go through every index to find out the possible sub array.
+	- However, we can find the way to optimize the right pointer.
+		- I think, **`either find longest or shortest, right pointer will never go back, therefore, outer loop use right pointer.`**
+	- Unlike Brute force, we can move the left and right pointer in the smart way.
+		- While expanding, check whether moving left pointer or right pointer can benefit the answer.
+- Find smallest:
+	- expand window until it's valid
+- Find longest:
+	- expand window until it's invalid
+
 ## Dynamic Sliding Window
 
 - Let's say we found the valid window index 0 -> 8, then we move the right pointer to 9, and the window is no longer valid.
@@ -28,3 +43,13 @@
 - In the substring, we only want to replace the less frequent letter. 
 	- window.length() - mostFreqLetterCount <= k
 
+### 76. Minimum Window Substring ***
+
+- create `Counter(t)` to count the number of each character in t.
+
+- use `count = len(t)` variable to track the constraint.
+
+### 3. Longest Substring Without Repeating Characters
+
+- create a flag to see if there's a duplicate character in the window.
+	- if window shrink, check if the value in dictionary is == 1.
