@@ -14,9 +14,9 @@ A URL (Uniform Resource Location) is a way to locate resources in the Internet. 
 
 The web works on a `client-server model`. The client is the browser, and the server is the computer or computers that host our target website. The client requests a service, and the server provides that service.
 
-The message that the client requests is formatted based on a protocol called HTTP. HTTP is a language that clients and servers use to talk to each other. We also have HTTPS, which is HTTP with encryption.
+The message that the client requests is formatted based on a protocol called HTTP. `HTTP is a language that clients and servers use to talk to each other`. We also have HTTPS, which is HTTP with encryption.
 
-When broswer recieve HTTP response, this HTTP response contains an HTML document, the browser reads that HTML document to construct a `document object model` and render the page.
+When broswer recieve HTTP response, this HTTP response contains an HTML document, the browser reads that HTML document to construct a `document object model` and render the page (<span style="color: cyan">After fetching all the resources</span>).
 
 **Front end developer**
 - HTML  
@@ -53,14 +53,14 @@ Adding functionality to webpages
 </html>
 ```
 
-`<!DOCTYPE html>` - Tell browser this is an html5 document  
+- `<!DOCTYPE html>` - Tell browser this is an html5 document  
 html element:  
-`<html></html>` - Opening tag and Closing tag  
-`<head></head>` - head element. Give browser information about this page  
+- `<html></html>` - Opening tag and Closing tag  
+- `<head></head>` - head element. Give browser information about this page  
 For example:  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`<title></title>` - title element. Specify title of this page  
 
-`<body></body>` - body element. Elements that will appear on our page  
+- `<body></body>` - body element. Elements that will appear on our page  
 For example:  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`<img src="" alt="">` - image element. 1. We don't have closing tab because image element cannot have child element. 2. Don't need to add forward slash in html5. Two attributes (supply addition information about an element): `src` - specify the path of image. `alt` - give the browser some text to display in case the image cannot be display. Attributes are coded as part of the opening tag.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`<p></p>` - text element.  
