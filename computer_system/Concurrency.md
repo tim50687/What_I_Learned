@@ -22,7 +22,7 @@
 ## Thread Creation
 
 1. **Thread Creation:**
-   - Creating a thread can be compared to $\textcolor{cyan}{\text{making a function call}}$. However, there's a distinction: while a function call will execute and then return to the caller, thread creation leads to a new execution path that operates concurrently with the caller.
+   - Creating a thread can be compared to $\textcolor{cyan}{\text{making a function call}}$. However, there's a distinction: while a function call will execute and then return to the caller, thread creation leads to a new execution path that operates `concurrently` with the caller.
    - The point at which the new thread begins execution may be immediately after its creation, or it could be delayed, depending on the OS scheduler's decisions.
 
 2. **OS Scheduler's Role:**
@@ -101,6 +101,7 @@
 **Highlighted Points**:
 - $\textcolor{cyan}{\text{POSIX}}$ offers a function called `pthread_create()` for thread creation.
 - Threads can be $\textcolor{cyan}{\text{given specific attributes}}$ through the `attr` argument.
+   - `stack size` or `scheduling priority`....
 - A thread starts its execution from a function pointed to by start_routine.
 - Passing multiple arguments requires packaging them into a $\textcolor{cyan}{\text{single custom type}}$.
 - Creating a thread results in another $\textcolor{cyan}{\text{live executing entity}}$ with its own call stack.
@@ -277,3 +278,189 @@ For `TestAndSet` to work correctly as a mutual exclusion primitive, it needs to 
 **Multiple CPUs**: 
 
 In a multiprocessor system, spin locks can be more efficient. If one thread on CPU 1 holds the lock and another thread on CPU 2 tries to acquire it, the second thread will spin. However, since the critical section (the part of code protected by the lock) is expected to be short, the first thread will quickly release the lock, and the spinning thread can acquire it. In this scenario, the overhead of spinning is relatively small, especially if the number of threads is roughly equal to the number of CPUs.
+
+## How can we develop a lock that doesn't needlessly waste time spinning on the CPU?
+
+We have working lock, and even fairness on lock acquisition(ticket lock). But we still need to deal with `spin lock`.
+p
+**Yielding Instead of Spinning in Locks: A Simple Approach**
+
+- **Background**: Using hardware support, we've achieved working locks and even fairness in lock acquisition (e.g., ticket lock). The challenge remains: how to handle a scenario where a context switch happens within a critical section, leading threads to spin indefinitely while waiting for the interrupted, lock-holding thread.
+
+- **The "Just Yield" Approach**:
+  - Instead of spinning, give up the CPU to another thread.
+  - This relies on an OS primitive `yield()`, allowing a thread to voluntarily give up the CPU.
+  - When a thread calls `yield()`, it moves from the running state to the ready state, allowing another thread to run.
+  - It's akin to a thread descheduling itself.
+
+- **Scenario Analysis**:
+  - **Two Threads, One CPU**: The yielding approach works effectively. If one thread finds the lock held, it yields the CPU, allowing the other thread to finish its critical section.
+  - **Many Threads (e.g., 100) Contending for a Lock**: When one thread acquires the lock but is preempted before releasing, the remaining threads will call `lock()`, find the lock held, and yield. With a round-robin scheduler, all threads will go through this pattern before the original thread runs again. This is more efficient than spinning but still incurs the cost of many context switches.
+  
+- **Starvation Issue**:
+  - Yielding doesn't address the potential for thread starvation. A thread might be caught in an endless yielding loop while others frequently enter and exit the critical section.
+   - starvation: thread is perpetually denied necessary resources to process its task(`perpetually waiting and never getting their turn`).
+  
+**Conclusion**: While yielding is an improvement over endless spinning, it's not a panacea. We need methods that directly address issues like wasted context switches and thread starvation.
+
+
+### **Summary: Building Real Locks in Operating Systems**
+
+- Real lock mechanisms in modern systems often rely on a combination of hardware and OS support.
+- Hardware might provide special instructions to help with mutual exclusion (e.g., powerful atomic operations).
+- The operating system provides support to help manage threads when they can't acquire a lock immediately, like Solaris' `park()` and `unpark()` or Linux's `futex`.
+- Although the principle is consistent, the exact implementation details and code for these locks can vary significantly and are typically optimized for performance.
+- For a deeper dive into locking strategies on modern multi-processors, refer to sources such as the Solaris or Linux code bases and the work by David et al.
+
+## Condition Variables
+
+### **Condition Variables: A High-Level Overview**
+
+- **Background**: We've seen how locks can be used to protect critical sections and ensure mutual exclusion. However, locks alone aren't sufficient for all synchronization scenarios. Consider the following example:
+  - A thread is waiting for a condition to be true before proceeding.
+  - Another thread is responsible for setting the condition to true.
+  - The first thread needs to wait until the condition is true before continuing.
+
+### We can try using the variable:
+
+**Parent Waiting for Child: Efficiency Concerns**
+
+**Goal:** 
+The expected output sequence is:
+```
+parent: begin
+child
+parent: end
+```
+
+**Implementation (Figure 30.2):** 
+- A shared variable, `done`, is utilized to coordinate between the parent and child.
+```c
+volatile int done = 0;
+
+void *child(void *arg) {
+    printf("child\n");
+    done = 1;
+    return NULL;
+}
+
+int main(int argc, char *argv[]) {
+    printf("parent: begin\n");
+    pthread_t c;
+    Pthread_create(&c, NULL, child, NULL); // create child
+    while (done == 0); // spin
+    printf("parent: end\n");
+    return 0;
+}
+```
+
+**Concern:** 
+While the above spin-based approach generally works, it's inefficient. The parent's busy-waiting (spinning) on the `done` variable leads to a waste of CPU resources.
+
+**Desired Solution:** 
+A mechanism that allows the parent to sleep, and only wake up when the required condition (i.e., the child completing its execution) is met.
+
+
+
+### **Condition Variables in Operating Systems**
+
+- **Purpose**: Condition variables enable threads to wait for a certain condition to become true. They serve as explicit queues where threads can wait when a certain condition is not met. Once the condition is met, another thread can wake the waiting threads. The idea can be traced back to Dijkstra's "private semaphores" and Hoare's "condition variable" concept in monitors.
+
+- **Implementation in POSIX**:
+  - **Declaration**: 
+    ```c
+    pthread_cond_t c;
+    ```
+    (proper initialization required)
+  - **Main operations**:
+    1. **wait**: `pthread_cond_wait(pthread_cond_t *c, pthread_mutex_t *m);`
+    2. **signal**: `pthread_cond_signal(pthread_cond_t *c);`
+
+  - **Key Insight**: `wait()` assumes the associated mutex is locked when called. Its role is to release this lock and sleep the calling thread atomically. When the thread is woken by a `signal()`, it must re-acquire the lock before resuming.
+
+- **Usage Patterns**:
+  - **Child-Parent Example**: The parent waits for the child to finish its execution. A state variable, `done`, is used to signify the child's completion. This approach avoids race conditions and guarantees that a sleeping thread (parent) is awakened when the desired condition (child's completion) is met. The parent uses a `while` loop to decide whether to wait, which is more reliable than an `if` statement.
+
+- **Incorrect Implementations and Pitfalls**:
+  1. **No State Variable**: If the state variable (`done`) is omitted, the parent might sleep indefinitely if the child signals before the parent begins waiting.
+   ```c
+   void thr_exit() {
+      pthread_mutex_lock(&m);
+      pthread_cond_signal(&c);
+      pthread_mutex_unlock(&m);
+   }
+
+   void thr_join() {
+      pthread_mutex_lock(&m);
+      pthread_cond_wait(&c, &m);
+      pthread_mutex_unlock(&m);
+   }
+   ```
+   - (Context Switch - Child execute first) In this case, if the child signal first , but there is no thread asleep on the condition. When the parent runs, it will simply call wait and be stuck; no thread will ever wake it.
+   2. Use if statement:
+      ```c
+      void thr_exit() {
+         done = 1;
+         Pthread_cond_signal(&c);
+      }
+
+      void thr_join() {
+         if (done == 0) {
+            Pthread_cond_wait(&c);
+         }
+      }
+      ```
+      - 
+  3. **No Lock**: If no lock is held while signaling and waiting, there's a potential race condition. The parent might be interrupted after checking the state but before calling `wait()`, leading to an indefinite sleep if the child signals in between.
+
+- **Best Practice**:
+  Always hold the lock while signaling or waiting on a condition variable. This practice ensures correctness and avoids potential pitfalls.
+
+
+> Just remember, for the best practice, use `while loop`, `Done`, and `lock` when using condition variables.
+
+### **Producer/Consumer (Bounded Buffer) Problem: Notes**
+
+1. **Background**:
+   - The problem is also known as the bounded buffer problem, first posed by Dijkstra.
+   - Producers generate data items and place them in a buffer; consumers grab items from the buffer and consume them.
+   - Real-world example: In a multi-threaded web server, producers place HTTP requests into a work queue (bounded buffer) and consumer threads process these requests.
+
+2. **The Basic Problem**:
+   - The buffer is a shared resource requiring synchronized access.
+   - The basic version uses a single integer as the buffer. Producers place a value when the buffer is empty, and consumers take it when it's full.
+   - Conditions: 
+     - Producers can only put data into the buffer when it's empty.
+     - Consumers can only get data when the buffer is full.
+
+3. **Broken Solution**:
+   - Using a single condition variable and a mutex leads to issues.
+   - Scenario:
+     1. Consumer Tc1 checks the buffer, finds it empty, and waits.
+     2. Producer fills the buffer and signals a consumer.
+     3. Another consumer Tc2 consumes the buffer's value before Tc1 gets a chance.
+     4. Tc1 wakes up, tries to consume but finds the buffer empty.
+   - Problem: The state of the buffer can change between signaling and the woken thread's execution due to *Mesa semantics*.
+   - Solutions like Hoare semantics, which allow a woken thread to run immediately, are harder to implement and rarely used.
+
+4. **Improved Solution**:
+   - Change the if condition before waiting to a while loop.
+   - This ensures that the condition is re-checked before the operation, safeguarding against the scenario mentioned.
+   - Rule of thumb: Always use `while` loops with condition variables.
+> This is one of the reason always use `while` loop with condition variables.
+
+5. **Still a Problem**:
+   - When multiple threads are waiting on the condition, signaling might not wake up the desired thread.
+   - Scenario: If two consumers are waiting and a producer signals after filling the buffer, it might accidentally wake up another consumer, leaving the buffer state unchanged and potentially causing all threads to wait indefinitely.
+
+6. **Correct Solution**:
+   - `Use two condition variables: one for empty and another for full.`
+   - Producers wait on the empty condition and signal the full condition. Consumers do the opposite.
+   - This ensures that the correct type of thread is woken up based on the buffer's state.
+
+7. **Tips**:
+   - Always use `while` loops for condition checks in multi-threaded programs. This caters to Mesa semantics and potential spurious wakeups.
+   - Some thread implementations might wake up more threads than signaled due to internal details.
+
+8. **End Result**:
+   - We have a functional producer/consumer solution, but it can be generalized further for broader use cases.
