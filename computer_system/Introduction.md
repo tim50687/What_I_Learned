@@ -70,54 +70,6 @@ Here's how it works:
 
 > `:$PATH`: This is the crucial part of the command. It appends the current value of the `PATH` variable to the end of the new `PATH` you are setting. The colon (`:`) acts as a separator between the new directory (`/usr/local/mysql/bin/`) and the existing directories in the `PATH`.
 
-## How you run a program?
-
-### Program Execution Process
-
-#### 1. User Executes Program
-- **What Happens**: You, the user, initiate the execution of a program by either clicking on its icon or running a command in the terminal.
-- **Role**: User interaction
-- **Location**: User Interface (UI)
-
-#### 2. Loader
-- **What Happens**: The loader is a system program that loads executable files into memory so they can be run by the operating system.
-- **Role**: System utility
-- **Location**: Operating System (OS)
-
-> What It Is: The Loader is a part of the operating system responsible for loading executable files from storage into the main memory (RAM) for execution.
-
-#### 3. RAM (Random Access Memory)
-- **What Happens**: The loader places the program into RAM. This is a type of volatile memory that provides fast read and write access to a processor.
-- **Role**: Memory storage
-- **Location**: Physical hardware
-
-#### 4. Process Created
-- **What Happens**: Once the program is in RAM, the operating system creates a new process for it. A process is essentially a program in execution, and activities such as keeping track of processor status and program counter are the essential roles of process management.
-- **Role**: OS task management
-- **Location**: Operating System (OS)
-
-#### 5. CPU (Central Processing Unit)
-- **What Happens**: The CPU starts executing the process. It fetches, decodes, and executes instructions from RAM.
-- **Role**: Computation and logic operations
-- **Location**: Physical hardware
-
-> Once the Scheduler decides which process to run next, it sets the CPU's Program Counter to the entry point of that process's next instruction, effectively handing over control to that process.
-
-#### 6. Process Execution
-- **What Happens**: The process is now actively being executed. It may perform a variety of tasks such as calculations, data processing, or network communication.
-- **Role**: Program functionality
-- **Location**: CPU and RAM
-
-#### 7. Process Termination
-- **What Happens**: Once the process completes its execution or encounters an error, it is terminated. The OS then reclaims any memory and resources that were allocated to the process.
-- **Role**: Ending the program
-- **Location**: Operating System (OS)
-
-#### 8. Memory Freed
-- **What Happens**: After the process is terminated, the memory it was using is freed up and returned to the system pool.
-- **Role**: Resource management
-- **Location**: RAM and Operating System (OS)
-
 
 ## Threads and Processes
 

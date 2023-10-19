@@ -1,5 +1,157 @@
 # Context Switching
 
+## How to efficiently virtualize the CPU with control?
+
+### How can OS make sure the program doesn't do anything that we don't want it to do?
+
+> Sometimes process wishes to perform some kind of restricted operation, such as issuing an I/O request to a disl, or gaining  access to more system resources such as CPU or memory
+
+#### User mode and Kernel mode
+
+**Protected Control Transfer**
+
+- **Hardware Assistance**: The hardware provides different modes of execution to aid the OS.
+- **User Mode**: Applications run in this mode where they don't have unrestricted access to all hardware resources.
+- **Kernel Mode**: In this mode, the OS can access all the machine's resources without limitations.
+- **Special Instructions**: 
+  - **Trap into Kernel**: Allows a switch from user mode to kernel mode.
+  - **Return-from-Trap**: Lets programs return to user mode from kernel mode.
+  - **Trap Table Location**: There are instructions that enable the OS to inform the hardware about the memory location of the trap table.
+
+---
+
+What if user process wishes to perform some kind of privileged operation?
+
+   - Virtually all modern hardware provides the ability for user program to perform a `system call`
+
+   - To execute a system call, a program must execute a special trap instruction.
+
+> While doing the trap, it will do the context switch, it must make sure to save enough of the caller’s registers in order to be able to return correctly when the OS issues the return-from-trap instruction.
+
+##### How does the trap know which code to run inside the OS?
+
+Clearly, the calling process cannot specify which adress to jump to in the OS, because that would allow it to execute arbitrary code in the OS.
+
+- The kernel does so by setting up a `trap table` at boot time.
+   - OS will tell the hardware what code to run when cretain exceptional events occur. `The OS informs the hardware of the location of these trap handlers(pieces of code), primarily it's the CPU that needs to be informed about the location of these trap handlers. `. For example, what code should run when a `hardware interrupt` takes place, when a keyboard interrupt occurs, or when a program makes a `system call`?
+- To specify the exact system call, a system-call number is usually assigned to each system call. User code is responsible for placing the desired system call number in a register or at a specified location on the stack.
+
+### How does the operating system stop it from running and switch to another process?
+
+If a process is running on the CPU, this by definition means the OS is not running! 
+
+1. OS regain control only when the process does something illegal, such as divides by zero or access memory that they do not own. Or system call.  
+
+> Application also transfer control to the OS when they do something illegal, such as divides by zero or access memory that they do not own. It will generate a `trap` to the OS. The OS will have control of the cpu again.
+
+However, if a process ends up in an infinite loop, the OS will never regain control of the CPU.
+
+2. Handling Uncooperative Processes in Operating Systems
+
+**Solution**: The introduction of a **timer interrupt**. 
+
+- A timer device can be set to trigger an interrupt every specified number of milliseconds. 
+- When this interrupt is triggered, the ongoing process is paused, and an OS-defined interrupt handler executes, allowing the OS to regain control of the CPU.
+- At system startup (boot time), the OS informs the hardware about the specific code to run when the timer interrupt is triggered.
+- Also, during booting, the OS starts the timer, which is a privileged operation, ensuring it regains control at regular intervals. The timer can also be turned off, a topic to be explored further in discussions on concurrency.
+
+**Hardware Responsibility**:
+- When an interrupt takes place, the hardware must save the state of the current program to ensure it can be resumed accurately after handling the interrupt. 
+- This behavior resembles the system-call trap into the kernel where specific registers are saved (like on a kernel stack), allowing them to be easily restored when needed.
+
+**Tip**: 
+- Operating systems often face misbehaving processes, which might be due to bugs or intentional malicious actions.
+- In modern systems, the default action when encountering such a process is to terminate it. If a process attempts unauthorized actions (like accessing memory it shouldn't or executing illegal instructions), the OS stops it. This approach is direct but ensures system security and stability.
+
+---
+
+<p align = "center">
+<img src = "images/cswitch.png" style = "width:500; border:0">
+</p>
+
+**Scenario**: A timer interrupt occurs while Process A is running, and the operating system decides to switch from Process A to Process B.
+
+### Timer Interrupt and Entering the Kernel
+
+1. **Timer Interrupt**: The hardware raises a timer interrupt because the pre-allocated time for Process A has elapsed.
+2. **Save Process A's Registers to its Kernel Stack**: To handle this interrupt, the CPU needs to temporarily save the context (state) of the currently executing process (Process A). This state is saved onto Process A's kernel stack. (`When the OS is handling the interrupt`)
+3. **Enter Kernel Mode**: The CPU transitions to kernel mode, giving it privileged access. This is necessary to handle the interrupt and potentially switch processes.
+4. **Jump to Trap Handler**: The CPU starts executing a predefined trap handler, a specific function in the OS kernel designed to handle such interrupts.
+
+### Handling the Trap and Making a Scheduling Decision
+
+5. **Scheduling Decision**: Within the trap handler, the OS determines that it wants to switch from Process A to Process B.
+6. **Call `switch()` Routine**: The OS calls a special function, often named `switch()`, to perform the context switch between processes.
+
+### Performing the Context Switch
+
+7. **Save Process A's State to its Process Control Block (PCB)**: The current state of Process A, which was saved on its kernel stack, is now transferred and saved into a more permanent and structured location: its PCB (or process table entry).
+8. **Load Process B's State from its PCB**: The OS retrieves the saved state of Process B from its PCB.
+9. **Switch to Process B's Kernel Stack**: The CPU's stack pointer is updated to point to Process B's kernel stack. This means any further operations (until the process switch completes) will use Process B's kernel stack.
+
+### Returning to User Mode and Starting Process B
+
+10. **Return-from-Trap**: With Process B's context loaded, the CPU issues a return-from-trap instruction. This starts the transition back from kernel mode to user mode.
+11. **Restore Process B's Registers from its Kernel Stack**: Before jumping to Process B's code, the CPU restores its registers using the data saved on Process B's kernel stack. (`When the OS is done handling the interrupt`)
+12. **Move to User Mode and Execute Process B**: The CPU now transitions back to user mode and starts (or continues) executing Process B from where it left off.
+
+### Refined Note:
+
+---
+**Context Switching on a Timer Interrupt:**
+
+- **Interrupt Occurs**: When Process A's execution time expires, a timer interrupt is raised.
+  
+- **Enter Kernel Mode**: The CPU saves Process A's state onto its kernel stack and transitions to kernel mode to handle the interrupt through the trap handler.
+
+- **Scheduling Decision**: The OS, within the trap handler, decides to switch to Process B.
+
+- **Switch Context**: 
+  - Process A's state is moved from its kernel stack to its PCB.
+  - Process B's saved state is loaded from its PCB.
+  - The CPU's stack pointer is updated to point to Process B's kernel stack.
+
+- **Return to User Mode**: 
+  - The CPU restores Process B's state from its kernel stack.
+  - It transitions back to user mode and resumes Process B's execution.
+
+
+---
+
+#### **Kernel Stack**:
+Now, when we talk about processes, they primarily run in user mode, and their primary stack (as mentioned above) is the user-mode stack. But when a process is switched to kernel mode (maybe due to a system call or an interrupt), the kernel doesn't want to use the user-mode stack because it might be a security risk or because the kernel wants a clean, dedicated space. This is where the kernel stack comes in.
+    
+   - Each process has its own kernel stack, separate from its user-mode stack. 
+   - This kernel stack is used whenever the process is executing in kernel mode.
+   - It ensures that kernel-mode operations are kept separate from user-mode operations to maintain system integrity and security.
+
+
+
+### Operating System's Decision-Making After Regaining Control
+
+**Regaining Control**: 
+The OS can regain control over the CPU either:
+1. Cooperatively: Via a system call initiated by a process.
+2. Forcefully: Through a timer interrupt, which ensures the OS gets control at regular intervals.
+
+**Decision Point**: 
+Once in control, the OS must decide:
+- To continue executing the currently-running process.
+- Or to switch to another process.
+
+**Scheduler**:
+- This decision is driven by a component of the operating system called the **scheduler**.
+- The scheduler evaluates which process should run next based on predefined scheduling policies.
+
+**Context Switch**:
+- If the decision is to switch to a different process, the OS performs a **context switch**.
+- A context switch is a low-level operation that saves the state of the currently-running process and loads the state of the new process to be executed.
+
+
+
+
+
+
 **Thread vs. Process Context Switching:**
 
 The OS schedules `threads`, not processes, because threads are the only executable units in the system. Process switch is just a thread switch where the threads belong to different processes, and therefore the procedure is basically the same.

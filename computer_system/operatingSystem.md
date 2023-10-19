@@ -68,29 +68,15 @@ For an analogy, consider why society has police and the courts: not every citize
 - **Error-detecting Aids**: Includes methods for producing dumps, traces, error messages, and other debugging and error-detecting methods.
 
 
-## Kernel and Processes
+## Kernel
 
 ### The Kernel
 
-The kernel is the heart of an operating system, responsible for managing the computer's hardware and serving as a bridge between applications and hardware operations. It has the following characteristics:
+The kernel is the heart of an operating system, responsible for managing the computer's hardware and serving as a bridge between applications and `hardware operations`. It has the following characteristics:
   
-- **Privilege Level**: Operating with full machine privilege, the kernel has unrestricted access to all computer resources. Its power is unmatched, allowing it to perform any action without checks or limitations.
+- **`Privilege Level`**: Operating with full machine privilege, the kernel has unrestricted access to all computer resources. Its power is unmatched, allowing it to perform any action without checks or limitations.
   
-- **Persistence**: Upon booting the operating system, the kernel is the first component loaded into memory and remains active until the system is shut down. It handles tasks such as disk, task, and memory management.
-
-### Processes
-
-Processes are active instances of programs. While a program is a static set of instructions, a process is its dynamic execution. Processes can be:
-
-- **Unprivileged**: Often referred to as "user-level processes," they operate without elevated machine privileges. This distinction ensures that individual process errors or bugs don't compromise the entire system.
-
-- **Protection**: Modern operating system kernels prioritize protecting processes from one another. This protection ensures that one process's actions don't violate the OS's sharing policies.
-
-### Program vs. Process
-
-- **Program**: A static set of instructions designed for a specific function, like a web browser meant to display web pages.
-  
-- **Process**: An active execution of a program, such as a running instance of a web browser displaying a specific website.
+- **Persistence**: Upon booting the operating system, `the kernel is the first component loaded into memory and remains active until the system is shut down`. It handles tasks such as disk, task, and memory management.
 
 ### Kernel Goals
 
