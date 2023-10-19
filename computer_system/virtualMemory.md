@@ -255,6 +255,8 @@ Therefore, a 32-bit system can address up to 4GB of memory. This is a theoretica
 
 ## Page fault
 
+The process will be in the `blocked state`. Thus, the OS will be free to run other ready processes while the page fault is being serviced.
+
 Read these two websites to understand the page fault.
 
 [good website](https://medium.com/software-under-the-hood/under-the-hood-os-demand-paging-page-faults-and-working-set-82849bb6b404)
@@ -359,31 +361,9 @@ Even when multiple applications, such as a browser, text editor, and email clien
 
 ### **Note on Copy-On-Write Mechanism in UNIX Systems**:
 
-#### **Page Sharing**:
-- Generally, read-only pages are safely shared among processes since they can't be modified and hence don't affect other processes.
-  
-#### **UNIX Process Creation**:
-- UNIX uses `fork()` and `exec()` system calls for process management.
-  - `fork()`: Creates a copy of the current process.
-  - `exec(file)`: Replaces the current process's address space with the program specified by `file` and starts executing that program.
-  
-#### **Issues with the Traditional Approach**:
-- Early UNIX systems implemented `fork()` by copying all writable sections of the parent process to the child process. However, most of the time, the child process would immediately call `exec()`, discarding the copied address space. This made the copying process inefficient, especially when large programs tried to execute smaller ones.
-
-#### **Writable Page Sharing Challenge**:
-- Sharing writable pages poses a challenge. If both parent and child processes can write to the same page, they might inadvertently interfere with each other, potentially causing issues. Especially, data that is writable but isn't anticipated to be modified is a concern.
-
-#### **Copy-On-Write (COW) Technique**:
-- Linux uses the Copy-On-Write (COW) strategy to optimize the handling of writable memory pages during `fork()`.
-- On executing `fork()`, the child process's address space shares both read-only and writable pages from the parent. However, these writable pages are marked read-only to prevent modifications.
-- These pages are also flagged as copy-on-write in the kernel's memory structures.
-- If either process tries to write to a shared page, a page fault occurs. The page fault handler then:
-  1. Allocates a new memory page.
-  2. Copies the content of the old shared page to this new page.
-  3. Maps the new page as writable to the process trying to write, thereby isolating it from the original shared page.
 
 #### **Benefit**:
-- The COW technique avoids the unnecessary copying of memory unless it's explicitly needed (i.e., when a write operation is attempted). This results in faster and more efficient process creation and memory utilization.
+- Copy-on-write (sometimes referred to as "COW") is an optimization strategy used in computer programming. The fundamental idea is that if multiple callers ask for resources which are initially indistinguishable, you can give them pointers to the same resource. This function can be maintained until a caller tries to modify its "copy" of the resource (`Because sometime you don't even want to write it`), at which point a true private copy is created to prevent the changes becoming visible to everyone else. All of this happens transparently to the callers. The primary advantage is that if a caller never makes any modifications, no private copy need ever be created.
 
 ## Memory overcommitment
 
