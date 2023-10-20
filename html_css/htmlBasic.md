@@ -1,57 +1,17 @@
 # HTML Basic
 
+## The Head section 
 > Tips: `! + tab `- Get a basic HTML boilerplate
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="HYML, CSS" />
-    <meta name="description" content="..." />
-    <title>Document</title>
-    <style>
-      em {
-        color: red;
-        font-style: normal;
-      }
-      img {
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Heading 1</h1>
-    <h2>HTML</h2>
-    <p>HTML tutorial</p>
-    <h3>Code</h3>
-    <h3>Exercise</h3>
-    <h2>CSS</h2>
-    <p>CSS tutorial</p>
 
-    <p>I love to teach you <em>HTML!</em></p>
-    <p>I love to teach you &lt;HTML!&gt; &copy;</p>
-    <p>
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rerum quibusdam
-      iusto facilis nulla nam dolore repudiandae iste. Itaque, doloribus natus
-      quos earum magnam quidem adipisci molestias dicta at non tempore odit
-      quaerat consectetur, eaque vel &nbsp;nesciunt aliquam minima ab placeat
-      velit praesentium sunt quam sequi? Error sit mollitia sunt eveniet?
-    </p>
-    <img src="images/coffee.jpg" alt="A coffee mug on a table">
-  </body>
-</html>
-```
 In head element, we have couple of `meta elements`, giving information about this webpage.  
 
 `<meta name="description" content="">` - description of this page. It will appear on search engine when someone searches for our website.
 
-`<em></em>` - emphasize element. To emphasize content in our HTML. This helps search engines extract important content in our document. By default, browser display emphasize content in italic. But again the purpose of this element is to emphasize element. If you want to style the content, use CSS. `Don't use it just because you want to implement italic.` 
+`<p>I love to teach you <em> HTML </em></p>` - emphasize element. To emphasize content in our HTML. This helps search engines extract important content in our document. By default, browser display emphasize content in italic. But again the purpose of this element is to emphasize element. If you want to style the content, use CSS. `Don't use it just because you want to implement italic.` 
 > HTML is not meant for styling, it should only be used for structuring content.
-
+### Heading 
 In HTML, we have six heading elements.  
+
 `<h1></h1>` - most important heading. *Don't choose heading based on the size*, size can always be changed with CSS. We should use these headings only for creating hierarchy. We should only have one single h1 element to avoid confusing search engine.
 
 ## Entities
@@ -81,7 +41,7 @@ Some characters are reserved in HTML, to display them we have to use special not
 - `id` - id atribute. Unique identifier. Can use pound sign to jump to the second heading. 
 
 - `#` - empty fragment. Jump to top.
-
+ 
 > Use absolute URL to link to an external website (Start with the protocol `https://`)
 
 ### How to open a new tab
@@ -98,7 +58,7 @@ A link is just an address, the url, the location of the target page.
 
 A hyperlink is the element that user can click on to navigate to that target page. Hyperlinks are hidden under the graphics, music, text, image, and video and are only visible when the mouse hovers over them.
 
-## img
+## Images
 
 - `alt` - alt attribute. 
     - 1. Make our page accessible to visually impaired people. They use screen reader to read the web out to them. That means we should write a good meaningful description here.
@@ -150,51 +110,6 @@ In case the browser does not support video. We can provide the fallback text "Yo
 
 
 ## List
-
-```html
-<style>
-      ul {
-        list-style-type: square;
-      }
-</style>
-
-<body>
-<!-- unorder list -->
-    <ul>
-      <li>About me</li>
-      <li>Courses
-        <ul>
-          <li>HTML</li>
-          <li>Javascript</li>
-          <li>Git</li>
-        </ul>
-      </li>
-      <li>Subscribe</li>
-      <li>Contact me</li>
-    </ul>
-
-    <!-- Order list -->
-    <ol>
-      <li>Preheat the oven.</li>
-      <li>Place the ingridients on the crust</li>
-      <li>Put the pizza in the oven for 20 minutes</li>
-    </ol>
-
-    <!-- description list -->
-    <dl>
-      <dt>Title</dt>
-      <dd>The ultimate HTML and CSS course</dd>
-      <dt>Author</dt>
-      <dd>Tim Jackson</dd>
-      <dt>Skills</dt>
-      <dd>HTML</dd>
-      <dd>CSS</dd>
-      <dd>Respponsive Design</dd>
-      <dd>Search engine optimization</dd>
-    </dl>
-</body>
-```
-
 
 - `ul` - unordered list. Show a list of item where the order does not matter. Nivigation menus on the website are often represented by unordered list.
   - `li` - list item. 
@@ -282,7 +197,8 @@ To do that we use: `<thead></thead>, <tbody><tbody>, <tfoot></tfoot>`
 
 ## Container
 
-If we need to group a bunch of element for styling purposes.
+[What is a container?](https://www.geeksforgeeks.org/container-and-empty-tags-in-html/)
+
 
 ```html
 <style>
@@ -314,6 +230,8 @@ Most common comtainer element:
 - `div` - division element. This container will `fill up the width of the page` because it's a `Block-Level Element` - always start on a new line and fillup the entire available space. But we can use CSS to change its width.
 
 -  `span` - span element. In a paragraph we can wrap the text with `span`. It's an `Inline Element`, which mean it's not gonna take up entire width.
+
+  - The <span> HTML element is a generic inline container for phrasing content, which does not inherently represent anything. It can be used to group elements for styling purposes (using the class or id attributes), or because they share attribute values, such as lang.
 
 ### Semantic elements
 
