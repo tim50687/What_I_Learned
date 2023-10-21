@@ -226,3 +226,73 @@ ORDER BY latest_inv DESC
   - An inline view acts like a table in the scope of the main query.
   - Always assign a table alias to subqueries in the `FROM` clause.
   - Provide aliases for calculated columns in the subquery to make the main query more readable and to easily refer to those columns.
+
+## How to code a recursive CTE
+
+**1. What is a Recursive CTE?**
+
+A Recursive CTE is a CTE that refers to itself. This self-referencing mechanism allows you to perform iterative data retrieval tasks. It's commonly used to fetch hierarchical data, like organizational charts or file directory structures, where there's a parent-child relationship.
+
+**2. Sample Data:**
+
+Based on the description you've given:
+
+```
+Employees Table:
+
+| employee_id | first_name    | last_name    | manager_id |
+|-------------|---------------|--------------|------------|
+| 1           | Cindy         | Smith        | NULL       |
+| 2           | Elmer         | Jones        | 1          |
+| 3           | Paulo         | Locario      | 1          |
+| ...         | ...           | ...          | ...        |
+```
+
+In the table, `manager_id` points to the `employee_id` of the manager for the respective employee.
+
+**3. The Recursive CTE Structure:**
+
+A recursive CTE generally has two main parts:
+- The **base case** (or anchor query): This is the initial query that gets the first set of data, usually the top-level items.
+- The **recursive part**: This is where the CTE refers to itself to get the next level of items.
+
+The two parts are combined using a `UNION ALL`.
+
+**4. Explanation of the Given Query:**
+
+- **Base Case**:
+```sql
+SELECT employee_id,
+CONCAT(first_name, ' ', last_name) AS employee_name,
+1 AS ranking 
+FROM employees
+WHERE manager_id IS NULL
+```
+This gets the top-level manager(s) who don't have a `manager_id` (in this case, Cindy Smith) and assigns a ranking of 1.
+
+- **Recursive Part**:
+```sql
+SELECT employees.employee_id,
+CONCAT(first_name, ' ', last_name), ranking + 1
+FROM employees
+JOIN employees_cte
+ON employees.manager_id = employees_cte.employee_id
+```
+This part refers back to the CTE (named `employees_cte`) to get the next level of employees based on the `manager_id`. Each time it loops through, it increments the ranking by 1.
+
+- **Final Query**:
+```sql
+FROM employees_cte
+ORDER BY ranking, employee_id
+```
+This is where the constructed hierarchy is finally queried, and the result is ordered by ranking and then by `employee_id`.
+
+**5. How the Recursive Mechanism Works:**
+
+1. Start with top-level manager(s) (base case).
+2. Using the results from step 1, find employees who have their `manager_id` equal to the `employee_id` of the results from step 1.
+3. Repeat step 2 using the results from the previous iteration until no more matches are found.
+
+By following these iterations, you create a hierarchical list of employees, starting with the top-level manager and moving down through each layer of subordinates.
+
+The key here is that the recursive CTE keeps "building" upon itself with each iteration until there are no more records to add, creating a full hierarchy in the process.
