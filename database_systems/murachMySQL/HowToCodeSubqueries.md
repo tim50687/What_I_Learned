@@ -296,3 +296,15 @@ This is where the constructed hierarchy is finally queried, and the result is or
 By following these iterations, you create a hierarchical list of employees, starting with the top-level manager and moving down through each layer of subordinates.
 
 The key here is that the recursive CTE keeps "building" upon itself with each iteration until there are no more records to add, creating a full hierarchy in the process.
+
+**Recursive CTE Iteration Mechanics:**
+
+1. **Initial State**: Begin with the base case (usually the top-level items). 
+2. **Iteration**: For every subsequent iteration, each row from the previous step is used as a "reference" or "input" for the next iteration.
+3. **Example**: If we have two managers, Elmer (`employee_id` = 2) and Paulo (`employee_id` = 3), in the second iteration:
+   - First, find all employees with Elmer (`manager_id` = 2) as their manager.
+   - Next, find all employees with Paulo (`manager_id` = 3) as their manager.
+4. **Processing Order**: While the SQL engine typically processes matches for each "reference" row before moving to the next, the exact order can depend on internal optimizations.
+5. **Completion**: Iterations continue until no more matches are found in the subsequent step.
+
+This iterative approach enables hierarchical data retrieval, building on prior results until the full hierarchy is established.
