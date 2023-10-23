@@ -138,3 +138,6 @@ CR (Carriage Return) - moves the cursor to the beginning of the current line.
 
 LF (Line Feed) - moves the cursor down to the next line.
 
+## Cast
+
+- `DATE(incident_timestamp)` : cast the `incident_timestamp` to `DATE` type.
