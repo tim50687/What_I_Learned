@@ -121,3 +121,100 @@ html {
    - This line defines a border style using pixel units (`px`) for the border width.
 
 In summary, CSS offers various measurement units to define sizes and dimensions. Understanding the appropriate use of units like `px`, `em`, `rem`, `vw`, and `vh` is essential for creating responsive and well-proportioned web layouts. The choice of unit depends on the specific use case and the desired responsiveness of the design.
+
+## Positioning
+
+Each element can have several classes by separating them with a space.
+
+```html
+<div class="box box-one"></div>
+```
+
+By default, the position property of an element is set to static. This means that the element will be positioned according to its place in the normal flow of the page.
+
+### Relative Positioning
+
+Setting the top, right, bottom, and left properties of a relatively-positioned element will cause it to be adjusted away from its normal position. Other content will not be adjusted to fit into any gap left by the element.
+
+- position: relative
+    - left, right, top, bottom
+
+In CSS, the `position` property plays a crucial role in determining how elements are positioned within a web page. Two commonly used values for this property are `absolute` and `relative`. Let's clarify the concepts:
+
+#### `position: fixed`: 
+
+Elements with position: `fixed`; are removed from the normal document flow and are positioned relative to the viewport itself. 
+
+#### `position: absolute;`
+
+- When you apply `position: absolute;` to an element, it is positioned relative to its nearest positioned ancestor, not the initial containing block (usually the `<html>` element).
+
+- Positioned ancestors are elements with a `position` property set to anything other than the default `static`. These ancestors establish a reference point for the positioning of child elements with `position: absolute;`.
+
+- `position: absolute;` allows you to precisely position an element by using properties like `top`, `right`, `bottom`, and `left`. The element is removed from the normal document flow, which means it won't affect the layout of other elements.
+
+- Overlapping can occur if multiple absolutely positioned elements are not properly managed. To control their positioning within a specific context, it's common to set a parent container to `position: relative;`. This makes the parent the positioned ancestor for its children with `position: absolute;`.
+
+#### `position: relative;`
+
+- When you set a parent element to `position: relative;`, you establish it as a positioned ancestor for its child elements.
+
+- Child elements with `position: absolute;` are positioned relative to the boundaries of their nearest positioned ancestor (the parent container). This allows you to create specific layouts or effects within the context of the parent without affecting the overall page layout.
+
+- Importantly, elements with `position: relative;` remain in the normal document flow, preserving the integrity of the page structure.
+
+In summary, `position: absolute;` positions an element relative to its nearest positioned ancestor, while `position: relative;` establishes a parent container as the positioned ancestor for its child elements. Understanding these concepts is crucial for precise layout control in CSS.
+
+### Three axis
+
+- x-axis: left, right
+
+- y-axis: top, bottom
+
+- z-axis: z-index
+    - By default, all elements have a z-index of 0. The z-index property specifies the stack order of an element. An element with greater stack order is always in front of an element with a lower stack order.
+
+    - When multiple HTML elements have the same z-index value (which is the default 0 if not specified), they are considered to be in the same stacking context, and their order in the stacking context is determined by the order in which they appear in the HTML markup.
+
+### Two ways to set the position elements
+
+1. Width and Height
+
+2. Top, Right, Bottom, Left
+```html
+    left: 2rem;
+    right: 2rem;
+    width: auto; /* let the browser decide how wide it should be */
+```
+
+
+## Floating Elements
+
+The CSS `float` property is used to specify how an element should float. It is commonly used to float images, but it is also useful for layouts that require smaller elements to be floated next to larger elements. Here are the key aspects of the `float` property:
+
+1. **`float: left;`**:
+    - The `float` property is set to "left" to float an element to the left of its container. The floated element will move as far to the left as possible, and other content will wrap around it.
+
+    - How can we make element not wrap around the floated element? We can use the `clear` property to prevent content from wrapping around a floated element. The `clear` property specifies which sides of an element other floating elements are not allowed. The `clear` property can have one of the following values:
+
+        - `none` - Allows floating elements on both sides. This is default
+
+        - `left` - No floating elements allowed on the left side
+
+        - `right` - No floating elements allowed on the right side
+
+        - `both` - No floating elements allowed on either the left or the right side
+
+### By default, parent elements don't see floated elements.
+
+Therefore, the height will not consider the height of the floated elements. 
+
+We can use pseudo element `::after` and `clear:both` to fix this problem.
+
+```css
+.clearfix::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+```
