@@ -1,5 +1,38 @@
 # HTML Basic
 
+## Viewport
+
+The term "viewport" in web development refers to the visible area of a web page within the user's web browser. It represents the portion of the web page that is currently visible to the user without scrolling. The viewport's size can vary depending on the device and the user's settings, and it plays a crucial role in responsive web design and user interface layout.
+
+Here are some key points related to the viewport:
+
+1. **Initial Viewport**:
+   - When a user opens a web page, the initial viewport is the portion of the page that is visible without the need for scrolling. It's the first impression of the web page that a user sees.
+
+2. **Viewport Dimensions**:
+   - The dimensions of the viewport are measured in pixels, and they represent the width and height of the visible area in the user's browser window.
+
+3. **Responsive Design**:
+   - Viewport size can vary widely between different devices, such as desktop computers, laptops, tablets, and smartphones. To create a user-friendly experience on all devices, web designers often use responsive design techniques to adapt the layout and content of a web page to fit within the available viewport.
+
+4. **Viewport Meta Tag**:
+   - Web developers can control how a web page is initially displayed on mobile devices using the `<meta>` viewport tag in the HTML `<head>` section. This tag allows developers to set the initial viewport width, scale, and other properties.
+
+   Example of a viewport meta tag:
+   ```html
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   ```
+
+   - In the above example, `width=device-width` instructs the browser to set the initial viewport width to the device's screen width, and `initial-scale=1.0` sets the initial zoom level to 100%.
+
+5. **Viewport Units**:
+   - CSS provides viewport units (`vw`, `vh`, `vmin`, and `vmax`) that allow designers to specify sizes and positions relative to the viewport dimensions. This is especially useful for creating responsive designs that adapt to different viewport sizes.
+
+6. **Scrolling**:
+   - When the content of a web page extends beyond the dimensions of the viewport, users can scroll to view the hidden content. Vertical and horizontal scrollbars may appear, depending on the overflow behavior set for the content.
+
+In summary, the viewport is the visible area of a web page within a user's browser, and it plays a vital role in responsive web design. Web designers and developers use various techniques and tools to ensure that web pages are displayed optimally within the available viewport, providing a consistent and user-friendly experience across different devices and screen sizes.
+
 ## The Head section 
 > Tips: `! + tab `- Get a basic HTML boilerplate
 

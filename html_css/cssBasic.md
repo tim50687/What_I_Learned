@@ -193,6 +193,8 @@ In CSS, we have bunch of pseudo-classes selectors. For example:
 
 ## Psuedo-elements Selectors
 
+- A CSS pseudo-element is used to style specified parts of an element. For example, `::first-line` can be used to change the font of the first line of a paragraph.
+
 - Pseudo-elements are used to style `parts of an element`. They are expressed by adding two colons (::) after a selector in CSS.
 
 ### `p::first-letter`
