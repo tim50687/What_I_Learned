@@ -138,19 +138,6 @@ Essentially, `ptr->x` is a shorthand for `(*ptr).x`. The arrow operator `->` der
 If the first condition is true, the computer won't be bother to check the second condition.
 
 
-- If you do something like: `if (vector == NULL || vector->data == NULL)`, there's a risk. If `vector` is NULL, the program will still try to evaluate `vector->data`, leading to a segmentation fault.
-- The safer approach is to use separate `if` statements:
-    ```c
-    if (vector == NULL) {
-        // Handle NULL vector
-    } else if (vector->data == NULL) {
-        // Handle NULL data
-    }
-    ```
-    In this approach, if `vector` is NULL, the second `if` statement (checking `vector->data`) won't be executed, preventing a segmentation fault.
-
-
-
 ### Execution of C program
  **Execution**:
    - When you run the executable, the operating system loads it into RAM.
