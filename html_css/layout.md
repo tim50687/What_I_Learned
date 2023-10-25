@@ -218,3 +218,160 @@ We can use pseudo element `::after` and `clear:both` to fix this problem.
     clear: both;
 }
 ```
+
+## Flexbox
+
+The CSS `display` property is used to specify the display behavior of an element. It is commonly used to change the layout of elements from block to inline, or vice versa. Here are the key aspects of the `display` property:
+
+1. **`display: flex;`**:
+   - The `display` property is set to "flex" to create a flex container. This allows you to use flexbox to lay out the child elements of the container.
+      - We can layout a bunch of elements in a row or in a column.
+      - `flex-direction: row | column`
+      - `flex-wrap: column-reverse | row-reverse`
+         - flex-wrap: Items that cannot fit in one line will wrap in the next line. It will keep the same size.
+
+### Alignments
+
+In Flex we have two axis: Main (primary), and Cross (secondary)
+
+<p align = "center">
+    <img src="images/mainCross.png" width="500px">
+</p>
+
+#### Aligning items along the main axis
+
+- `justify-content: flex-start (default) | flex-end | center | space-between | space-around | space-evenly`
+
+#### Aligning items along the cross axis
+
+- `align-items: flex-start | flex-end | center | baseline | stretch`
+
+> Even though the box is flex, the container is still a block level element. 
+
+#### What is align-content?
+
+- `align-content` is used to align the lines of items if there are multiple lines of items inside the flex container.
+
+#### What is align-self?
+
+- `align-self` is used to align individual items inside the flex container.
+
+### Sizing
+
+All of the below properties are applied to the `flex items` not container.
+
+#### Flex-grow
+
+- `flex-grow` is used to specify how much the item will grow relative to the other items inside the flex container.
+
+If there's three items, flex-grow: 1, flex-grow: 1, flex-grow: 2,
+then the browswer the take the remaining space and divide it into 4 parts. The first two items will take 1 part each, and the last item will take 2 parts.
+
+#### Flex-shrink
+
+- `flex-shrink` is used to specify how much the item will shrink relative to the other items inside the flex container.
+
+
+#### Flex-basis
+
+- `flex-basis` is used to specify the initial size of the item before CSS makes adjustments with `flex-grow` or `flex-shrink`.
+
+- `flex-basis: auto` means that the item will start at its default size.
+
+- `flex-basis: 0` means that the item will have no size at the beginning.
+
+- `flex-basis: 10px` means that the item will start at 10px.
+
+#### Flex
+
+- `flex` is a shorthand property for `flex-grow`, `flex-shrink` and `flex-basis` combined.
+
+
+## Grid
+
+To layout content in both rows and columns
+
+### How to define a grid?
+
+- First we need a container
+
+- `display`: grid
+
+   - `grid-template-columns`: 1fr 1fr 1fr 
+
+   - `grid-template-rows`: 1fr 1fr 1fr 
+
+Make it into function:
+```css
+grid-template-rows: repeat(3, 100px);
+grid-template-columns: repeat(2, 100px);
+```
+
+### Grid Areas
+
+```css
+grid-template-areas: "header header" "sidebar main";
+```
+
+make footer only contain one cell:
+```css
+grid-template-areas: 
+"header header" 
+"sidebar main" 
+". footer";
+```
+
+
+### Alignments
+
+#### Aligning items along the horizontal axis
+
+- `justify-content: stretch | flex-start | flex-end | center | space-between | space-around | space-evenly`
+
+- Default: stretch
+   - The items will stretch to fill the container.
+   - But if we set the width of the items, then the items will not stretch.
+
+#### Aligning items along the vertical axis
+
+- `align-items: flex-start | flex-end | center | baseline | stretch`
+
+#### Aligning the grid inside the container horizontally
+
+- `justify-items: flex-start | flex-end | center | stretch`
+
+#### Aligning the grid inside the container vertically
+
+- `align-items: flex-start | flex-end | center | stretch`
+
+### Gap
+
+Gap is the space between the rows and columns.
+
+- `gap: 10px 20px` (row gap, column gap)
+
+
+### Place items
+
+- `grid-row` and `grid-column` are used to place items inside the grid container.
+
+- `grid-area` is a shorthand for `grid-row` and `grid-column`.
+
+
+## Hiding Elements
+
+- `display: none` will remove the element from the normal flow of the page. It will not take up any space.
+
+- `visibility: hidden` will hide the element, but it will `still take up space`.
+
+## Media Queries
+
+```css
+@media screen and (min-width: 600px) {
+    .container{
+        flex-direction: row;
+    }
+}
+```
+
+- Design should always look good, don't blindly follow the design on internet, because new devices might be different.
