@@ -116,7 +116,7 @@ The `WHERE` clause is used to filter rows from the result set. It's placed after
 
 > MySQL databases are not case-sensitive.
 
-> If you compare a null value using operators, the result is always a null value. To test for null values, use the `IS NULL` clause.
+> If you compare a null value using operators, the result is always a null value. It will always return FALSE. To test for null values, use the `IS NULL` clause.
 
 #### Example
 
