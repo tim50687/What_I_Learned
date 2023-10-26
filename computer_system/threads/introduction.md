@@ -153,3 +153,61 @@ myFuncDef functionFactory(int n) {
 ```
 
 Function pointers are a versatile feature in C that can be used for various purposes, including creating callback mechanisms, implementing dynamic behavior, and more.
+
+## Resource Management in Thread Libraries
+
+In thread libraries like the one we are implementing, resource management, especially memory management, is a critical aspect to consider. When a thread calls `qthread_exit` to exit, `it removes itself from the active queue but does not immediately free its associated resources, such as stack memory.`
+
+This approach is intentional and serves two main purposes:
+
+1. **Memory Ownership**: Threads are responsible for their own stack memory. If a thread were to immediately free its stack memory within `qthread_exit`, it might cause issues if other parts of the program are still trying to access that memory after the thread has exited. Delaying resource cleanup helps avoid such problems.
+
+2. **Waiting for Join**: Other threads in the program might still be interested in the return value of the exiting thread, and they use `qthread_join` for that purpose. If the exiting thread were to free its resources immediately, the return data might be lost, leading to unexpected behavior. Leaving resource cleanup to be handled when another thread calls `qthread_join` ensures that resources are reclaimed only when they are no longer needed and when it's safe to do so.
+
+Therefore, remember that calling `qthread_exit` marks a thread as finished and removes it from the active queue, but the actual resource cleanup occurs when another thread calls `qthread_join`. Proper usage of thread library functions is essential to ensure that resources are managed correctly and efficiently.
+
+## **Context Switching in qthreads:**
+
+- **Purpose**: Context switching in the `qthreads` library is essential for managing and executing threads concurrently.
+
+- **Creating Threads**: When you create a new thread using `qthread_create`, you initialize its context, including its stack and execution state.
+
+- **Switching Execution**: Context switching is used to transition execution from one thread to another. It involves saving the current thread's context and loading the context of the thread to be executed.
+
+- **Concurrency**: Context switching enables multiple threads to run concurrently, allowing them to share CPU time and make progress independently.
+
+- **Thread Management**: Context switching is crucial for managing thread scheduling and control flow. It ensures that threads can exit (`qthread_exit`), yield (`qthread_yield`), and be managed effectively.
+
+Context switching is a fundamental mechanism that enables multithreading in `qthreads`, facilitating concurrent execution and thread management.
+
+## Why init
+
+- `qthread_init` is a function used to initialize a user-level thread management system within your program.
+- When your program starts, it typically runs in the context of the main thread provided by the operating system.
+- `qthread_init` sets up data structures and context for user-level threads, creating a "main thread" in the user-level thread management system.
+- User-level threads are managed within your program's address space and are separate from the main OS thread.
+- `qthread_init` allows you to create and manage user-level threads using functions like `qthread_create`, `qthread_exit`, and more.
+- This user-level thread management system operates independently of the main OS thread, providing concurrency within your program.
+
+
+## `makecontext`, `getcontext`, and `swapcontext` in User-Level Threading
+
+1. **`makecontext` Function:**
+   - `makecontext` is used in user-level threading libraries to set up the execution context for a user-level thread.
+   - It takes a `ucontext_t` structure and a function pointer as arguments.
+   - The function pointer specifies the entry point for the thread's execution.
+   - It also takes the number of integer arguments that will be passed to the entry function and allows for additional integer arguments to be passed.
+   - `makecontext` prepares a context (ucontext_t) to execute a specific function when that context is activated (usually with swapcontext)
+
+2. **`getcontext` Function:**
+   - `getcontext` is used to obtain the current execution context, which includes the program's state at the point of the call.
+   - It stores the current context in the provided `ucontext_t` structure.
+   - Commonly used in user-level threading libraries to save the context of the currently executing thread before switching to another thread.
+
+3. **`swapcontext` Function:**
+   - `swapcontext` is used to perform a context switch between two contexts (e.g., between two user-level threads).
+   - It takes two `ucontext_t` structures as arguments, representing the context to switch from and the context to switch to.
+   - `swapcontext` saves the current context and loads the new context, effectively switching the execution from one thread to another.
+   - Used to implement thread scheduling and context switching in user-level thread libraries.
+
+These functions are essential tools for managing user-level threads without relying on the operating system's thread scheduler. They allow user-level threads to be created, their execution contexts to be set up, and context switches to be performed, all within user space. This enables lightweight and efficient thread management in user-level threading libraries.
