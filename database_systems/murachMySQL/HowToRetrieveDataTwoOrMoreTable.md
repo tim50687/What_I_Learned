@@ -64,8 +64,6 @@ FROM customer c JOIN employee e
 
 ### How to use self join
 
-Certainly! Let's break down the concept of a self-join and the given query step by step.
-
 ### What is a Self-Join?
 A self-join is a join in which a table is joined with itself. It's useful when the data related to one row is contained within other rows in the same table. This can be useful to compare rows within the same table.
 
@@ -271,3 +269,39 @@ LEFT JOIN user_follows_artist ufa ON ar.aid = ufa.aid;
 3. **Third JOIN (Result of First and Second JOINs with `user_follows_artist`):** This tries to pair each artist from the previous result set with information from the `user_follows_artist` table. If an artist doesn't have any followers, this column will display `NULL`.
 
 To summarize, by using an INNER JOIN with the `artists` table, any song without a matching album (and hence without a matching artist) will be excluded from the result set. Only songs that have both an associated album and artist will appear in the final result.
+
+
+
+
+### **Full Outer Join in MySQL:**
+
+- A **Full Outer Join** returns all rows from both participating tables, even if they don't have matching columns in the other table.
+- MySQL does not natively support the `FULL OUTER JOIN` keyword. However, one can simulate this by combining the results of a `LEFT OUTER JOIN` and a `RIGHT OUTER JOIN` using the `UNION` keyword.
+- This approach can help identify rows in both tables that don't have matching counterparts in the other table.
+
+**Example:**
+To illustrate, consider two tables: `Departments` and `Employees`. A Full Outer Join between them will return all departments and all employees, even if some employees aren't assigned to departments or some departments have no employees.
+
+```sql
+SELECT 
+  department_name AS dept_name, 
+  d.department_number AS d_dept_no, 
+  e.department_number AS e_dept_no, 
+  last_name
+FROM departments d
+LEFT JOIN employees e ON d.department_number = e.department_number
+UNION
+SELECT 
+  department_name AS dept_name, 
+  d.department_number AS d_dept_no, 
+  e.department_number AS e_dept_no, 
+  last_name
+FROM departments d
+RIGHT JOIN employees e ON d.department_number = e.department_number;
+```
+
+**Key Points:**
+1. Full Outer Join provides a complete view by merging the unmatched rows from both tables.
+2. In MySQL, use a combination of `LEFT JOIN` and `RIGHT JOIN` with `UNION` to simulate a Full Outer Join.
+3. This approach is useful to identify unmatched data between tables, e.g., employees without departments or departments without employees.
+
