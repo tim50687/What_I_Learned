@@ -211,3 +211,39 @@ Context switching is a fundamental mechanism that enables multithreading in `qth
    - Used to implement thread scheduling and context switching in user-level thread libraries.
 
 These functions are essential tools for managing user-level threads without relying on the operating system's thread scheduler. They allow user-level threads to be created, their execution contexts to be set up, and context switches to be performed, all within user space. This enables lightweight and efficient thread management in user-level threading libraries.
+
+
+## Thread API
+
+### Yield
+
+1. **Context Switching**: When a thread yields, it initiates a context switch, which is the process of saving the current state of a thread (including registers, program counter, and stack pointer) so that it can be resumed later. The operating system then loads the state of another thread and begins executing it.
+
+2. **The Role of the Stack Pointer**: The stack pointer is a register that points to the current position in the stack. The stack is a region of memory used to store local variables, function parameters, return addresses, and to control the execution flow within threads. When a thread is executing, the stack pointer keeps track of where in the stack the thread is currently working.
+
+3. **Problem with Yielding to Itself**: Now, imagine a scenario where a thread tries to yield to itself. In a normal context switch, the system would save the current thread's state (including the stack pointer) and then load the state of the next thread. But if a thread yields to itself, it essentially tries to save its current state and then immediately load it back.
+
+Here's where the confusion arises:
+
+- The stack pointer is currently pointing to some location in the thread's stack.
+- When the thread yields, the system attempts to save the thread's context (including the stack pointer) into the thread's data structure.
+- If the thread yields to itself, the system tries to load the saved context back while it's still in the process of saving it.
+
+This can lead to inconsistencies and undefined behavior. Essentially, the stack pointer and the thread's state could end up in a sort of limbo where the system is both saving and loading them at the same time, leading to corruption of the thread's state.
+
+In summary, yielding to the same thread can cause confusion in the management of the stack pointer and other registers, leading to unpredictable behavior and potential errors in the program's execution.
+
+
+### JOIN
+
+When thread `b` calls `qthread_join(a)`, it's expressing an interest in waiting for thread `a` to finish execution and retrieve its return value. However, calling `qthread_join(a)` does not guarantee that thread `b` will be executed immediately after `a` exits.
+
+When `b` calls `qthread_join(a)` and `a` has not yet exited, `b` is marked as the waiting thread for `a` and then context switch, allowing the scheduler to pick the next thread to run from the active queue. The scheduler doesn't prioritize `b` just because `a` has exited; it selects the next thread to execute based on its scheduling algorithm, which could be a simple round-robin or some other algorithm.
+
+So, even if `a` exits and wakes up `b` (by putting it back on the active queue), `b` won't necessarily execute right away. It will be scheduled to run at the discretion of the scheduler, which might select other threads to run first, if there are any in the active queue.
+
+#### Way to solve this problem
+
+- If `a` has already exited. `b` can just get the return value of `a` and continue execution.
+
+- If `a` has not already exited. `b` can tell `a` that `b` is waiting for `a`. And later once you call `qthread_exit`, `a` can wake up `b` and put `b` back on the active queue. So that when the `b` is scheduled to run, we make sure `a` has already exited, and `b` can get the return value of `a` and continue execution.

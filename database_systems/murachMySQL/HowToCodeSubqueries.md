@@ -6,7 +6,7 @@ Subquery can be coded in the `SELECT`, `FROM`, `WHERE`, or `HAVING` clause.
 
 2. Subquery can also return a list of values(a result set that has one column). In this case, you can use the subquery in a comparison operator such as `IN`, `NOT IN`, `ANY`, or `ALL`.
 
-3. Subquery can return a table of alues(a result set that has multiple columns). In this case, you can use the subquery in the `FROM` clause.
+3. Subquery can return a table of values(a result set that has multiple columns). In this case, you can use the subquery in the `FROM` clause.
 
 4. You can code a subquery within another subquery. However, nested subqueries can be difficult to read. So, you should avoid nesting subqueries more than two or three levels deep.
 
