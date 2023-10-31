@@ -29,3 +29,26 @@ function_name() OVER ([partition_clause] order_clause)
 
 > The issue with the query is in the `ORDER BY` clause inside the `ROW_NUMBER()`. When you use `ROW_NUMBER()` in conjunction with an aggregate function in the same query, you cannot reference the aggregate column by its alias directly within the window function. Instead, you need to use the actual aggregate function.
 
+## SUBSTRING
+
+**MySQL SUBSTRING() Function Note:**
+
+**Introduction**:
+
+- The `SUBSTRING()` function extracts a substring from a string (starting at any position).
+
+**Syntax**:
+
+```
+SUBSTRING(string, start, length)
+```
+
+- you can ignore the `length` parameter. Then the `SUBSTRING()` function returns the substring from the `start` position to the end of the string.
+
+## UPPER and LOWER
+
+**MySQL UPPER() and LOWER() Functions Note:**
+
+**Introduction**:
+
+- The `UPPER()` and `LOWER()` functions convert all letters in a string into uppercase and lowercase letters, respectively.

@@ -1,7 +1,5 @@
 # Summary queries
 
-You might need to report sales totals by vendor or state.
-
 ## Aggregate functions
 
 `Aggregate functions` perform calculations on a series of values and return a single summary value.
@@ -132,3 +130,14 @@ GROUP BY and HAVING clauses are coded after the WHERE clause and before the ORDE
 
 - **Note**: The result for the state of CA shows cities "Los Angeles", "San Francisco", and "San Diego" concatenated into a single string, indicating all the cities in CA with vendors. This provides a concise way to view grouped data.
 
+## How to code aggregate window functions
+
+Aggregate window functions are similar except that the groups, or partitions, aren't collapsed to a single row. Instead, the aggregate function is applied to each row in the partition.
+
+- You can partition the rows by coding a PARTITION BY clause after the OVER clause.
+
+- If you code an OVER clasuse with a PARTITION BY clause, the aggregate function is applied to each partition.
+
+- If you code an ORDER BY clause on the OVER clause, the rows with each partition are sorted and the values from one row to the next are cumulative.
+
+> The RANK() function, when used with the ORDER BY clause, assigns a rank to rows within each partition based on the specified ordering. In your query, you have used ORDER BY COUNT(incident_number) DESC, which means that rows within each district_name partition will be ranked based on the descending order of COUNT(incident_number)
