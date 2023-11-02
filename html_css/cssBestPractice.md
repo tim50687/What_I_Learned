@@ -65,4 +65,3 @@ Then we can access the variable using
 
 - Use `--` to seperate block and modifier
 
-```html
