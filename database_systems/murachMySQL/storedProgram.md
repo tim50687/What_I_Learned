@@ -79,3 +79,55 @@ END CASE;
 ## How to use a cursor
 
 By default, SQL statements work with an entire result set rather than individual rows. However, you may sometimes need to work with the data in a result set one row at a time. To do this, you can use a cursor.
+
+1. Declare a cursor.
+
+```sql
+DECLARE cursor_name CURSOR FOR select_statement;
+```
+
+2. Open the cursor.
+
+```sql
+OPEN cursor_name;
+```
+
+3. Fetch the first row from the cursor.
+
+```sql
+FETCH cursor_name INTO variable_list;
+```
+
+4. Close the cursor.
+
+```sql
+CLOSE cursor_name;
+```
+
+## How to declare a condition handler
+
+SQL has provide three built-in condition handlers for the most common types of errors:
+
+- `SQLEXCEPTION` handler
+
+- `SQLWARNING` handler
+
+- `NOT FOUND` handler
+
+How to declare a condition handler for a MySQL error code
+```sql
+DECLARE CONTINUE HANDLER FOR 1329 SET row_not_found = TRUE
+```
+How to declare a condition handler for a SQLSTATE code
+```sql
+DECLARE CONTINUE HANDLER FOR SQLSTATE '02000 ' SET row not 
+found= TRUE
+```
+How to declare a condition handler for a named condition
+```sql
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET row_not_found = TRUE
+```
+
+> Use CONTINUE keyword to continue executing the program after the error occurs.
+
+> Use EXIT keyword to exit the program after the error occurs.
