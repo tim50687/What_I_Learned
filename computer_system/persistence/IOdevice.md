@@ -70,3 +70,94 @@ This passage discusses the issue of data transfer between the CPU, memory, and p
 - DMA improves CPU utilization and system efficiency by minimizing CPU involvement in data movement tasks.
 
 > Instead of the CPU manually performing data transfer tasks like reading from or writing to peripheral devices or memory, the CPU can instruct the DMA (Direct Memory Access) controller to handle these data transfer operations. The DMA controller operates independently of the CPU, and once programmed with the necessary instructions, it can efficiently move data between memory and peripheral devices without direct CPU involvement. This offloading of data transfer tasks to the DMA controller allows the CPU to focus on executing other processes or tasks concurrently. It improves overall system efficiency by reducing CPU overhead and maximizing CPU utilization for processing tasks other than data movement.
+
+### What is DMA descriptor?
+
+A device typically requires multiple parameters to perform an operation and transfer the data to or from memory. In the case of a disk controller, for instance, these parameters would include the type of access (read or write), the disk locations to be accessed, and the memory address where data will be stored or retrieved from.
+
+Rather than writing each of these parameters individually to device registers, the parameters are typically combined in memory in what is called a DMA descriptor. The DMA descriptor is a data structure that contains all the information needed to perform a DMA operation. The DMA descriptor is typically stored in a memory location that is accessible by the DMA controller.
+
+- The DMA Descriptor is typically located in the system memory `(RAM)`.
+
+**1. What is a DMA Descriptor?**
+   - A **DMA Descriptor** is a data structure (like a table or a record) that contains all the necessary information needed for a DMA transfer.
+   - It is a way to bundle together all the parameters required for a data transfer operation and provide it to the device in a single package.
+
+**2. Components of a DMA Descriptor:**
+   - **Command**: Specifies the operation to be performed, such as read or write.
+   - **Parameters**: Includes details like the disk location (Logical Block Address - LBA) and the length of the data to be transferred.
+   - **Buffer Address**: Specifies the memory address where the data should be stored (for reads) or retrieved from (for writes).
+   - **Buffer Length**: Specifies the size of the data buffer.
+   - **Status**: A field where the device can write the status of the operation (success/failure) after completion.
+   - **Next Descriptor**: Points to the next DMA descriptor in case of multiple queued requests.
+
+**3. How It Works:**
+   - **Bundling Information**: Instead of sending each parameter (like command, buffer address, etc.) individually to the device, all of these are bundled together in a DMA descriptor.
+   - **Single Write**: The address of this descriptor is then sent to the device in a single write operation.
+   - **Efficiency**: The device can read all the required information in a single burst, making the operation more efficient.
+   - **Queuing**: Multiple DMA descriptors can be linked together to queue several data transfer requests.
+   - **Interrupts**: Once an I/O operation completes, the device sends an interrupt to the CPU and writes the status information into the descriptor.
+
+#### Why queueing?
+
+**Queuing in DMA Descriptors: An Overview**
+
+**1. **Definition:**
+   - **Queuing** in DMA (Direct Memory Access) refers to organizing multiple data transfer requests in a sequence or line-up, where each request is represented by a DMA descriptor.
+
+**2. **DMA Descriptor:**
+   - A **DMA descriptor** is a data structure in system memory containing all necessary information for a single data transfer operation (source, destination, length, command, status, etc.).
+
+**3. **Why Queueing?**
+   - **Efficiency:** Queuing reduces latency by pre-organizing multiple transfers, allowing for a seamless transition from one operation to the next.
+   - **CPU Overhead:** By queuing requests, the CPU doesn't have to intervene and set up each transfer individually, saving time and resources.
+   - **Optimization Opportunities:** Devices can optimize operations when aware of multiple requests in advance (e.g., reordering disk reads for minimal seek time).
+
+**4. **How Queuing Works:**
+   - **Linking Descriptors:** Multiple DMA descriptors are linked together, where each descriptor's "Next Descriptor" field points to the next one in the queue.
+   - **Continuous Processing:** The device processes the first descriptor and automatically moves on to the next one in the sequence, ensuring continuous data transfer.
+   - **Interrupts and Status:** Upon completion, the device can send an interrupt to the CPU and update the status field in the descriptor to indicate success or failure.
+
+
+## What is disk controller?
+
+The disk controller is the controller circuit which enables the CPU to communicate with a hard disk, floppy disk or other kind of disk drive. It also provides an interface between the disk drive and the bus connecting it to the rest of the system.
+
+## What is disk drive?
+
+How to fit devices, each of which have very specific interfaces, into the OS, which we would like to keep as general as possible.
+
+<p align = "center">
+<img src = "../images/drive.png" style = "width:500; border:0">
+</p>
+
+**The Crux: How to Build a Device-Neutral OS**
+
+The main challenge here is to design an operating system (OS) that can interact with various hardware devices (like SCSI disks, IDE disks, USB drives, etc.) without needing to tailor the OS specifically for each device. The OS should be able to handle these devices seamlessly, without knowing their intricate details.
+
+**Solution: Abstraction and Device Drivers**
+
+The solution is to use a concept called **abstraction**. This means creating a simplified and uniform way of interacting with all devices, regardless of their specifics.
+
+- **Device Driver**: A device driver is a piece of software that knows how to interact with a specific device. It understands the nitty-gritty details of how a device works and communicates with the OS.
+  
+**Example: Linux File System Stack**
+
+Consider how Linux organizes its software to work with various storage devices:
+  
+1. **Application Layer**: Applications interact with the file system using standard calls like open, read, write, close, etc.
+
+2. **File System**: The file system doesn't concern itself with the specifics of the underlying hardware. It simply issues generic block read/write requests.
+
+3. **Generic Block Layer**: This layer acts as a mediator that forwards the read/write requests to the correct device driver.
+
+4. **Device Driver**: The device driver knows the specifics of the hardware (e.g., SCSI, ATA) and interacts with the device accordingly.
+
+**Downsides of Abstraction**
+
+While abstraction simplifies interaction with devices, it can also lead to underutilization of special features that some devices might offer. For example, a SCSI device may have advanced error reporting, but since the generic interface only expects basic error codes, the advanced features might go unused.
+
+**Device Drivers Constitute a Large Part of the OS Code**
+
+An interesting fact is that a large portion of an operating system's code is composed of device drivers. Studies suggest that over 70% of the Linux kernel code is found in device drivers. However, at any given time, only a small subset of these drivers may be active, depending on the devices connected.
+
