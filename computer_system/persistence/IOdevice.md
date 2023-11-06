@@ -44,6 +44,14 @@ Data is communicated to and from PCIE cards through lanes. Each lane consists of
 
 - Without interrupts, the system simply polls the I/O device to see if it is ready to transfer data. This `polling(Checking the status register, basically just asking it what is going on)` wastes CPU cycles.
 
+**Note on Polling:**
+
+- **Busy-wait polling:** The CPU frequently checks a device's status, waiting for an operation to complete. This method can be inefficient as the CPU is tied up in this repetitive checking process and can't do other tasks.
+  
+- **Interrupt-driven polling:** The device notifies the CPU via an interrupt when an operation is complete, allowing the CPU to perform other tasks in the meantime. This method is more efficient and provides better utilization of the CPU.
+
+In both cases, the objective is to ensure that an operation is completed, but interrupt-driven polling is generally preferred for its efficiency.
+
 - With interrupts, the I/O device signals the CPU when it is ready to transfer data. The CPU can then do other work until the I/O device is ready.
 
 2. DMA
@@ -70,6 +78,22 @@ This passage discusses the issue of data transfer between the CPU, memory, and p
 - DMA improves CPU utilization and system efficiency by minimizing CPU involvement in data movement tasks.
 
 > Instead of the CPU manually performing data transfer tasks like reading from or writing to peripheral devices or memory, the CPU can instruct the DMA (Direct Memory Access) controller to handle these data transfer operations. The DMA controller operates independently of the CPU, and once programmed with the necessary instructions, it can efficiently move data between memory and peripheral devices without direct CPU involvement. This offloading of data transfer tasks to the DMA controller allows the CPU to focus on executing other processes or tasks concurrently. It improves overall system efficiency by reducing CPU overhead and maximizing CPU utilization for processing tasks other than data movement.
+
+#### Without DMA (Direct Memory Access):
+
+- **CPU Involvement**: The CPU is heavily involved in the data transfer process.
+- **Data Transfer**: The CPU must execute a routine to transfer data between the memory and the I/O device one word at a time.
+- **Processor Time**: Since the CPU is managing the data transfer, it is occupied with this task instead of performing other operations, leading to inefficient use of the CPU.
+- **Interrupts**: The CPU is interrupted to signal that an I/O operation has completed, but the data must still be transferred by the CPU itself from the I/O device to the system memory or vice versa.
+
+#### With DMA:
+
+- **CPU Involvement**: The CPU initiates the transfer by setting up the DMA controller, but does not participate in the data transfer.
+- **Data Transfer**: The DMA controller handles the transfer of data directly between the I/O device and the system memory without CPU intervention, transferring a block of data at a time.
+- **Processor Time**: The CPU is free to perform other tasks while the DMA controller is managing the data transfer.
+- **Interrupts**: The CPU is interrupted only after the entire block of data has been transferred, at which point the DMA controller signals the completion of the transfer.
+
+In essence, DMA allows for more efficient processing by freeing up the CPU from the time-consuming task of data transfer. This is especially important for high-throughput devices like disk drives, where the volume of data is significant.
 
 ### What is DMA descriptor?
 
