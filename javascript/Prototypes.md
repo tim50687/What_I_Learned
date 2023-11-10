@@ -144,3 +144,18 @@ array.shuffle();
 
 - We should avoid extending the built-in objects because we can run into problems.
     - Because some where else you might be using, there might be a library that is depending on the original implementation of the `Array` object.
+
+
+## Method Overriding
+
+```javascript
+function Circle() {}
+
+extend(Circle, Shape);
+
+Circle.prototype.duplicate = function () {
+  Shape.prototype.duplicate.call(this); // we can use this to call the parent method
+  // duplicate method
+  console.log("duplicate circle");
+};
+``
