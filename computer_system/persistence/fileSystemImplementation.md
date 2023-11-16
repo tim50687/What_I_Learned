@@ -1,5 +1,7 @@
 # Very Simple File System
 
+The file system is pure software. It is a layer of software that sits on top of the disk hardware and provides a higher-level interface to the user.
+
 ## Overview
 
 - Data region: A region of the disk that stores file data.
@@ -204,3 +206,52 @@ Most file systems aggresively use DRAM to cache data.
 
 - **Buffering:** The process of temporarily storing data in a buffer.
 
+## Mounting
+
+### Step-by-Step Example of Mounting a USB Drive
+
+#### 1. Connect the USB Drive
+
+- **Physical Connection:** Plug the USB drive into the computer. The operating system's USB drivers detect the new device.
+
+#### 2. Device Recognition
+
+- **Device Detection:** The operating system detects the new device and assigns it a device identifier, such as `/dev/sdb1`.
+
+#### 3. Choosing a Mount Point
+
+- **Mount Point Selection:** Decide where in the file system hierarchy you want to access the USB drive's contents. For this example, let's say the mount point is `/mnt/usb`.
+- **Create Mount Point:** If the directory `/mnt/usb` doesn't already exist, you create it using a command like `mkdir /mnt/usb`.
+
+#### 4. Mount Command
+
+- **Issue Mount Command:** Run the command `mount /dev/sdb1 /mnt/usb`. This tells the operating system to mount the device identified as `/dev/sdb1` at the `/mnt/usb` directory.
+
+   -  When a storage device is mounted, it is assigned a specific location in the file system hierarchy, known as a mount point. This is a directory through which all files on the storage device are accessed.
+
+#### 5. Filesystem Driver Association
+
+- **Driver Involvement:** The operating system uses the appropriate filesystem driver (ext4 in this case) to read the filesystem's metadata from the USB drive. This step is crucial for the OS to understand how to interact with the data structure on the drive.
+
+   - `Filesystem Driver`: This is a crucial component. A filesystem driver is a piece of software that understands how to read and write data on a storage device according to the rules of a specific filesystem format (such as ext4, NTFS, FAT32, etc.).
+
+#### 6. Accessing Files
+
+- **File System Integration:** Once mounted, the files on the USB drive are accessible through the directory `/mnt/usb`. You can navigate, read, and write files as if they were part of the local file system.
+
+#### 7. File Operations
+
+- **Read/Write:** Perform file operations such as reading, writing, or listing files under the mount point `/mnt/usb`.
+
+#### 8. Unmounting (When Done)
+
+- **Unmount Command:** When you're finished using the USB drive, you unmount it with the command `umount /mnt/usb`. This step is important to ensure all file operations are completed and the filesystem is left in a consistent state.
+- **Physical Removal:** After unmounting, you can safely remove the USB drive from the computer.
+
+### Additional Notes
+
+- **Automatic Mounting:** In many modern systems, this process can be automatic. When you plug in a USB drive, the system may automatically choose a mount point and mount the filesystem.
+- **Filesystem Compatibility:** The operating system must have support for the filesystem used on the USB drive. Most Unix-like systems natively support common filesystems like ext4, NTFS, and FAT32.
+- **Permissions and Security:** The mount command may require root privileges, and the system's security settings will determine access permissions for the files on the USB drive.
+
+In this example, the mounting process involves recognizing the USB drive, associating it with a directory (the mount point) in the file system hierarchy, and using the appropriate filesystem driver to interpret and manage the data on the drive.
