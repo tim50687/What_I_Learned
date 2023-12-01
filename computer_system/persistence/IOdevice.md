@@ -4,7 +4,7 @@
 
 - `CPU` attached to the main memory of the system via some kind of memory bus.
 
-- `Some device` connected to the system via a general-purpose I/O bus, which in many modern systems would be PCI.
+- `Some device` connected to the system via a general-purpose I/O bus, which in many modern systems would be `PCI`.
 
 - Finally, we have `peripheral bus`, such as SCSI, USB, or FireWire. These connect slow devices to the system, including disk drives, mice, keyboards, and so on.
     - a `peripheral bus` is a computer bus designed to support computer peripherals like printers and hard drives.
@@ -146,6 +146,58 @@ Rather than writing each of these parameters individually to device registers, t
 ## What is disk controller?
 
 The disk controller is the controller circuit which enables the CPU to communicate with a hard disk, floppy disk or other kind of disk drive. It also provides an interface between the disk drive and the bus connecting it to the rest of the system.
+
+Your confusion is understandable. Let's clarify the roles of the disk controller and disk driver, and how they interact with the CPU and the rest of the computer system. 
+
+### Disk Controller
+- **Definition**: As you found on Wikipedia, the disk controller is indeed a hardware component (circuitry) in a computer system. Its primary role is to manage and facilitate communication between the CPU and the disk drive (like a hard disk or SSD).
+- **Interface Role**: The disk controller provides an interface between the disk drive and the computer's bus system. The bus system is the network of pathways used for communication between various components in the computer.
+- **Functionality**: The disk controller handles the low-level details of controlling the disk's operations. This includes sending signals to move the read/write heads, managing data transfer to and from the disk, and controlling the disk's motor and other physical components.
+
+### Disk Driver
+- **Software Component**: The disk driver, on the other hand, is a software component that resides in the operating system. 
+- **Translator**: The driver translates high-level commands from the operating system (like reading a file) into a series of low-level commands that the disk controller can understand.
+- **Communication with Controller**: When a read or write command is issued by the operating system, the disk driver communicates with the disk controller, instructing it on what operations to perform.
+
+### Interaction and Workflow
+1. **High-Level Request**: When the operating system needs to read or write data to the disk, it issues a high-level command.
+2. **Driver Translation**: The disk driver translates this command into a series of lower-level instructions that the disk controller can understand.
+3. **Controller Operation**: The disk controller then executes these instructions, physically moving the read/write heads on the disk, reading or writing data, and then sending a signal (often an interrupt) back to the CPU to indicate completion.
+4. **Response to OS**: The disk driver receives the completion signal (via the interrupt) and then communicates the result back to the operating system.
+
+### Summary
+- The **disk controller** is the hardware interface between the disk drive and the computer's bus (and indirectly to the CPU), handling the physical aspects of disk operations.
+- The **disk driver** is the software in the OS that communicates with the disk controller, translating high-level OS commands into low-level instructions for the controller.
+
+Understanding the distinction between these two components and their roles helps clarify how data storage and retrieval tasks are handled in a computer system.
+
+#### Example
+
+The workflow involving a read operation among the disk driver, disk controller, and disk drive in a computer system is a coordinated process where each component plays a specific role. Here's a step-by-step breakdown of the workflow:
+
+##### 1. Request Initiation by the Operating System
+- The process starts when the operating system (OS) needs to read data from the disk. This could be a file read operation, for example.
+- The OS communicates this request to the disk driver. This communication includes details like the location of the data on the disk (e.g., sector number) and the size of the data to be read.
+
+##### 2. Disk Driver Processes the Request
+- The disk driver, which is a software component, receives the read request from the OS.
+- It translates this high-level request into a series of commands that the disk controller can understand. This translation includes determining the exact location on the disk where the data is stored.
+
+##### 3. Disk Controller Executes the Operation
+- The disk controller, a hardware component either integrated into the disk drive or located separately, receives the commands from the disk driver.
+- It then physically manages the reading process. This involves moving the read/write head (in the case of HDDs) or accessing the appropriate cells (in SSDs) to the correct location on the disk where the data is stored.
+- The controller reads the data from the disk and temporarily stores it in a buffer.
+
+##### 4. Data Transfer Back to the OS
+- Once the data is read and stored in the controller's buffer, it is sent back to the disk driver.
+- The disk controller may notify the completion of the operation to the CPU using an interrupt, indicating that the data is ready to be transferred.
+
+##### 5. Disk Driver Relays Data to the OS
+- The disk driver receives the data from the disk controller and passes it back to the operating system.
+- The OS then processes or utilizes this data as required, for example, loading it into an application or displaying it to the user.
+
+
+
 
 ## What is disk drive?
 
