@@ -2,19 +2,41 @@
 
 If the transaction is not execute successfully, the transaction is `aborted`. If a transaction is aborted, the database must be restored to the consistent state it was in before the transaction started. This is called `rollback`.
 
+## Consistency (ACID)
+
+### By user and DBMS
+
+- User: Don't do stupid logic
+
+- DBMS: 
+
+#### Example 
+DBMS-Enforced Constraints:
+- Referential Integrity: Ensures all references within the database are consistent (e.g., no transactions refer to non-existent accounts).
+- Domain Constraints: Ensures that data entries fall within specified domains (e.g., account balances are numeric, positive values).
+- Check Constraints: Enforces specific rules defined on the columns of tables (e.g., account balance should not go negative).
+- Unique Constraints/Primary Keys: Ensures uniqueness where required (e.g., no two accounts have the same account number).
+
+
+
 ## Concurrency Control Problems
 
 1. `Lost update problem`: An apparently successfully completed updated operation by one user can be overriden by another user's update operation.
 
 2. `Uncommitted dependency problem`: A transaction reads a value that has been updated by another transaction but not yet committed.
+    - What is T2 crashes after writing 200 but before committing? T2 has to be rolled back. And what T1 read is not valid anymore.
 
     - It is also called `dirty read`.
 
 3. `Inconsistent analysis problem`: A transaction reads several values while a second transaction updates some of those values during the execution of the first transaction.
 
+    - T1 and T2 Read X first, but T1 move X to Y, then T2 read Y. The result is not consistent.
+
 4. `Nonrepeatable read problem`: A row is retrieved twice and the values within the row differ between reads.
 
-5. `Phantom problem`: A transaction reads a set of rows that satisfy a search condition. While the transaction is active, a second transaction inserts or deletes rows that satisfy the condition. The first transaction then repeats the search, returning a different set of rows.
+5. `Phantom problem`: A transaction reads a set of rows that satisfy a search condition. While the transaction is active, a second transaction inserts or `deletes` rows that satisfy the condition. The first transaction then repeats the search, returning a different set of rows.
+
+    - T1 read A, T2 delete A, T1 read A again, the result is different.
 
 ## Serializability and Recoverability
 
@@ -231,7 +253,7 @@ Basic timestamp ordering is a method to control transaction concurrency using ti
 - **How it Works**:
     - When a transaction \( T \) wants to write to a data item \( x \):
         - If \( ts(T) < read\_timestamp(x) \), \( T \) is too late to write to \( x \) because a younger transaction has already read the current value of \( x \). \( T \) must be aborted and restarted with a newer timestamp.
-        - If \( ts(T) < write\_timestamp(x) \), \( T \) is attempting to write an obsolete value to \( x \), as a younger transaction has already updated it. \( T \) must be aborted and restarted with a newer timestamp.
+        - If \( ts(T) < write\_timestamp(x) \), \( T \) is attempting to write an obsolete value to \( x \), as a younger transaction has already updated it. \( T \) simply ignores the write operation and proceeds without rollback.
         - Otherwise, \( T \) can write to \( x \), and \( write\_timestamp(x) \) is set to \( ts(T) \).
 
 
