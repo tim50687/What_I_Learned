@@ -14,7 +14,31 @@ JShell is a Read-Eval-Print Loop (REPL) tool introduced in Java 9. It is a comma
 
 ## Expressions
 
-An expression is a combination of values, variables, operators, and method calls that evaluates to a single value. The value can be a number, a string, or a boolean value. For example, `1 + 2` is an expression that evaluates to `3`. `1 + 2` is an expression that evaluates to `3`. `"Hello"` is an expression that evaluates to a string value `"Hello"`. `true` is an expression that evaluates to a boolean value `true`.
+An expression is a combination of one or more operands and zero or more operators that can be evaluated to a single value, object, method, or namespace. Expressions can be used to perform assignments, compare values, call methods, and more.
+
+Assignment is also an expression. 
+
+```java
+// 6 expressions
+int health = 100;
+if((health < 100) && (health > 0)) {
+    highScore = highScore + 50;
+}
+```
+
+
+## Statements
+
+A statement is a `complete unit of execution`. It can be an assignment, a method call, a loop, a condition, or any other Java statement.
+
+```java
+    // These are 3 statements
+    int myVariable = 50;
+    myVariable++;
+    myVariable--;
+
+```
+
 
 ## int
 
