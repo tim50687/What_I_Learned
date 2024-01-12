@@ -54,3 +54,65 @@ In conclusion, while circuit switching offers consistency and reliability for vo
 - **Definition**: Routing is the process of selecting paths in a network along which to send network traffic.
 - **Functionality**: Routers, the devices that perform routing, use routing tables and algorithms to determine the most efficient path for data packets to reach their destination.
 
+## Note on Packet-Switched Networks and Statistical Multiplexing
+
+**Packet-Switched Networks - Key to Efficiency**:
+- **Fundamental Question**: How can numerous hosts share a network, especially simultaneously? The answer lies in the efficient use of network resources through packet switching and multiplexing.
+
+**Multiplexing - Sharing Network Resources**:
+- **Concept**: Multiplexing is akin to time-sharing in computing. Multiple users share the same physical resources (like links), with each believing they have private access.
+- **Application in Networks**: Data from multiple sources is multiplexed over physical network links, allowing efficient sharing and transmission.
+
+**Time-Division and Frequency-Division Multiplexing (STDM and FDM)**:
+- **STDM**: Divides time into equal slots, allocating each flow a slot to transmit data in a round-robin manner.
+- **FDM**: Assigns different frequencies to different data flows, enabling simultaneous transmission over one link.
+
+**Limitations of STDM and FDM**:
+- **Inefficiency During Idle Periods**: If a flow has no data to send, its allocated time or frequency remains unused.
+- **Fixed Number of Flows**: These methods are not flexible for dynamic addition or removal of flows.
+
+**Statistical Multiplexing - A Superior Approach**:
+- **Dynamic Allocation**: Like STDM, it shares the physical link over `time` but differs by transmitting data from each flow `on demand`.
+- **Efficiency**: If only one flow has data, it can use the entire link capacity without waiting, minimizing idle time.
+- **Packet-Based**: Once the flow begins sending data, we need some way to limit the transmission, so that the other flows can have a turn. This is done by dividing the data into `packets`. The source may need to `fragment` the message into several packets, with the receiver reassembling them into the original message.
+
+**Packet Switching in Networks**:
+- **Packet Transmission**: Decisions on which flow's packet to transmit next are made independently by each switch.
+- **Fairness and Quality of Service (QoS)**: Ensuring fair bandwidth allocation and managing congestion are key challenges.
+
+**Network Congestion**:
+- **Buffering and Packet Drop**: When incoming data exceeds the link's capacity, switches buffer packets. Prolonged congestion can lead to buffer overflow and packet loss.
+
+**Conclusion**:
+Statistical multiplexing in packet-switched networks enables fine-grained, efficient sharing of network resources. It addresses the limitations of earlier methods by dynamically allocating network capacity based on demand, with packet scheduling at each switch playing a critical role in managing network traffic and congestion.
+
+## Different Types of Networks: LANs, WANs, MANs, and SANs
+
+**Network Classification by Size**:
+- Networks are often categorized based on their geographical scope and size, influencing the technology and architecture used.
+
+**Local Area Networks (LANs)**:
+- **Definition**: LANs are networks that typically extend less than 1 kilometer.
+- **Usage**: Commonly used in homes, offices, and building complexes.
+- **Characteristics**: High data transfer rates, low latency, and limited geographic coverage.
+
+**Wide Area Networks (WANs)**:
+- **Definition**: WANs can span large geographical areas, potentially worldwide.
+- **Historical Context**: The term WAN emerged as computers proliferated, necessitating networks that connected geographically distant computers.
+- **Usage**: Used for broader communication needs, connecting LANs and MANs, often via leased telecommunication lines.
+
+**Metropolitan Area Networks (MANs)**:
+- **Definition**: MANs usually span tens of kilometers, covering a city or a metropolitan area.
+- **Usage**: They bridge the gap between LANs and WANs, providing regional connectivity.
+
+**Storage Area Networks (SANs)**:
+- **Definition**: SANs are high-speed networks that connect storage devices with servers. They are usually confined to a single room or building.
+- **Technology Example**: Fibre Channel is a common technology in SANs, connecting computing systems to storage servers and data vaults.
+- **Performance Edge**: SANs often lead in performance and are increasingly integrated into LANs and WANs.
+
+**Implications of Network Size**:
+- **Data Propagation Time**: The size of a network often affects the data propagation time – the time it takes for data to travel from one end of the network to the other.
+- **Technology Choices**: Different sizes and scopes of networks require distinct technological approaches and considerations.
+
+**Conclusion**:
+Understanding the different types of networks – LANs, WANs, MANs, and SANs – is crucial for grasping the varied networking technologies and their specific uses. Each type serves distinct purposes and scales, from local area coverage in LANs to global connectivity in WANs, and specialized high-performance connections in SANs.
