@@ -132,3 +132,31 @@ Statistical multiplexing in packet-switched networks enables fine-grained, effic
 
 **Conclusion**:
 Understanding the different types of networks – LANs, WANs, MANs, and SANs – is crucial for grasping the varied networking technologies and their specific uses. Each type serves distinct purposes and scales, from local area coverage in LANs to global connectivity in WANs, and specialized high-performance connections in SANs.
+
+## Support for Common services
+
+Since many applications need common services, such as file transfer, email, and the web, it makes sense to provide these services once and then make them available to all applications.  
+
+###   Network Channels in Computer Networks
+
+**Network Channels - Facilitating Application Communication**:
+- A network channel is a conceptual pathway through which application-level processes on different hosts communicate over a computer network.
+
+**Beyond Simple Connectivity**:
+- **Role of Channels**: Channels are not just about delivering packets from one host to another but about `enabling meaningful communication between applications`.
+    - Ex. request/ reply or message streams.
+        - A request/ reply channel is a channel that supports a request/ reply protocol, it `guarantees` that a request is received and processed by the recipient, which then sends a reply back to the sender.
+        - A message stream channel is a channel that supports a message stream protocol, where one application sends a stream of messages to another application, which then receives the messages in the `same order` they were sent. Furthermore, `support multicast`, where one application can send a message to multiple applications.
+- **Simplifying Application Development**: Instead of each application handling complex network functionalities, channels provide common services to simplify this process.
+
+**Characteristics of Network Channels**:
+1. **Logical Connection**: Channels represent a logical, not necessarily physical, connection between applications.
+2. **Abstraction**: They abstract the complexities of the underlying network, offering a simpler interface for application developers.
+3. **Application-Specific Services**: Different applications can use different types of channels based on their specific requirements.
+
+**Services Provided by Channels**:
+- **Guaranteed Delivery**: Ensuring that messages are reliably delivered to the recipient.
+- **Order Preservation**: Maintaining the order in which messages are sent.
+- **Security and Privacy**: Providing secure and private communication to prevent eavesdropping.
+- **Error Handling and Correction**: Managing and correcting errors in transmission.
+
