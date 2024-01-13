@@ -132,3 +132,12 @@ The scope of the variable declared in the switch statement is limited to the swi
 ### Instance field
 
 - Value of the field is not allocated any memory and has no value until the object is created
+
+
+## Get user input
+
+- `Integer.parseInt` : convert string to integer
+
+1. You cannot use System.console() in intellij, this is because IDE disables it. You can use it in the terminal.
+
+- `scanner.nextLine()` :  It will read the input string unless the line changes or a new line and then ends the input with \n or pressing enter.
