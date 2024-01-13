@@ -37,3 +37,11 @@ In summary, when you typed `make ex1`, you told `make` to compile `ex1.c` into a
   - If any dependency has a more recent modification timestamp than the target, `make` will rebuild the target.
 
 
+> If just type make, make will build the first target in the makefile. In this case, it will build ex1. If you want to build a specific target, you can type make ex1. If you want to build all targets, you can type make all.
+
+> `all` is a special target. It is the default target if you just type make. It can build every target you list as a dependency. In this case, it builds ex1 and ex3.
+
+
+- If I don't have the dependency, try going down the tree and see if you can build it. 
+
+- If you have the dependency, check the timestamp. If the dependency is newer than the target, then rebuild the target. If the target is newer than the dependency, then don't rebuild the target.
