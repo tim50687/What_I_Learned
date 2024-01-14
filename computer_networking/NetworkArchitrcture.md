@@ -47,6 +47,8 @@ The concept of abstraction and layering in network design is a crucial strategy 
 1. **Manageable Components**: It breaks down the network design into smaller, more manageable parts. Each layer addresses a specific aspect of the network functionality.
 2. **Modularity**: This approach allows for modularity in design. If a `new service` or functionality needs to be added, it might only require changes at a specific layer, without altering the entire system.
 
+> Unfortunately, the OSI model hide information, which will lead to the performance issue.
+
 ### Conclusion
 Abstraction and layering are fundamental in network design, simplifying complex systems and making them manageable and scalable. By abstracting details and layering functionalities, network systems become easier to develop, maintain, and upgrade. This approach allows network designers to focus on one layer's functionality at a time, leveraging the capabilities provided by the lower layers.
 
@@ -150,3 +152,185 @@ Encapsulation is a fundamental concept in network communication, crucial for the
    - Different protocols have different ways of defining their demux keys. For example, some might use 8-bit fields (allowing for 256 different identifiers), while others might use 16- or 32-bit fields for more options.
    - Some protocols might use a single demultiplexing field, while others use a pair (one for each communication direction).
 
+
+## Example of Layering of Protocols on Data
+
+### The Process of Sending an HTTP Request
+
+#### 1. Application Layer (HTTP Request)
+- **Web Browser's Role**: The browser creates an HTTP request, which is a plain text message following the HTTP protocol format, like the `GET / HTTP/1.1` request.
+- **Data**: The request includes the path (`/`), HTTP version (`HTTP/1.1`), and headers like `Host` and `Connection`.
+
+#### 2. Transport Layer (TCP)
+- **OS and TCP**: The operating system takes the HTTP data and uses TCP (Transmission Control Protocol) to ensure reliable delivery. TCP handles the data integrity and order.
+- **TCP Header**: The OS adds a TCP header to the HTTP data, including information like the source and destination port numbers (e.g., port 80 for HTTP).
+
+#### 3. Network Layer (IP)
+- **IP Routing**: The OS then encapsulates the TCP-HTTP data within an IP (Internet Protocol) packet, adding an IP header. This header includes the source and destination IP addresses.
+- **Routing Decision**: The OS determines the next hop for the packet, which could be a local server or an external router, based on its routing table.
+
+#### 4. Data Link Layer (Ethernet)
+- **Ethernet Frame**: For communication over the LAN, the OS wraps the IP-TCP-HTTP packet in an Ethernet frame, adding an Ethernet header with MAC addresses.
+- **Transmission**: The packet, now Ethernet-IP-TCP-HTTP, is sent over the network. Ethernet handles local network delivery.
+
+#### 5. Receiving and Processing
+- **Destination Device**: The receiving device (server or router) reads the Ethernet frame.
+- **Layer-by-Layer Processing**: Each layer processes and strips off its respective header, passing the remaining data to the next layer up.
+- **Final Delivery**: If the destination is the correct server, the HTTP request reaches the application layer (web server) after all headers are removed.
+
+### Intermediate Routers
+- **Routing Function**: If a router is an intermediate stop, it processes the Ethernet and IP headers, determines the next hop based on the IP address, and forwards the packet accordingly.
+- **Protocol Flexibility**: The packet might switch from Ethernet to another protocol if it leaves the LAN (e.g., over fiber optic lines).
+
+### Layered Network Model
+- **Abstraction and Independence**: Each layer operates independently and handles specific tasks: Ethernet for local delivery, IP for routing, TCP for reliable transmission, and HTTP for application-level communication.
+- **Encapsulation**: Each layer adds its own header to the data from the higher layer. This nesting ensures that each layer's protocols and operations are contained and managed distinctly.
+
+
+## Conceptualize the layered model of network communication
+
+### 1. Application Layer
+- **Intent**: The application (e.g., a web browser) wants to send or receive data (like an HTTP request).
+- **Action**: It prepares the data in a format understandable at the application level (following HTTP protocol, for instance) and hands it off to the transport layer.
+- **Perspective**: "I've formatted this data according to my protocol. Transport layer, it's your turn to handle it."
+
+### 2. Transport Layer
+- **Intent**: Needs to transport the application's data reliably to the correct process on the destination machine.
+- **Action**: Adds a transport layer header (like TCP), which includes information for managing this transport (like port numbers, sequence numbers for ordering, etc.).
+- **Perspective**: "I've ensured this data will reach the right process reliably. Network layer, please route this to the right machine."
+
+### 3. Network Layer
+- **Intent**: Responsible for routing the packet to the destination machine across networks.
+- **Action**: Adds a network layer header (like IP), containing source and destination IP addresses and other routing information.
+- **Perspective**: "I've determined how to route this packet. Data link layer, please deliver this to the next node."
+
+### 4. Data Link Layer
+- **Intent**: Handles the local transmission of data (like on a LAN).
+- **Action**: Adds a data link layer header (like Ethernet), which includes MAC addresses and other local network information.
+- **Perspective**: "I'll handle the local delivery of this packet. Physical layer, please transmit these bits over the hardware."
+
+
+## The 7-Layer Model
+
+
+### Physical Layer
+
+- **Service**: Transmits raw bits over a physical link between two systems.
+- **Interface**: Defines how a single bit is sent across the physical medium.
+- **Protocol**: Specifies the encoding scheme for a bit, including voltage levels, signal timing, etc.
+- **Examples**: Coaxial cable, fiber optics, radio frequency transmitters.
+
+### Data Link Layer
+
+- **Service**: Manages data framing (defining packet boundaries), Media Access Control (MAC), and provides per-hop reliability and flow control.
+- **Interface**: Handles the transmission of packets between two hosts on the same medium.
+- **Protocol**: Involves physical addressing (like MAC addresses).
+- **Examples**: Ethernet, WiFi, DOCSIS (Data Over Cable Service Interface Specification).
+
+### Network Layer
+
+- **Service**: Responsible for delivering packets across the entire network, handling tasks like fragmentation/reassembly, packet scheduling, and buffer management.
+- **Interface**: Facilitates sending a packet to a specific, globally-defined destination.
+- **Protocol**: Involves global addressing schemes (like IP addresses) and maintaining routing tables.
+- **Examples**: Internet Protocol (IP), IPv6.
+
+### Transport Layer
+
+- **Service**: Offers services like multiplexing/demultiplexing of data streams, congestion control, and ensures reliable, in-order delivery of messages.
+- **Interface**: Allows sending of a complete message to a destination.
+- **Protocol**: Includes the use of port numbers, mechanisms for reliability and error correction, and flow control.
+- **Examples**: TCP (Transmission Control Protocol), UDP (User Datagram Protocol).
+
+### Session Layer
+
+- **Service**: Manages access and synchronization of data.
+- **Interface**: Varies depending on the implementation.
+- **Protocol**: Includes token management and insertion of checkpoints.
+- **Examples**: Not typically used in modern networking, more abstract.
+
+### Presentation Layer
+
+- **Service**: Converts data between different formats and representations, such as from big endian to little endian, or ASCII to Unicode.
+- **Interface**: Varies depending on the implementation.
+- **Protocol**: Defines data formats and transformation rules.
+- **Examples**: Again, more abstract and not typically used in modern networking.
+
+### Application Layer
+
+- **Service**: Provides a wide range of services depending on the application's requirements. This layer encompasses the high-level applications we interact with.
+- **Interface and Protocol**: Both are highly variable and depend on the specific application. This layer follows the protocols and interfaces defined by the application itself.
+- **Examples**: Any high-level applications like web browsers, email clients, and mobile apps.
+
+### Conclusion
+
+Each layer of the OSI model has specific roles, protocols, and interfaces. The lower layers (Physical, Data Link, Network) are more concerned with the transport of data, while the upper layers (Transport, Session, Presentation, Application) deal with the formatting and management of that data for various applications. This layered approach allows for modular networking, where each layer can operate independently yet collaboratively to ensure efficient and reliable network communication.
+
+
+## Hourglass Model of the Internet
+
+### Top of the Hourglass: Application Layer
+- **Wide Range of Applications**: The top wide part of the hourglass represents the multitude of applications and high-level protocols (like HTTP for web browsing, SMTP for email, FTP for file transfer, etc.).
+- **Diversity**: This layer is diverse and ever-expanding, allowing for a wide range of applications and services to be built.
+
+### Narrow Waist: Internet Protocol (IP) Layer
+- **Simplicity and Universality**: The narrow middle of the hourglass represents the Internet Protocol (IP) layer. It's the core of the Internet's architecture, providing a simple set of rules for routing packets of data from source to destination.
+- **Uniformity**: All data, regardless of its final application, passes through this layer. This uniformity simplifies the routing process and ensures interoperability across different networks and devices.
+
+### Bottom of the Hourglass: Network Access Layer
+- **Diverse Technologies for Data Transmission**: The bottom wide part of the hourglass represents the various network technologies used to transmit data (like Ethernet, Wi-Fi, LTE, Fiber Optics, etc.).
+- **Flexibility**: This layer is characterized by a variety of physical and data link technologies that can connect devices to the Internet. Despite their differences, they all support the IP layer above.
+
+### Significance of the Hourglass Model
+- **Simplicity at the Core**: By having a simple, standardized IP layer at its core, the Internet can support a wide range of applications and network technologies. This design allows for innovation and expansion at both the application and network layers without changing the core IP layer.
+- **Interoperability**: The model ensures that `as long as data can be packaged into IP packets`, it can traverse the Internet regardless of the application or the underlying physical network.
+- **Scalability**: This architecture allows the Internet to grow and incorporate new technologies and applications without fundamental changes to its core.
+
+### Conclusion
+The hourglass model of the Internet effectively illustrates how a simple and universal protocol at its core (IP) can support a vast and diverse range of applications and network technologies. This design principle is key to the Internet's widespread success and its ability to continuously evolve and accommodate new technologies and services.
+
+> However, it's extremely hard to change the IP protocol, which is why we have IPv4 and IPv6 at the same time. The reason why it's really hard to change is because it's the core of the Internet, and it's really hard to change the core of the Internet.
+
+
+## Reviews
+
+Sure, let's go through these questions one by one:
+
+### 1. When a router sees an IP address, how does it know where to forward it?
+- A router uses a routing table to decide where to forward packets. The routing table contains information about the topology of the network and uses IP addresses to determine the best next hop for a packet. When a router receives a packet, it examines the destination IP address and checks its routing table to find the best route for the packet. If the destination is on the router's local network, it sends the packet directly to that destination. If not, it forwards the packet to another router that is closer to the destination.
+
+### 2. Speculate on why IP is above TCP in the layered model. Why does the TCP header go on before the IP header and not the other way around?
+
+1. **Separation of Responsibilities**:
+   - The layered model divides network responsibilities into distinct layers, each handling a specific aspect of data communication.
+   - **TCP (Transport Layer)**: Focuses on data transmission between devices, ensuring data is sent reliably and in order.
+   - **IP (Network Layer)**: Deals with routing the data across different networks to reach the correct destination.
+
+2. **Why TCP Comes Before IP**:
+   - **Order of Operations**: When a message is sent over the Internet, it first goes through the Transport Layer (TCP), where it is broken down into segments, and transport-level considerations like establishing a connection, reliability, and order are applied.
+   - **Addition of Headers**: Each layer adds its own header information to the data packet:
+     - **TCP Header**: Contains information like `source and destination port numbers`, `sequence numbers`, `acknowledgment numbers`, etc.
+     - **IP Header**: Added after the TCP header, containing source and destination IP addresses, among other things.
+   - **Conceptual Flow**: Conceptually, the data flows from the application down through the layers. It hits TCP (Transport Layer) first, where it's prepared for transport. Then it moves to IP (Network Layer) where it's prepared for routing.
+
+3. **Why Not the Other Way Around**:
+   - **Data Integrity and Order First**: It's essential to establish a reliable connection and segment the data before worrying about how to route it. TCP handles these tasks.
+   - **Routing is the Next Step**: Once the data is reliably prepared for transmission, the next step is to figure out how to get it to the destination, which is IP's role.
+
+#### `Simplified Example`
+
+Imagine sending a letter:
+- **TCP's Role**: Writing the letter, putting it in an envelope, and ensuring the letter is ready for posting (e.g., adding a return address, checking the content).
+- **IP's Role**: Once the envelope is ready, determining the best postal route to get the letter to its destination.
+
+#### Conclusion
+
+In the network stack, TCP (Transport Layer) handles the preparation of data for transmission, ensuring reliability and proper sequencing. After this, IP (Network Layer) takes over to route this prepared data to its final destination. This sequential process explains why the TCP header is added to data packets before the IP header.
+
+### 3. If UDP is unreliable and TCP is reliable, speculate on why one might ever use UDP.
+- UDP (User Datagram Protocol) is used in scenarios where `speed` and `efficiency` are more critical than reliability. For example:
+  - Streaming services (like live video or audio) where receiving all data in order isn't as important as keeping the stream going without delay.
+  - DNS queries, where the overhead of establishing a TCP connection is not justified for small query-response interactions.
+  - Situations where the application can handle some level of packet loss or has its own mechanisms for ensuring data integrity.
+  - IoT (Internet of Things) devices, where lightweight and fast communication is preferred.
+
+Using UDP reduces the overhead associated with the connection establishment, error checking, and congestion control features of TCP, making it more efficient for certain types of network communication.
