@@ -54,3 +54,27 @@ printf("I am %d years old.\n", age);
 - `n`: next line, but step over function calls.
 
 - `bt`: backtrace, shows the stack of function calls that got us to this point in the program. (`read it from the bottom up`).
+
+
+## Exercise 7: Variables and Types
+
+- `%e`: prints a floating-point number in scientific notation.
+
+- `%%`: prints a literal percent character.
+
+- `\0`: is 0 in integer, but is the null character in character.
+
+You can do `math operation on int and char`, C implicitly converts char to int. `To C, a character is just an integer`. It's a really smaill integer.
+
+
+## Exercise 10: switch statement
+
+- Variable expressions are not allowed in case labels. `Although macros are allowed.`
+
+- Float value is not allowed as a constant value in case label.
+
+- ONly those expressions are allowed in switch which results in an integral constant value.
+
+## Exercise 11: Array and Strings
+
+- `int numbers[4] = {1};` : if you don't initialize all the elements, the rest of the elements will be initialized to 0.
