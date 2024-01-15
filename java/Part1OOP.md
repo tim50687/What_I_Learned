@@ -101,3 +101,85 @@ public class Person {
 ```
 
 In this example, constructor chaining ensures consistent object creation while providing flexibility for clients to choose suitable constructors.
+
+
+## Static
+
+You can also set up static variables in constructors. For example, this is useful when you want to keep track of how many objects of a class have been created.
+
+```java
+
+  private static int numberOfAccounts = 0;
+
+  public BankAccount(String number, double balance, String customerName, String email,
+      String phoneNumber) {
+    System.out.println("Account constructor with parameters called");
+    this.accountNumber = number;
+    this.accountBalance = balance;
+    this.customerName = customerName;
+    this.email = email;
+    this.phoneNumber = phoneNumber;
+    numberOfAccounts++;
+  }
+
+  public static int getNumberOfAccounts() {
+    return numberOfAccounts;
+  }
+
+```
+
+### Static Method
+
+- Static methods can not access instance methods and instance variables directly.
+
+
+## Plain Old Java Object (POJO)
+
+A plain old java object is a class that generally only has instance fields.
+
+- It's used to house data, and pass data between funcitonal classes.
+
+- Many databases frameworks uses POJOs to read data from, or to write data to, databases. files or streams.
+
+### The record
+
+> What is boilerplate code?  
+> A boilerplate code usually refers to a pile of code blocks with a fixed pattern that can be widely applied to various program modules.
+
+The record type is to replace the boilerplate code of the POJO, but to be more restrictive.
+
+- The record is a special class that contains data, that's not meant to be altered.
+
+```java
+public record LPAStudent(String id, String name, String dateOfBirth, String classList) {
+}
+```
+
+- The part that's in parentheses, is called the `record header`.
+
+- The record header consists of `record components`, a comma delimited list of components.
+
+For each component in the header, Java generates:
+
+1. A field with the same name and declared type as the component.
+
+2. The field is declared as private and final.
+
+3. The field is sometimes referred to as a component field.
+
+- Java generates a toString method that prints out each attribute in a formatted String.
+
+- Java generates a public accessor(`getter`) method for each component field. `For example, id, is simply id().`
+
+```java
+System.out.println(recordStudent.name() + " is taking " + recordStudent.classList());
+```
+
+- There's no setter, this is because the record is immutable. `If you want to modify data on your class, you won't be using the record.`
+
+## Annotation
+
+- Annotations are a type of metadata.
+
+- Annotations are more structured, and have more meaning than comments.
+
