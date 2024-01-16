@@ -157,3 +157,150 @@ The `socket()` function's parameters—`domain`, `type`, and `protocol`—allow 
 
 - **`Enabling Multiple Connections`**: With ports, a single IP address can be used to establish numerous connections for different purposes. For example, you can browse the internet, send emails, and stream videos from the same device concurrently, each using different port numbers.
 
+## Youtube tutorial
+
+### Header Files
+
+- `#include <sys/types.h>`: This header file contains definitions of a number of `data types used in system calls`. 
+
+- `#include <sys/socket.h>`: This header file contains definitions of `structures needed for sockets`. Eg. sockaddr
+    - Provides the definitions for socket-related functions like `socket()`, `bind()`, `listen()`, `accept()`, `connect()`, etc.
+    - Defines important structures such as `sockaddr`.
+
+- `#include <netinet/in.h>`: This header file contains `constants and structures needed for internet domain addresses`.
+    - Defines structures like `struct in_addr` (which represents an IPv4 internet address) and `struct sockaddr_in` (used for IPv4 socket address structure).
+    - Provides constants such as `AF_INET (address family for IPv4)` and `INADDR_ANY (used to bind a socket to all available interfaces)`.
+
+#### Structure of sockaddr_in
+    
+```c
+struct sockaddr_in {
+    short   sin_family;
+    u_short sin_port;
+    struct  in_addr sin_addr;
+    char    sin_zero[8];
+};
+```
+
+### Functions
+
+```c
+int sockfd = socket(int domain, int type, int protocol);
+```
+
+- **Purpose**: Creates a new socket.
+
+- **Parameters**:
+   - `domain`: Specifies the protocol family of the created socket.
+        - `PF_INET`: Stands for "Protocol Family Internet" and is used for IPv4 Internet protocols. This is typically used for TCP/IP or UDP/IP network communication.
+        - `PF_INET6`: Similar to `PF_INET` but for IPv6 Internet protocols.
+        - `PF_UNIX` (or `PF_LOCAL`): Used for local communication between processes on the same system, employing Unix domain sockets.
+   - `type`: Specifies the communication semantics.
+        - `SOCK_STREAM`: Provides a sequenced, reliable, two-way, connection-based byte stream. It's used with `TCP` (Transmission Control Protocol). Data is read and written as a continuous stream, much like reading and writing to a file.
+        - `SOCK_DGRAM`: Supports datagrams (connectionless, unreliable messages of a fixed maximum length). It's used with `UDP` (User Datagram Protocol). 
+   - `protocol`: Specifies a particular protocol to be used with the socket. Normally, only a single protocol exists to support a particular socket type within a given protocol family.
+        - use `0` to automatically choose the appropriate protocol for the given `type`. For example, for `PF_INET` and `SOCK_STREAM`, the `default protocol is TCP`.
+
+
+```c
+int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+```
+
+- **Purpose**: Binds the newly created socket to the specified address.
+
+- **Parameters**:
+   - `sockfd`: The socket descriptor returned by `socket()`.
+   - `addr`: A pointer to a `sockaddr` structure containing the address to bind to, cast to a `sockaddr *`.
+   - `addrlen`: The size in bytes of the address to bind to.
+
+
+```c
+int listen(int sockfd, int backlog);
+```
+
+- **Purpose**: Marks the socket as a passive socket, that is, as a socket that will be used to accept incoming connection requests using `accept()`.
+
+- **Parameters**:
+   - `sockfd`: The socket descriptor returned by `socket()`.
+   - `backlog`: The maximum number of pending connection requests that can be queued up before connections are refused. This is typically set to `5`.
+
+
+```c
+int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+```
+- It is the blocking operation that does not return until a remote client has successfully connected to the server. And when it does return, it returns a new socket descriptor that can be used to communicate with the client.
+
+- **Purpose**: Accepts an incoming connection request on a socket.
+
+- **Parameters**:
+   - `sockfd`: The socket descriptor returned by `socket()`.
+   - `addr`: A pointer to a `sockaddr` structure that will be filled with the address of the client that connects, cast to a `sockaddr *`.
+   - `addrlen`: A pointer to a `socklen_t` structure that will be filled with the size in bytes of the address of the client that connects.
+
+
+```c
+int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+```
+
+- **Purpose**: Connects the socket to the specified address.
+
+- **Parameters**:
+   - `sockfd`: The socket descriptor returned by `socket()`.
+   - `addr`: A pointer to a `sockaddr` structure containing the address to connect to, cast to a `sockaddr *`.
+   - `addrlen`: The size in bytes of the address to connect to.
+
+
+```c
+bzero((char *) &serv_addr, sizeof(serv_addr));
+```
+
+- **Purpose**: Sets all values in the buffer to zero.
+
+- **Parameters**:
+   - `serv_addr`: A pointer to the buffer to be zeroed.
+   - `sizeof(serv_addr)`: The size in bytes of the buffer to be zeroed.
+
+
+### `inet_ntoa` and `ntohs`
+`inet_ntoa` and `ntohs` are functions used in C programming for handling network-related tasks, specifically for dealing with IP addresses and port numbers in a network context.
+
+1. `inet_ntoa`:
+   - `inet_ntoa` stands for "Internet Network to ASCII."
+   - It is a function used to convert an IPv4 address from its binary network byte order representation into a human-readable string in dotted-decimal format.
+   - The function takes an `in_addr` structure as an argument and returns a pointer to a static buffer containing the string representation of the IP address.
+   - Here's an example of how it's typically used:
+
+   ```c
+   #include <stdio.h>
+   #include <netinet/in.h>
+   #include <arpa/inet.h>
+
+   // ...
+
+   struct sockaddr_in client_addr;
+   // Assume client_addr is filled with information
+   printf("server: got connection from %s port %d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+   ```
+
+   In the code snippet above, `inet_ntoa` is used to convert the binary IP address (`client_addr.sin_addr`) to a string.
+
+2. `ntohs`:
+   - `ntohs` stands for "Network to Host (Short)."
+   - It is a function used to convert a 16-bit unsigned short integer from network byte order to host byte order (which might be little-endian or big-endian depending on the system).
+   - It's typically used for converting the port number received in network packets to the format used by the host system.
+   - Here's an example of how it's used:
+
+   ```c
+   #include <stdio.h>
+   #include <netinet/in.h>
+
+   // ...
+
+   struct sockaddr_in client_addr;
+   // Assume client_addr is filled with information
+   printf("server: got connection from %s port %d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+   ```
+
+   In this code, `ntohs` is used to convert the port number (`client_addr.sin_port`) from network byte order to host byte order before displaying it in the `printf` statement.
+
+These functions are commonly used when working with socket programming in C to handle network communication.

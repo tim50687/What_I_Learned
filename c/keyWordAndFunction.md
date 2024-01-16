@@ -225,3 +225,38 @@ In the case of `ls | grep`:
 The `close()` calls are essential for two reasons:
 1. Free up system resources.
 2. Ensure that the pipe behaves correctly. For example, if the read end isn't closed, `grep` might hang waiting for more input because the pipe wouldn't send an EOF (end of file) signal.
+
+
+## perror():
+
+The `perror()` function in C is used to print a descriptive error message to the standard error output (stderr). It's typically used in conjunction with system calls and library functions that set the global variable `errno` on failure. Here's a detailed explanation:
+
+### Purpose of `perror()`
+
+- **Error Reporting**: When a system call or library function encounters an error, it often returns a specific value (like `-1`) and sets the global variable `errno` to indicate the type of error.
+- **Contextual Information**: `perror()` uses the current value of `errno` to fetch a human-readable error message that describes the last error encountered.
+- **Custom Prefix**: It takes a string as an argument, which is displayed as a prefix to the error message. This helps provide context about where or why the error occurred.
+
+### How `perror()` is Used
+
+- **Example Usage**:
+   ```c
+   int fd = open("non_existent_file.txt", O_RDONLY);
+   if (fd == -1) {
+       perror("Error opening file");
+   }
+   ```
+- **In this Example**:
+   - If the `open()` system call fails (for example, the file doesn't exist), it returns `-1` and sets `errno`.
+   - `perror("Error opening file")` then outputs a message like "Error opening file: No such file or directory" to stderr.
+   - The specific error message after the colon is determined by the value of `errno`.
+
+### Why Use `perror()`
+
+- **User-Friendly Error Messages**: Directly reading `errno` gives a numeric code, which isn't user-friendly. `perror()` translates this code into a message that is easier to understand.
+- **Debugging Aid**: It's helpful for debugging, especially for system-level programming where interpreting `errno` values is common.
+- **Standard Error Reporting**: It's a standard way in C to report errors that occur during system call or library function execution.
+
+### Conclusion
+
+`perror()` is a simple yet powerful function in C for reporting errors. By providing descriptive, human-readable error messages that are associated with the `errno` value set by system calls and library functions, it plays a crucial role in debugging and error handling in C programs.
