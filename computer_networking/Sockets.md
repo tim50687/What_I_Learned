@@ -174,13 +174,21 @@ The `socket()` function's parameters—`domain`, `type`, and `protocol`—allow 
 #### Structure of sockaddr_in
     
 ```c
+#include <netinet/in.h>
+
 struct sockaddr_in {
-    short   sin_family;
-    u_short sin_port;
-    struct  in_addr sin_addr;
-    char    sin_zero[8];
+    short            sin_family;   // e.g. AF_INET
+    unsigned short   sin_port;     // e.g. htons(3490)
+    struct in_addr   sin_addr;     // see struct in_addr, below
+    char             sin_zero[8];  // zero this if you want to
+};
+
+struct in_addr {
+    unsigned long s_addr;  // load with inet_aton()
 };
 ```
+
+- In memory, the `struct sockaddr_in` is the same size as `struct sockaddr`, and you can freely cast the pointer of one type to the other without any harm, except the possible end of the universe.
 
 ### Functions
 
@@ -286,7 +294,7 @@ bzero((char *) &serv_addr, sizeof(serv_addr));
 
 2. `ntohs`:
    - `ntohs` stands for "Network to Host (Short)."
-   - It is a function used to convert a 16-bit unsigned short integer from network byte order to host byte order (which might be little-endian or big-endian depending on the system).
+   - It is a function used to `convert a 16-bit unsigned short integer from network byte order to host byte order` (which might be little-endian or big-endian depending on the system).
    - It's typically used for converting the port number received in network packets to the format used by the host system.
    - Here's an example of how it's used:
 
@@ -304,3 +312,4 @@ bzero((char *) &serv_addr, sizeof(serv_addr));
    In this code, `ntohs` is used to convert the port number (`client_addr.sin_port`) from network byte order to host byte order before displaying it in the `printf` statement.
 
 These functions are commonly used when working with socket programming in C to handle network communication.
+
