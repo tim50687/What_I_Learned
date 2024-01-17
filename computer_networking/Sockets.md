@@ -180,7 +180,7 @@ struct sockaddr_in {
     short            sin_family;   // e.g. AF_INET
     unsigned short   sin_port;     // e.g. htons(3490)
     struct in_addr   sin_addr;     // see struct in_addr, below
-    char             sin_zero[8];  // zero this if you want to
+    char             sin_zero[8];  // included to pad the structure to the length of a struct sockaddr, should be set to all zeros with the funciton `memset()`
 };
 
 struct in_addr {
@@ -269,10 +269,10 @@ bzero((char *) &serv_addr, sizeof(serv_addr));
    - `sizeof(serv_addr)`: The size in bytes of the buffer to be zeroed.
 
 
-### `inet_ntoa` and `ntohs`
+### `inet_ntoa` and `ntohs` and `inet_pton` and `inet_ntop`
 `inet_ntoa` and `ntohs` are functions used in C programming for handling network-related tasks, specifically for dealing with IP addresses and port numbers in a network context.
 
-1. `inet_ntoa`:
+1. `inet_ntoa`: (Obsolete)
    - `inet_ntoa` stands for "Internet Network to ASCII."
    - It is a function used to convert an IPv4 address from its binary network byte order representation into a human-readable string in dotted-decimal format.
    - The function takes an `in_addr` structure as an argument and returns a pointer to a static buffer containing the string representation of the IP address.
@@ -311,5 +311,22 @@ bzero((char *) &serv_addr, sizeof(serv_addr));
 
    In this code, `ntohs` is used to convert the port number (`client_addr.sin_port`) from network byte order to host byte order before displaying it in the `printf` statement.
 
-These functions are commonly used when working with socket programming in C to handle network communication.
+3. `inet_pton()`
+
+Converts an IP address in `numbers-and-dots` notation into either a `struct in_addr or a struct in6_addr` depending on whether you specify AF_INET or AF_INET6.
+
+4. `inet_ntop()`
+
+```c
+#include <arpa/inet.h>
+
+const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
+
+```
+
+Converts either a `struct in_addr or a struct in6_addr` into a `textual representation` suitable for presentation. The `dst` parameter points to a buffer to receive the `null-terminated string` containing the text address. The `size` parameter specifies the size of this buffer. The `src` parameter points to the `struct in_addr or struct in6_addr` that you want to convert.
+
+
+
+
 
