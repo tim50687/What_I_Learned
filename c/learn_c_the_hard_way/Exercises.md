@@ -78,3 +78,46 @@ You can do `math operation on int and char`, C implicitly converts char to int. 
 ## Exercise 11: Array and Strings
 
 - `int numbers[4] = {1};` : if you don't initialize all the elements, the rest of the elements will be initialized to 0.
+
+## Exercise 12: Sizes and Arrays
+
+The size of char is `always` 1 byte in C. 
+
+- `char name[] = "Zed"` : the size of the array is 4, because the string "Zed" has 4 characters, including the null byte.
+
+## Exercise 13: For Loops and Arrays of Strings
+
+You can loop through the string by:
+
+```c
+for (int i = 0; argv[1][i] != '\0'; i++) // cool!!!!!
+    {
+        char letter = argv[1][i];
+
+        switch (letter)
+        {
+        case 'a':
+        case 'A':
+            printf("%d: 'A'\n", i);
+            break;
+        case 'e':
+        case 'E':
+            printf("%d: 'E'\n", i);
+            break;
+        case 'i':
+        case 'I':
+            printf("%d: 'I'\n", i);
+            break;
+        case 'o':
+        case 'O':
+            printf("%d: 'O'\n", i);
+            break;
+        case 'u':
+        case 'U':
+            printf("%d: 'U'\n", i);
+            break;
+        default:
+            printf("%d: %c is not a vowel\n", i, letter);
+        }
+    }
+```
