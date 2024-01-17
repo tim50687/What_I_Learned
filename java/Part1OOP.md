@@ -183,3 +183,29 @@ System.out.println(recordStudent.name() + " is taking " + recordStudent.classLis
 
 - Annotations are more structured, and have more meaning than comments.
 
+## extends
+
+- A class can only extend one class.
+
+Java will `implicitly create a constructor` for the child class, that calls the parent class constructor. * **If parent class did not implement a default constructor, then the child class must explicitly call a parent class constructor.**
+
+## super
+
+- You can use ternary in `super` because super has to be the `first` statement in the constructor.
+
+```java
+
+  public Dog(String type, double weight, String earShape, String tailShape) {
+    super(type, weight < 15 ? "small" : (weight < 35 ? "medium" : "large"), weight);
+    this.earShape = earShape;
+    this.tailShape = tailShape;
+  }
+
+```
+
+
+## override method
+
+- It can `extend` the functionality of the parent class by calling the `super` method.
+
+- It can `change` the functionality of the parent class.
