@@ -204,7 +204,7 @@ Java will `implicitly create a constructor` for the child class, that calls the 
 ```
 
 
-## override method
+## overridden method
 
 - It can `extend` the functionality of the parent class by calling the `super` method.
 

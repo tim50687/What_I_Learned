@@ -22,6 +22,10 @@
 - Find longest:
 	- expand window until it's invalid
 
+### Why right never goes back? (IMO)
+
+IF Right pointers can goes back and find the more `optimal solution`, Then that optimal solution should already be found before. Therefore, no need for right to go back.
+
 ## Dynamic Sliding Window
 
 - Let's say we found the valid window index 0 -> 8, then we move the right pointer to 9, and the window is no longer valid.
@@ -53,3 +57,16 @@
 
 - create a flag to see if there's a duplicate character in the window.
 	- if window shrink, check if the value in dictionary is == 1.
+
+### 209. Minimum Size Subarray Sum
+
+- We remember the result once we found it in the inner loop.
+
+
+### 121. Best Time to Buy and Sell Stock
+
+- Here, we use `Kadane's algorithm`.
+
+- We can use `minPrice` to keep track of the minimum price we have seen so far.
+
+> Assume you sell at (right) what is the minPrice so dar you can buy at (left).
