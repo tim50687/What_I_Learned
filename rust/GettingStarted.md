@@ -118,3 +118,132 @@ The Rust package manager is called `cargo`. It is a command line tool that autom
 - This mechanism guarantees that your project will remain at the specified dependency versions (e.g., "0.8.5" for the "rand" crate) until you explicitly update them.
 - The `Cargo.lock` file is crucial for reproducible builds, ensuring that the same versions of dependencies are used consistently across different builds and environments.
 - It is common practice to include the `Cargo.lock` file in your project's source control (e.g., Git) to maintain a record of the specific dependency versions used in your project, enhancing collaboration and reproducibility.
+
+
+## Function
+
+### Order
+In Rust, the `order` of function definitions within the same file `does not matter` because Rust uses a two-pass compiler. Rust first scans the entire file to collect information about all functions and their signatures before generating code. As a result, you can define functions in any order within the same file, and they can reference each other without any issues.
+
+### Assignment
+In Rust, assignments do not return the value of the assignment itself. If you write `x = y = 6` in Rust, both `x` and `y` will not have the value `6`. Instead, this code will result in a compilation error because assignment in Rust is not an expression, and you cannot chain assignments like you can in some other languages.
+
+Contrast this with languages like C and Ruby, where you can indeed write `x = y = 6`, and both `x` and `y` will have the value `6`. In those languages, assignment is an expression that returns the value being assigned, allowing you to chain assignments like this.
+
+So, in Rust, you should use separate lines for assigning values to different variables, and assignment statements do not return the value being assigned, which differs from the behavior in languages like C and Ruby.
+
+> A new scope block created with curly brackets is an expression
+
+> If you add a semicolon to the end of an expression, you turn it into a statement, and it will then not return a value. Keep this in mind as you explore function return values and expressions next.
+
+### Return Value
+
+You can return early from a function by using the return keyword and specifying a value, but most functions return the last expression implicitly.
+
+```rust
+fn five() -> i32 {
+    5
+}
+```
+#### Example 
+The error you're encountering in your Rust code is due to the presence of a semicolon (`;`) at the end of the line `x + 1;` inside the `plus_one` function. In Rust, semicolons are used to terminate statements, and they indicate that the expression has no return value, effectively returning `()` (unit type).
+
+To fix this issue, you should remove the semicolon so that the last line of the function becomes an expression, which will be returned as the result of the function. Here's the corrected code:
+
+```rust
+fn main() {
+    let x = plus_one(5);
+
+    println!("The value of x is: {x}");
+}
+
+fn plus_one(x: i32) -> i32 {
+    x + 1 // Removed the semicolon here
+}
+```
+
+By removing the semicolon, you allow the `x + 1` expression to be the return value of the `plus_one` function, and it will correctly return an `i32` as expected.
+
+
+## Conditional Statement
+
+- The condition in the code must be bool
+
+In Rust, the `if` statement is an expression, which means it produces a value that can be assigned to a variable or used as part of an expression. This is a powerful feature because it allows you to conditionally assign values to variables using `if` statements in a concise and readable manner.
+
+In the provided code:
+
+```rust
+fn main() {
+    let condition = true;
+    let number = if condition { 5 } else { 6 };
+
+    println!("The value of number is: {number}");
+}
+```
+
+The `if` expression evaluates the condition, and if it's `true`, it returns the value `5`; otherwise, it returns the value `6`. This result is then assigned to the variable `number`. The key point here is that the type of `number` is determined by the types of the values returned by both branches of the `if` expression. In this case, `number` will have the type `i32` because both branches return integers.
+
+Using `if` expressions in `let` statements is a clean way to conditionally set the initial value of a variable based on some condition, and it's a common pattern in Rust code.
+
+>  the values that have the potential to be results from each arm of the if must be the same type
+
+
+### Wierd 
+
+```rust
+
+fn main() {
+    let mut counter = 0;
+
+    let result = loop {
+        counter += 1;
+        if counter == 10 {
+            break counter * 2; // still have semi colon, but can return 
+        }
+    };
+
+    println!("The result is {}", result);
+}
+```
+
+
+## Loop
+
+### Loop Label
+
+In Rust, when you have nested loops, the `break` and `continue` statements by default apply to the innermost loop. However, there are situations where you might want to break out of or continue a specific outer loop, especially in complex code structures. To achieve this, you can use loop labels.
+
+Here's how loop labels work:
+- You define a loop label by placing an identifier followed by a colon (`:`) just before the `loop` keyword.
+- When you use `break` or `continue`, you can specify the label to indicate which loop you want to affect.
+
+In the provided code:
+
+```rust
+fn main() {
+    let mut count = 0;
+    'counting_up: loop {
+        // ...
+
+        loop {
+            // ...
+
+            if count == 2 {
+                break 'counting_up; // Break out of the 'counting_up loop
+            }
+            // ...
+        }
+
+        count += 1;
+    }
+    // ...
+}
+```
+
+- `'counting_up:` is a loop label for the outermost loop.
+- The `break 'counting_up;` statement specifies that you want to break out of the loop labeled `'counting_up`.
+
+In this specific example, when `count` reaches `2`, the `break 'counting_up;` statement is executed, causing the program to exit the outer loop labeled `'counting_up`. Without the label, it would break out of the innermost loop only.
+
+Using loop labels can be helpful for maintaining code clarity and specifying exactly which loop you intend to manipulate when working with nested loops.
