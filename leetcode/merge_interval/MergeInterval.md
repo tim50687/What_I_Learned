@@ -14,6 +14,23 @@
 
   - By setting `key=lambda x: x[0]`, you're telling the `.sort()` method to sort the intervals based on the value of the first element of each interval (i.e., the start time of each interval).
 
+### To merge intervals, we can use the following algorithm:
+
+1. Sort the intervals in ascending order based on the start time.
+
+2. Create a new empty list `merged`.
+
+3. Create a new interval `currInterval` and set it equal to the first interval in the sorted list.
+
+4. Three situations can occur when iterating through the intervals in sorted order:
+
+   - curr.start > interval.end : No overlap, so we can add the interval to the merged list.
+
+   - curr.end < interval.start : No overlap, so we can add the curr to the merged list, and set curr = interval
+
+   - Otherwise, we have an overlap, so we merge the two intervals and set curr = merged interval.
+
+5. At the end, we add the last `curr` to the merged list and return it.
 
 ## 56. Merge Intervals
 
@@ -40,3 +57,27 @@ There will be three cases when you try to insert a new interval:
 I did `n^2` first. 
 
 However, can use `two pointer` to solve this problem to prevent the `revisit`.
+
+
+## 759. Employee Free Time
+
+1. Flatten the list of intervals into a single list.
+
+2. We merge all the intervals together, and then find the gaps between them.
+
+## Task Scheduler (do it again)
+
+### Greedy
+
+1. It just make sense to do the task with the most frequency first.
+
+2. We do the most frequent task first, and then do the second most frequent task, and so on.
+
+- The answer will look like this:
+
+  - Most frequent task -> second most frequent task -> ... -> least frequent task
+  - Put idle in between if necessary
+
+- Once the next most frequent task is available, we want to do that again.
+
+> Heapq, and Queue are useful data structures to solve this problem.
