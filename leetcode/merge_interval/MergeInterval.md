@@ -65,7 +65,7 @@ However, can use `two pointer` to solve this problem to prevent the `revisit`.
 
 2. We merge all the intervals together, and then find the gaps between them.
 
-## Task Scheduler (do it again)
+## 621 Task Scheduler (do it again)
 
 ### Greedy
 
@@ -81,3 +81,19 @@ However, can use `two pointer` to solve this problem to prevent the `revisit`.
 - Once the next most frequent task is available, we want to do that again.
 
 > Heapq, and Queue are useful data structures to solve this problem.
+
+## 253 Meeting Rooms II (do it again)
+
+- We can not merge it is because maybe third meeting can share the room second meeting is using.
+
+- simulate it in the real world situation.
+
+- Let's sort it first, more organized.
+
+- If there are three meeting, and the fourth meeting just need to check if there's any meeting that finished before the fourth meeting starts.
+    - if so, then we can use the same room.
+    - if not, then we need to add a new room.
+
+- We can use prioiry queue as the meeting room. 
+
+> If you want to know currently who is smallest, first, or largest, you can use `priority queue`.

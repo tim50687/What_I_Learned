@@ -212,3 +212,6 @@ Overall, `response.follow` simplifies the process of navigating from one page to
 
 
 
+## Handle dynamic content
+
+[good video](https://www.youtube.com/watch?v=Pu3gmdWsLYc&list=PLj4hN6FewnwrQ3Soq1e2MKISnoWyPkWfB)
