@@ -214,4 +214,23 @@ Overall, `response.follow` simplifies the process of navigating from one page to
 
 ## Handle dynamic content
 
+```bash
+scrapy crawl quotes -o quotes.json
+```
+
 [good video](https://www.youtube.com/watch?v=Pu3gmdWsLYc&list=PLj4hN6FewnwrQ3Soq1e2MKISnoWyPkWfB)
+
+### scrapy request
+
+The line of code you provided is creating an instance of a `scrapy.Request` object. Let's break down what each part of this line does:
+
+1. `request = scrapy.Request(`: This initializes a new Scrapy Request object and assigns it to the variable `request`.
+
+2. `url=url`: This sets the URL that the request should be sent to. The `url` variable is passed as an argument to specify the URL you want to scrape.
+
+3. `callback=self.parse_schedule`: This specifies the callback function that should be called when the response to this request is received. In this case, it's set to `self.parse_schedule`, which means that when the response is received, Scrapy will call the `parse_schedule` method of the spider to handle and parse the response.
+
+4. `headers=self.headers)`: Here, you are passing a dictionary of HTTP headers to be included in the request. `self.headers` likely contains a set of headers that you want to send with this request, such as user-agent, accept-encoding, etc. These headers can help mimic a real browser request or specify certain preferences for the server.
+
+Overall, this line of code is creating an HTTP request object with a specified URL, callback function, and headers, which Scrapy will use to make the request and handle the response when scraping a website.
+

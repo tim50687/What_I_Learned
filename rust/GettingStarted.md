@@ -247,3 +247,7 @@ fn main() {
 In this specific example, when `count` reaches `2`, the `break 'counting_up;` statement is executed, causing the program to exit the outer loop labeled `'counting_up`. Without the label, it would break out of the innermost loop only.
 
 Using loop labels can be helpful for maintaining code clarity and specifying exactly which loop you intend to manipulate when working with nested loops.
+
+## Rust Module System
+
+[Crazy good website](https://www.sheshbabu.com/posts/rust-module-system/)
