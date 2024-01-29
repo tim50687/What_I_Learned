@@ -235,3 +235,176 @@ You are correct in your description of modern Ethernet networks:
 6. **Power over Ethernet (PoE):** Ethernet can also carry electrical power in addition to data. PoE allows devices like IP phones, security cameras, and access points to receive power over the Ethernet cable, simplifying installation and reducing the need for separate power sources.
 
 These features make modern Ethernet networks highly versatile, capable of supporting high data rates, and suitable for a wide range of applications, from home networks to data centers and beyond. The use of switched Ethernet and full-duplex communication has significantly improved network efficiency and reliability, making Ethernet a foundational technology in today's digital world.
+
+
+## Wireless
+
+### Smaller range
+Wireless radios have a small range compared to the overall system:
+
+Wireless networks, such as those using Wi-Fi, have a limited range determined by the power of the radio transmitter and environmental factors. This range is usually much smaller compared to wired networks, which can span larger distances with the help of repeaters and switches.
+
+### Collision is at the receiver
+
+In wireless networking, collisions are detected at the receiver because it's the receiver that experiences the overlap of signals. The sender usually isn't aware that a collision has occurred, `unlike in Ethernet where the sender can detect a collision`.
+
+### Carrier sense plays a different role 
+
+CSMA stands for Carrier Sense Multiple Access. In Ethernet (CSMA/CD), a device listens to the network to check if it's free before transmitting (Carrier Sense). In Wi-Fi (CSMA/CA), it also listens, but because it `can’t detect collisions as effectively`, it uses a different method to `avoid them` (Collision Avoidance).
+
+### Why is is hard for Wireless to detect collision?
+
+Wi-Fi networks cannot effectively implement collision detection in the same way as Ethernet due to the fundamental differences in their transmission mediums and the nature of radio frequency (RF) communication. Here are the key reasons why Wi-Fi can't use collision detection like Ethernet:
+
+1. **The `Hidden Node` Problem**:
+   - In Wi-Fi, two devices might be in range of the access point but not in range of each other. This is known as the hidden node problem. If both devices send data to the access point simultaneously, a collision occurs at the access point, but neither device can detect it because they can't hear each other's transmission.
+
+2. **Signal Overlap and Interference**:
+   - In radio communications, `signals can overlap and interfere with each other without completely obliterating the signal`, unlike Ethernet where electrical signals on a wire can be directly monitored for collisions. Detecting such overlaps accurately in Wi-Fi is challenging due to varying signal strengths, distances, and environmental factors.
+
+3. **The Sender Cannot Hear While Transmitting**:
+   - In Ethernet, devices are capable of listening to the network while they transmit, which allows them to detect collisions. In contrast, most Wi-Fi devices cannot reliably receive and interpret signals while they are transmitting. This limitation is due to` the way radio transceivers are designed`.
+
+### Carrier sensing might be a problem for Wireless
+
+#### Exposed Terminal Problem
+
+A - B - C - D
+
+If B is sending data to A, at the same time, C detects that the channel is busy and it assumes that transmitting to D might cause a collision.
+
+C, therefore, `waits` to avoid a collision, `even though its transmission to D would not actually interfere with B's transmission to A`. This is because D is out of range of A and B.
+
+#### Collision is at the receiver end
+
+In wireless networks, the collision that matters is at the `receiver end`, not the sender. A collision occurs if two signals interfere at the receiver, making it `unable to decipher either`.
+
+
+## Potential Protocol for Wireless
+
+### Maca
+
+
+MACA is a network protocol used primarily in wireless communication to manage how multiple devices access a shared communication medium, such as a radio channel, in a way that minimizes the chance of collisions. It's an evolution of the basic ideas found in Carrier Sense Multiple Access (CSMA) but with strategies specifically designed for the challenges of wireless communication. Here's a breakdown of how MACA works:
+
+1. **Basic Principle**:
+   - In a shared medium, like a wireless network, multiple devices need to communicate, but if two or more devices transmit simultaneously, a collision occurs. MACA aims to minimize these collisions.
+
+2. **Collision Avoidance Mechanism**:
+   - Unlike CSMA, which includes Collision Detection (CSMA/CD) used in Ethernet, MACA focuses on avoiding collisions before they happen. This is crucial in wireless networks where detecting collisions is impractical due to reasons like the hidden node problem.
+
+3. **Use of Control Messages**:
+   - MACA uses control messages to facilitate communication and avoid collisions:
+     - **RTS (Request to Send)**: A device wanting to send data first transmits an RTS frame, which includes the intended recipient and the duration of the intended transmission.
+     - **CTS (Clear to Send)**: The recipient of the RTS, upon receiving it and finding the channel free, responds with a CTS frame, indicating that `it's ready to receive data`. The CTS also includes the duration of the transmission, `informing neighboring devices` to avoid transmitting during this time.
+
+4. **Avoiding Nearby Interference**:
+   - When other devices in the network hear either RTS or CTS frames, they refrain from sending data for the duration specified in these frames. This helps in avoiding collisions `not just between the sender and receiver` but also with any `nearby devices that might interfere`.
+
+5. **Send the data and get back the `ACK`**
+6. **Handling Collisions**:
+   If a `sender` in a wireless network using protocols like MACA (Multiple Access with Collision Avoidance) or its variations (like those in IEEE 802.11 Wi-Fi standards) does not receive a `CTS` (Clear to Send) or `ACK` (Acknowledgment) frame, it typically assumes that a collision has occurred or there is some form of communication failure. The protocol then follows a process to handle this situation, often involving exponential backoff. Here's how it works:
+
+   1. **Assuming Collision or Communication Failure**:
+      - If the sender sends an RTS (Request to Send) but doesn't receive a CTS in response, or if it sends data but doesn't receive an ACK, it assumes that its packets have collided with another transmission, or there is some other issue preventing successful communication (such as signal interference, out-of-range receiver, etc.).
+
+   2. **Entering Exponential Backoff Mode**:
+      - The sender then enters a phase known as exponential backoff. This is a strategy to manage retransmissions in a way that minimizes the chances of repeated collisions.
+
+   3. **How Exponential Backoff Works**:
+      - Initially, the sender waits for a random amount of time before attempting to retransmit. This time period is chosen randomly from a range of time slots.
+      - If the retransmission fails again, the range from which the random wait time is chosen is doubled. This doubling is the "exponential" part of exponential backoff.
+      - This process is repeated for each failed attempt to transmit, up to a maximum number of retries. Each time, the range of potential wait times increases exponentially, hence spreading out the retransmission attempts over a longer period and reducing the likelihood of further collisions.
+
+   4. **Limit on Backoff Attempts**:
+      - There is usually a limit to how many times and how long a sender will keep trying to retransmit using exponential backoff. Once this limit is reached, the attempt to transmit is abandoned, and an error may be reported to higher layers of the network protocol stack.
+
+   5. **Effectiveness and Efficiency**:
+      - Exponential backoff is effective in reducing network congestion and collision in busy networks. By randomizing retransmission times and increasing the wait period after each collision, it reduces the probability of simultaneous retransmissions from multiple devices.
+
+   This mechanism is crucial in managing the shared and unpredictable nature of wireless communication channels, ensuring that devices communicate efficiently even under conditions of potential interference and signal collision.
+
+
+## 802.11 Aka Wifi
+
+- The 802.11b standard was introduced in 1999. It was one of the earliest Wi-Fi standards to gain widespread adoption.
+
+- 802.11b supports `data rates of 5.5 Mbps and 11 Mbps`. These speeds were a significant improvement over the earlier 802.11a standard and were sufficient for many early wireless networking applications.
+   - Practical Throughput with TCP is Only 5.9 Mbps
+
+
+### 2.4 GHz band
+
+1. **Frequency Bands and Licensing**:
+   - The electromagnetic spectrum, which includes all frequencies of electromagnetic radiation, is divided into different frequency bands. Some of these bands are designated for specific uses and require a license to operate in (like certain TV or cellular frequencies). Others are designated as "unlicensed," meaning they are open for public use without the need for a government license.
+
+2. **The 2.4 GHz Band**:
+   - The 2.4 GHz band is one of these unlicensed frequency bands. It's widely used for various wireless communications because it's available worldwide and doesn't require licensing fees. This makes it an attractive option for many types of wireless devices.
+
+3. **Use in Wi-Fi (802.11b)**:
+   - The 802.11b standard for Wi-Fi operates in this 2.4 GHz unlicensed band. This was one of the key reasons for the rapid adoption of 802.11b, as it allowed for easy and cost-effective deployment of wireless networks.
+
+4. **Shared Use with Other Devices**:
+   - Since the 2.4 GHz band is unlicensed and widely accessible, it's not just used by Wi-Fi devices. Other common devices like Bluetooth headsets, cordless phones, microwave ovens, and even baby monitors use this band.
+
+5. **Interference Issues**:
+   - The shared nature of the 2.4 GHz band means that devices operating in this range can interfere with each other. For example:
+     - A microwave oven might emit radiation in the 2.4 GHz band, which can disrupt Wi-Fi signals.
+     - Bluetooth devices can cause interference with Wi-Fi networks as they also operate in the 2.4 GHz band.
+     - Cordless phones in the same frequency range can disrupt Wi-Fi connectivity when they are in use.
+
+6. **Impact on Wi-Fi Performance**:
+   - Interference in the 2.4 GHz band can lead to various performance issues for Wi-Fi networks, such as slower data rates, increased latency, and even loss of connectivity. This is particularly noticeable in crowded environments like apartment buildings, where many devices are operating in the same frequency range.
+
+In summary, the use of the 2.4 GHz unlicensed band by 802.11b and other devices means that there can be a significant amount of interference, which can affect the performance and reliability of Wi-Fi networks. This is a trade-off for using a widely accessible and free-to-use frequency band.
+
+### 11 channels in 2.4 GHz band
+
+> Channels are essentially subdivisions of a frequency band.
+
+The statement about the 11 channels in the 2.4 GHz band for 802.11b Wi-Fi in the United States, and the mention that only channels 1, 6, and 11 are orthogonal, refers to how these Wi-Fi channels are arranged and how they can interfere with each other. Let's break it down:
+
+1. **Wi-Fi Channels in the 2.4 GHz Band**:
+   - The 2.4 GHz band is divided into multiple channels for Wi-Fi use. In the United States, there are 11 channels available for 802.11b (and also 802.11g, which also operates in the 2.4 GHz band).
+
+2. **Channel Width**:
+   - Each Wi-Fi channel in the 2.4 GHz band is about 22 MHz wide. However, the center frequencies of each channel are only 5 MHz apart.
+
+3. **Overlap and Interference Between Channels**:
+   - Because the channels are wider than the spacing between them, they overlap with adjacent channels. For example, channel 1 overlaps with channels 2 and 3, channel 2 overlaps with channels 1, 3, and 4, and so on. This overlap can cause interference if multiple nearby networks are operating on adjacent channels.
+
+4. **Orthogonal Channels**:
+   - "Orthogonal" in this context means that the channels do not overlap and, therefore, do not interfere with each other. In the 2.4 GHz band, channels 1, 6, and 11 are spaced far enough apart that they do not overlap. This makes them orthogonal to each other.
+   - Using orthogonal channels is important in areas with many Wi-Fi networks, like apartment buildings or office complexes. If everyone uses channels 1, 6, or 11, there will be less interference than if networks are set up on adjacent channels.
+
+5. **Choosing the Right Channel**:
+   - In practice, setting up Wi-Fi networks on channels 1, 6, or 11 reduces the chance of interference from other nearby Wi-Fi networks, improving overall network performance.
+   - However, in very crowded areas, even these channels might become congested, leading to potential performance issues.
+
+In summary, in the 2.4 GHz Wi-Fi band in the US, channels 1, 6, and 11 are recommended for use because they are orthogonal – they don't overlap and, therefore, minimize interference with each other. This setup is crucial for maintaining better Wi-Fi performance in areas with multiple networks. 
+
+
+## **CSMA/CA Process in Wi-Fi Networks**
+
+1. **Carrier Sense**:
+   - **Description**: Before transmitting, a node listens to the medium (e.g., wireless signals in a Wi-Fi network) to check if another node is already transmitting.
+   - **Hidden Node Problem**: There's a possibility that another node is transmitting but goes undetected due to distance or obstacles, known as the hidden node problem.
+
+2. **Collision Avoidance**:
+   - **Action on Detection**: If the medium is busy (another node is heard), the node waits for a random period before checking the channel again.
+   - **Purpose**: This waiting helps to avoid simultaneous transmissions (collisions) by multiple nodes.
+
+3. **Request to Send/Clear to Send (RTS/CTS)**:
+   - **Optional Use**: RTS/CTS is an optional mechanism to further mediate access to the medium.
+   - **Function**: Helps alleviate the hidden node problem. In a wireless network, for example, an Access Point issues a CTS to one node at a time.
+   - **Implementation**: Not typically used for all transmissions, especially small packets, due to overhead considerations.
+
+4. **Transmission**:
+   - **Medium Clearance**: If the medium is clear or a CTS is received, the node transmits its data.
+   - **Challenge in Listening While Transmitting**: In wireless, it's challenging for a node to listen for collisions while transmitting, as its own transmission drowns out other signals.
+
+5. **Acknowledgement and Retransmission**:
+   - **Acknowledgement**: After transmitting, the node waits for an ACK from the receiver (e.g., Access Point) to confirm successful receipt.
+   - **No ACK**: If no acknowledgement is received within a certain timeframe, the node assumes a collision occurred.
+   - **Exponential Backoff**: The node then enters a binary exponential backoff period before attempting to re-transmit.
+
