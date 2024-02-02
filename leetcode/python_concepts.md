@@ -97,3 +97,6 @@ Letters = ["This", "is", "b","a", "sentence"]
 print(min(Letters, key=len))
 ```
 
+## Round up
+
+rounded_up = -(-numerator // denominator)
