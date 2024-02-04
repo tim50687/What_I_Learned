@@ -2,16 +2,25 @@
 
 ## Concepts
 
+- `Wave` traversal, all neighbors first before depth.
+
 - In BFS(), whenever you add vertex to the queue -> visit.
 
 - If you process things layer by layer, you are still doing the same thing, however, here you're grouping the layer together, so that after the for loop, you know this layer is complete:
     - Use a for loop inside the while loop  
     ```python
     while q:
+            # get the len(q) first to know 
+            # how many nodes are in this level
             # deal with layer by layer
             for i in range(len(q)):
                 ...
     ```
+
+- `Shortest path` from a single source to all other vertices must be k edges.
+
+- Time complexity: $O(V+E)$, where $V$ is the number of vertices and $E$ is the number of edges in the graph.
+
 
 ## Problem
 

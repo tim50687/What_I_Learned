@@ -7,4 +7,20 @@
 
 - Use `Disjoint Set` to detect if there's a cycle. Use `Bellman Ford` to detect if there's a negative cycle.
 
+## Adjencency matrix vs Adjencency list
+
 - Do the `Adjencency matrix` or `list` first to avoid finding neighbor several times.
+    - Time complexity of finding neighbor in `Adjencency matrix` is O(V^2), while in `Adjencency list` is O(E).
+    - 0 <= E <= V^2 (`Graph can be not connected`)
+
+## Path
+
+Sequence of connected edges.
+
+## Tree
+
+It's a connected graph without a cycle. (`Connected graph: There's a path between every pair of vertices`)
+
+- Choosing a `root` will `imply a direction` on the edges. 
+
+- Path from u to v in the tree is unique. (Use any edge once)
