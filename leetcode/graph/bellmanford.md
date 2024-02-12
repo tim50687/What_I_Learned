@@ -1,5 +1,11 @@
 # Bellman Ford
 
+From u to v, edges at most V - 1.
+
+At First round of V - 1, if I relax all the edges, I can make sure that I relax the first edge of all shortest path.
+And so on, and then if I relax the edges again, I can make sure that I relax the second edge of all shortest path.
+
+Since the longest path is V - 1, if I relax the edges V - 1 times, I can make sure I will get the shortest path from source to every other vertex by `Path-Relaxation property`.
 ## Problem 
 
 ### 787. Cheapest Flights Within K Stops

@@ -1,5 +1,12 @@
 # Depth First Search
 
+- gray: discovered, not finished (use the `array` or `set` to store the visited node)
+
+If gray -> gray:
+- cycle
+
+- time complexity: $O(V+E)$
+
 ## Problem 
 
 ### 1971. Find if Path Exists in Graph

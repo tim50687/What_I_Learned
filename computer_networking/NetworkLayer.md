@@ -143,7 +143,146 @@ Overall, subnetting is a valuable technique for optimizing network performance, 
 
 
 ## **Modern Method: Classless Inter-Domain Routing (CIDR)**
+> classless
+
+
 - Moves away from the rigid class-based system to a more flexible approach that allows for more efficient allocation of IP addresses. CIDR uses variable-length subnet masking (VLSM) to specify network and host portions of an IP address, enabling the creation of differently sized networks and more precise control over IP address assignments.
 ### Example routing table
 
 [Good tutorial](https://www.youtube.com/watch?v=pbqc6IlFuVc)
+[subnetting](https://www.youtube.com/watch?v=ecCuyq-Wprc)
+
+- Slash: means how many bits are used for the network.
+
+- Broadcast address: The last address in the range of IP addresses for a subnet. It is used to send data to all devices on the subnet.
+
+### Example (Solve classful IP address)
+
+**CIDR (Classless Inter-Domain Routing)**
+
+- CIDR is a technique introduced to overcome the limitations of classful IP addressing and efficiently allocate IP addresses.
+- It uses a 32-bit IP address representation and allows for flexible allocation of address blocks based on the specific needs of organizations.
+
+**CIDR Block Representation:**
+
+- CIDR blocks are represented as "a.b.c.d/n," where "n" represents the number of bits in the Block ID or Network ID portion.
+
+**Example:**
+
+- 20.10.50.100/20 represents a CIDR block with a 20-bit Block ID and a 12-bit Host ID.
+
+**Rules for Forming CIDR Blocks:**
+
+1. **Contiguous IP Addresses:**
+   - All IP addresses within a CIDR block must be contiguous, meaning they follow one another sequentially.
+
+2. **Block Size as a Power of 2 (2^n):**
+   - The size of a CIDR block must be a power of 2 (2^n). This ensures that the block can be efficiently divided and that the Block ID can be easily determined.
+   - Example: If the block size is 2^5, then the Host ID contains 5 bits, and the Network ID contains 32 - 5 = 27 bits.
+
+3. **First IP Address Divisible by Block Size:**
+   - The first IP address within a CIDR block must be evenly divisible by the size of the block.
+   - In other words, the least significant bits of the Host ID should start with zeroes.
+   - This allows the least significant bits to be used as the Block ID portion.
+   - Example: For the block 100.1.2.32 to 100.1.2.47, all three rules are satisfied, making it a valid CIDR block.
+
+
+### Example (Shorter routing table)
+I apologize if my previous explanation was unclear. Let me provide a more detailed example to illustrate how CIDR reduces the size of routing tables.
+
+Suppose you have a router that needs to maintain a routing table for four different IP address blocks, each with a /24 subnet mask:
+
+1. 192.168.1.0/24
+2. 192.168.2.0/24
+3. 192.168.3.0/24
+4. 192.168.4.0/24
+
+Without CIDR, each of these subnets would require a separate entry in the routing table. In this case, the routing table would look like this:
+
+- Destination Network: 192.168.1.0/24
+- Destination Network: 192.168.2.0/24
+- Destination Network: 192.168.3.0/24
+- Destination Network: 192.168.4.0/24
+
+So, there are four separate entries in the routing table to represent these four networks.
+
+Now, let's apply CIDR and route aggregation:
+
+With CIDR, you can combine these four networks into a single entry by finding the longest common prefix that covers all of them. In this case, the common prefix is "192.168.," which includes all the addresses. The subnet mask required to encompass all these networks is /22 because it covers 192.168.1.0 to 192.168.4.0.
+
+So, using CIDR and route aggregation, you would have a single entry in the routing table:
+
+`“Send me anything with addresses beginning 192.168.0.0/22”`
+
+This single entry represents all four of the original networks (192.168.1.0/24, 192.168.2.0/24, 192.168.3.0/24, and 192.168.4.0/24) by summarizing them into one larger address block. By doing this, you reduce the number of entries in the routing table from four to just one, which simplifies routing table management and makes the routing process more efficient.
+
+
+## How do you get IP address?
+
+Obtaining IP addresses involves a hierarchical process that begins with the allocation of IP address ranges by the Internet Assigned Numbers Authority (IANA) and then further distribution to regional authorities and ultimately to organizations that need IP addresses. Here's an explanation of this process:
+
+1. **IANA (Internet Assigned Numbers Authority):**
+   - IANA is responsible for the global coordination of IP address allocations, among other Internet-related functions.
+   - Its history dates back to 1972 with the establishment of ARPANET at UCLA.
+   - Today, IANA is part of the Internet Corporation for Assigned Names and Numbers (ICANN), which oversees various aspects of Internet governance.
+
+2. **Regional Internet Registries (RIRs):**
+   - IANA divides the world into several regions, each served by a Regional Internet Registry (RIR).
+   - RIRs are responsible for managing IP address allocations within their respective regions.
+   - Examples of RIRs include ARIN (American Registry for Internet Numbers), RIPE NCC (Réseaux IP Européens Network Coordination Centre), APNIC (Asia-Pacific Network Information Centre), and others.
+
+3. **Requesting IP Addresses:**
+   - Organizations that require IP addresses for their networks or infrastructure submit requests to their respective RIR.
+   - These requests typically include information about the organization's size, technical requirements, and justification for the number of IP addresses needed.
+
+4. **RIR Allocation:**
+   - The RIR reviews the request and, if approved, assigns a range of IP addresses to the organization based on the organization's needs and the available address space.
+   - The allocated IP address range is often in the form of CIDR blocks (Classless Inter-Domain Routing).
+
+5. **Advertisement of Routes:**
+   - Once an organization receives an IP address allocation from the RIR, it can advertise these routes to the global Internet via its network infrastructure.
+   - This allows other routers on the Internet to know how to reach the organization's IP addresses.
+
+6. **Secondary Markets and Auctions:**
+   - In addition to the traditional process of obtaining IP addresses directly from an RIR, there are now secondary markets for IP address blocks.
+   - Organizations that have unused or surplus IP address space can sell or transfer it to other organizations in need.
+   - These transfers often involve negotiations, legal agreements, and sometimes auctions.
+
+## IP fragmentation 
+
+### Each network jas its own Maximum Transmission Unit (MTU)
+
+MTU: The maximum size of a data packet that can be transmitted over a network.
+
+> The smaller the MTU, the more fragmented the data will be. -> more headers -> more overhead.
+
+- When specifying the MTU for an Ethernet network, you are generally referring to the maximum size of the IP packet's payload, excluding the Ethernet header and trailer.
+
+- `Second bit of flags`: Don't fragment.
+    - Might send back an ICMP message to the sender. (Hey, I can't send this packet, it's too big.)
+    - We might not want the attacker to insert fragments instead of the original packet.
+
+### Challenges of IP Fragmentation
+The challenges mentioned - out-of-order fragments, missing fragments, duplicate fragments, and overlapping fragments - refer to issues that can occur when IP packets are fragmented and reassembled. These challenges can create complexities and difficulties for memory management and proper packet reconstruction in network devices and applications. Here's an explanation of each challenge:
+
+1. **Out-of-Order Fragments:**
+   - Out-of-order fragments occur when the fragments of an IP packet arrive at their destination in a different order than they were originally sent.
+   - This can happen due to varying network conditions where some fragments may take longer routes or encounter delays, causing them to arrive out of sequence.
+   - Managing out-of-order fragments requires buffering and sorting them until all fragments arrive, so they can be properly reassembled in the correct order.
+
+2. **Missing Fragments:**
+   - Missing fragments occur when one or more fragments of an IP packet are lost or dropped during transmission.
+   - When fragments are missing, it becomes impossible to fully reconstruct the original packet, which can lead to data loss or incomplete information.
+   - To handle missing fragments, network devices must have mechanisms to detect missing pieces and request retransmissions or drop the entire packet if necessary.
+
+3. **Duplicate Fragments:**
+   - Duplicate fragments can occur when the same fragment of an IP packet is transmitted more than once due to network errors, packet retransmissions, or other issues.
+   - Duplicate fragments waste network resources and can lead to unnecessary processing and memory usage.
+   - Network devices need to detect and eliminate duplicate fragments to avoid processing redundant data.
+
+4. **Overlapping Fragments:**
+   - Overlapping fragments happen when different fragments of an IP packet cover the same portion of the original packet's data.
+   - Overlapping fragments can lead to ambiguities during reassembly because it's unclear which data should be retained.
+   - Managing overlapping fragments requires careful examination of the offset values in the IP fragmentation headers to determine the correct alignment and eliminate redundancy.
+
+> Endpoints reassemble the fragments, not the routers.

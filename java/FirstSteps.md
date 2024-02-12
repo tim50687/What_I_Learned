@@ -84,3 +84,12 @@ x -= y
 is really
 
 x = (data type of x) (x - y)
+
+
+## How java works
+
+[good video](https://www.youtube.com/watch?v=NHrsLjhjmi4)
+
+- JVM is `not platform independent`. It is platform dependent. It is the responsibility of JVM to make java platform independent.
+
+- Application is `platform independent`. It is the responsibility of JVM to make java platform independent.

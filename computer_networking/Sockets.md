@@ -327,6 +327,72 @@ const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
 Converts either a `struct in_addr or a struct in6_addr` into a `textual representation` suitable for presentation. The `dst` parameter points to a buffer to receive the `null-terminated string` containing the text address. The `size` parameter specifies the size of this buffer. The `src` parameter points to the `struct in_addr or struct in6_addr` that you want to convert.
 
 
+## Blocking and Non-blocking Sockets
+
+### The Scenario with Blocking Sockets
+
+- **Data to Send**: 100,000 bytes
+- **Buffer Size**: 1,024 bytes
+
+### Blocking Sockets Explained
+
+In blocking mode, when you send data over a socket, your program will wait (or "block") if the buffer is full and not ready to accept more data. The system will automatically manage the process of emptying the buffer by sending its contents over the network, but your program stops executing further instructions until it can send more data.
+
+### Step-by-Step Process
+
+1. **Initial Send Attempt**: You attempt to send 100,000 bytes of data using a blocking socket. The system copies as much data as it can into the buffer, up to its limit. In this case, the first 1,024 bytes of your data are copied into the buffer.
+
+2. **Buffer is Full**: Since the buffer is now full, the system will attempt to send this data over the network. Your program is "blocked" during this time, meaning it will not proceed to the next line of code until there is more space in the buffer.
+
+3. **Buffer Empties**: As the data is sent over the network, the buffer begins to empty. The speed at which this happens depends on various factors, including network speed and congestion.
+
+4. **Sending More Data**: Once there is space in the buffer (for example, after the first 1,024 bytes are sent and the buffer is empty), the system will automatically attempt to copy the next chunk of data from your program into the buffer. Your program continues to be blocked if the buffer fills up again and will only proceed once there's more space in the buffer.
+
+5. **Repeat Until Complete**: This process of filling the buffer, blocking until it's sent, and then filling it again, continues until all 100,000 bytes of your data have been sent. Your program will be repeatedly paused and resumed during this process, but you don't need to manually manage the buffer or check how much data has been sent.
+
+6. **Completion**: Once all data has been successfully copied into the buffer and sent over the network, your program can continue executing the next instructions. There's no need for manual intervention to handle the buffer or manage the data sending process beyond the initial send command.
 
 
 
+
+### Non-blocking Sockets
+
+For non-blocking sockets, the process differs significantly because your program doesn't wait for the buffer to be ready to accept more data. Using the same scenario where you want to send 100,000 bytes of data and the buffer size is 1,024 bytes, let's see how it works:
+
+### The Scenario with Non-blocking Sockets
+
+- **Data to Send**: 100,000 bytes
+- **Buffer Size**: 1,024 bytes
+
+### Non-blocking Sockets Explained
+
+In non-blocking mode, when you attempt to send data, the operation will not block your program's execution. If the buffer can't accept all the data you're trying to send at once, the `send` method returns immediately with the number of bytes successfully copied into the buffer. If the buffer is full, it might return 0 or raise a `socket.error` (depending on the environment and situation).
+
+### Step-by-Step Process
+
+1. **Initial Send Attempt**: You try to send 100,000 bytes. The system attempts to copy as much of this data as it can into the buffer. Let's say it manages to copy 1,024 bytes, filling the buffer.
+
+2. **Immediate Return**: Unlike blocking sockets, the `send` method now immediately returns, indicating how many bytes were sent (or copied to the buffer) — in this case, 1,024 bytes. Your program continues running immediately after this call.
+
+3. **Program Responsibility**: It's now up to your program to handle the fact that not all data was sent. The `send` method's return value tells you how much was sent, so you know that 1,024 bytes of the 100,000 bytes were handled.
+
+4. **Handling Unsent Data**: Your program needs to try sending the remaining data again. But, since the socket is non-blocking, you should do this in a way that doesn't just loop immediately, trying to resend the data, as that could waste CPU resources and potentially lead to a tight loop.
+
+5. **Resend Attempts**: You might use a method like polling with `select`, a delay, or an event-driven approach to wait until the socket is ready to accept more data. Once it is, you try to send the next chunk of data (or the rest of the unsent data).
+
+6. **Repeat Process**: This process of attempting to send data, checking how much was sent, and then waiting before trying to send more continues until all 100,000 bytes have been successfully sent.
+
+7. **Completion**: Your program has to actively manage this process, repeatedly checking and sending, until all data is sent. It requires more complex coding but allows your program to remain responsive and able to perform other tasks while the data is being sent.
+
+### Summary
+
+With non-blocking sockets, your program must actively manage the sending of data, including dealing with partially sent data and retrying sends. This approach provides greater flexibility and can keep your application responsive, but it requires more sophisticated error handling and flow control mechanisms. You're responsible for ensuring all data is eventually sent, which might involve keeping track of unsent data and intelligently deciding when to retry sending.
+
+
+## Select and Poll
+
+[GOOD Article](https://stackoverflow.com/questions/970979/what-are-the-differences-between-poll-and-select)
+
+## Non-blocking vs Asynchronous
+
+[GOOD Article](https://medium.com/@livajorge7/breaking-down-the-differences-non-blocking-vs-asynchronous-programming-and-when-to-use-each-953f2354b052#:~:text=However%2C%20there%20are%20some%20subtle,concurrently%20without%20blocking%20other%20operations.)
