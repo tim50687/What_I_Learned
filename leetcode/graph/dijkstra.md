@@ -2,11 +2,16 @@
 
 - There's no DECREASE-KEY(`Relax`) in heapq, we just simply push the updated vertex to the heap. There might be identical vertex in the heap, but heappop() will get the min one -> same effect. `# Note: Need to deal with the next same vertex`
 
+- If you can update dijkstra array of neighbor index, you can push that neighbor to the heap.
+    - Else, if from me to neighbor is not the shortest path, we don't have to push it back to the heap, because dijkstra will always explore the shortest path first, it will just be a waste of resource if we push it back to the heap.
+
 ## Problem 
 
 ### 743. Network Delay Time
 
 - Last node to be added in dijkstra tree have the longest distance from the source among the shortest path. Because each round, dijkstra will add the shortest distance from the source to the tree ( = shortest path to that node)
+
+- for tuple, destructuring in the for loop -> `Easy to read`
 
 #### Python code
 

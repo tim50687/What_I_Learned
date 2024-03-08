@@ -35,3 +35,6 @@ It's a connected graph without a cycle. (`Connected graph: There's a path betwee
 
 - Path from u to v in the tree is unique. (Use any edge once)
 
+## DAG
+
+DAG -> topological sort O(V+E)
