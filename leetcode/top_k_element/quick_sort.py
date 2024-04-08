@@ -17,7 +17,7 @@ def partition(array, left, right):
 def quickSelect(array, left, right, k):
     # base case
     if left == right:
-        return array[left]
+        return array[left] ### study 
     
     # do the randomize partition
     pivot = partition(array, left, right)
@@ -26,7 +26,8 @@ def quickSelect(array, left, right, k):
     k_largest_index_subarray = pivot - left + 1
 
     if k_largest_index_subarray == k:
-        return array[k_largest_index_subarray]
+        print(array)
+        return array[pivot] # study
     elif k_largest_index_subarray > k:
         # third parameter is the index supposed to be find in next sub array
         return quickSelect(array, left, pivot - 1, k)

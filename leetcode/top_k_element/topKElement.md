@@ -35,3 +35,23 @@ Next, just finish even ideces if it's not finished yet. Then, finish odd indices
 For `If most frequent character is greater then n/2 (ceil), then there must be two character adjacent to each other`, you can use `pigeonhole principle` to prove it.
 
 But for the whole problem, don't know how to prove it, just remember the algorithm.
+
+
+## 347 Top K Frequent Elements
+
+Use quick select to find the kth largest element. 
+
+- Hashmap to store the frequency of each element
+
+- Put the unique elements into the array
+
+- We want to find the kth largest element, so we put `bigger elements to the left`, and smaller elements to the right.
+
+## 215. Kth Largest Element in an Array
+
+- Don't forget you can use `counting sort` to solve this problem.
+
+
+## 692. Top K Frequent Words
+
+- Quick select: if need to compare multiple conditions, use `tuple` to compare them.
