@@ -100,3 +100,28 @@ print(min(Letters, key=len))
 ## Round up
 
 rounded_up = -(-numerator // denominator)
+
+## Reference
+
+In python, array is mutable, se if you do something like this `dp = [[]] * (_len + 1)`, each element in the array will be the same reference. So if you change one element, all the element will be changed.
+
+Instead, if you do this `dp = [[] for _ in range(_len + 1)]`, each element will be different reference.
+
+### Contrast with the * Operator
+When you use the * operator, like in `[[]] * 4`, Python doesn't create new objects for each element in the resulting list. Instead, it copies the reference to the `original object` (in this case, the empty list []) multiple times. Thus, all elements in the resulting list refer to the same object.
+
+
+## Create immutable object in global scope
+
+- If you want to use it in the nested function, you need to use `nonlocal` keyword. Becase it's immutable, when you change the value in the nested function, it will create a new object, so you need to use `nonlocal` to change the value in the global scope.
+
+> Use the `nonlocal` keyword if curr_str is defined in an enclosing function but not in the global scope
+
+> Use the `global` keyword if curr_str is defined in the global scope
+
+
+
+## See if the element in the array is visited or not
+
+- Create a array that mark the element is 1 or 0, so that you can see if the element is visited or not.
+
