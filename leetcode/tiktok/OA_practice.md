@@ -1,3 +1,88 @@
+# Multiple Choice
+
+1. Securely manage user access in a multi-tenant system to ensure that tenants cannot access each other's data.
+
+- Role-Based Access Control (RBAC)
+
+2. Optimize CPU utilization across multiple cores to achieve maximum performance for TikTok's application.
+
+- Task parallelism
+
+3. Ensure data integrity across multiple nodes in TikTok's distributed file system, even in the presence of network failures.
+
+- checksum
+
+4. Tiktok needs to implement a real time data analytics platform that process and analyze incoming data streams with minimal latency. 
+Which data processing model would best support real time analytics?
+- Stream Processing
+
+5. To protect sensitive data transmitted between TikTok's data centers, robust encryption protocols need to be implemented. Which encryption protocol would best secure data in transit?
+
+- TLS (Transport Layer Security)
+
+# Tiktok Balanced Clips
+
+> Use dp tp do, e.g. current clips ends at char 'c' will be the range from c - diff ~ c + diff
+
+```python
+class Solution:
+    def countBalancedClips(self, clipLength: int, diff: int) -> int:
+        MOD = 10**9 + 7
+
+        dp = [1] * 26 # reps clips that ends at each character
+        
+        for cl in range(2, clipLength + 1):
+            # use prefix sum so that it's easier to cal sum 
+            prefix_sum = [0] * 26
+            prefix_sum[0] = dp[0]
+            for i in range(1, len(dp)):
+                prefix_sum[i] = prefix_sum[i - 1] + dp[i]
+            
+            dp_current = [0] * 26
+            for c in range(len(dp)):
+                left = max(0, c - diff)
+                right = min(25, c + diff)
+                total = prefix_sum[right]
+                if left > 0:
+                    total -= prefix_sum[left - 1] 
+
+                dp_current[c] = total
+
+            dp = dp_current
+                
+
+        return sum(dp) % MOD
+```
+# Maximize Engagement
+
+> Sort both array, and use greedy, if like can cover views, += 1
+
+```python
+class Solution:
+    def maximizeEngagement(self, views, likes) -> int:
+        # Step 1: Sort both arrays in ascending order
+        sorted_views = sorted(views)
+        sorted_likes = sorted(likes)
+        
+        n = len(views)
+        sum_engagement = 0
+        j = 0  # Pointer for likes
+        
+        # Step 2: Iterate through each view and assign the smallest like > view
+        for i in range(n):
+            current_view = sorted_views[i]
+            
+            # Move the likes pointer until we find a like > current_view
+            while j < n and sorted_likes[j] <= current_view:
+                j += 1
+            
+            # If a valid like is found, add to sum and move the pointer
+            if j < n:
+                sum_engagement += sorted_likes[j]
+                j += 1  # Move to the next like for future assignments
+        
+        return sum_engagement
+```
 
 # 210. Course Schedule II
 
