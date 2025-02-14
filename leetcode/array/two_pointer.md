@@ -46,3 +46,25 @@ Start from the end and keep adding words until the back pointer is less than 0.
 - If the inner substring is not a palindrome, the entire string is not either.
     - However, we are allowed to remove one character from the string.
         - If the characters are different, check if the substring without the left pointer is a palindrome. If not, check if the substring without the right pointer is a palindrome.
+
+## 9. Palindrome Number
+
+- We can use Math to solve this problem 
+
+- Compare the first and last digit.
+
+- Cut the first and last digit.
+
+- last digit is not that hard to get.
+    - We can % 10 to get the last digit.
+
+    - We can / 10 to cut the last digit.
+
+- First digit is hard to get.
+    - We first need to get the `divider`.
+
+    - We can / `divider` to get the first digit.
+
+    - We can % divider to get the last digit.
+
+> After one cycle, the divider will be 100 times smaller because we remove two digits.

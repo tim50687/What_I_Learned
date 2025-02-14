@@ -31,3 +31,5 @@ Add char to the stack until you reach ']'. There will be 2 situations:
 ### Logic 
 
 - Last in first out: we know that when we readh ']', we need to pop all the char until we reach '['. So we can use stack to store the char. `However`, can we put it to the ans? `No`, Because there might be nested pattern. So we need to store the char in the stack and repeat the char when we reach ']'.
+
+- FOr nested bracket, you just process it and push it back to the stack. Once the last bracket of nested bracket is processed, you will get the result for that bracket. Then you can push it back to the stack.
